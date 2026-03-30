@@ -5,14 +5,15 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>御品菜單配置管理系統</title>
-<meta property="og:title" content="御品菜單配置管理系統">
-<meta property="og:description" content="健康餐與風味餐菜單排班配置工具">
+<title>ChiaYu Menu Manager</title>
+<meta property="og:title" content="ChiaYu Menu Manager">
+<meta property="og:description" content="ChiaYu Menu Manager">
 <meta property="og:type" content="website">
 <!-- SheetJS for Excel export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -297,7 +298,8 @@ select.sel-l2:disabled {
 
 <div class="toolbar">
   <button class="btn-add"    onclick="addWeek()">➕ 新增日期</button>
-  <button class="btn-export" onclick="exportExcel()">📊 匯出 Excel</button>
+  <button class="btn-export" onclick="exportHTML(false)">📄 匯出 HTML（含類別）</button>
+  <button class="btn-export" style="background:#26a69a;" onclick="exportHTML(true)">📋 匯出 HTML（僅品項）</button>
   <button class="btn-save"   id="saveStatus">💾 自動儲存中…</button>
   <button class="btn-clear"  onclick="clearAll()">🗑️ 清除全部</button>
 </div>
@@ -864,61 +866,187 @@ function getLocName(sel, inp) {
   return sel.value === "__custom__" ? (inp?.value || "") : sel.value;
 }
 
-function exportExcel() {
-  const wb = XLSX.utils.book_new();
-
-  document.querySelectorAll(".week-block").forEach((block, bi) => {
-    const date = block.querySelector(".week-date")?.value || `第${bi+1}筆`;
-    const day  = block.querySelector(".week-day")?.textContent || "";
-
-    const locSels = [...block.querySelectorAll(".loc-sel")];
-    const locInps = [...block.querySelectorAll(".loc-inp")];
-
-    const wid = block.id.replace("block_", "");
-    const info = weekDataMap[wid] || {};
-    const hLocsCount = (info.hLocs || DEFAULT_HEALTH_LOCS).length;
-    const wLocsCount = (info.wLocs || DEFAULT_WIND_LOCS).length;
-
-    const resolvedLocs = locSels.map((s, i) => getLocName(s, locInps[i]));
-    const hLocNames = resolvedLocs.slice(0, hLocsCount);
-    const wLocNames = resolvedLocs.slice(hLocsCount, hLocsCount + wLocsCount);
-
-    const header1 = ["類別"];
-    hLocNames.forEach(l => { header1.push(`健康餐-${l}-類別`); header1.push(`健康餐-${l}-品項`); });
-    wLocNames.forEach(l => { header1.push(`風味餐-${l}-類別`); header1.push(`風味餐-${l}-品項`); });
-
-    const sheetData = [
-      [`日期：${date}　${day}`],
-      header1
-    ];
-
-    block.querySelectorAll("table tr").forEach(tr => {
-      const catTd = tr.querySelector(".td-cat");
-      if (!catTd) return;
-      const rowArr = [catTd.textContent];
-      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
-      sels1.forEach((s1, i) => {
-        rowArr.push(s1.value && s1.value !== "-" ? s1.value : "");
-        rowArr.push(sels2[i]?.value && sels2[i].value !== "-" ? sels2[i].value : "");
-      });
-      sheetData.push(rowArr);
-    });
-
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    ws['!cols'] = header1.map((_, i) => ({ wch: i === 0 ? 8 : 14 }));
-    ws['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:header1.length-1} }];
-
-    const sheetName = date.replace(/[\\\/\?\*\[\]:]/g, "_").slice(0, 31) || `第${bi+1}筆`;
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-  });
-
-  if (wb.SheetNames.length === 0) {
+function exportHTML(itemOnlyMode) {
+  const blocks = document.querySelectorAll(".week-block");
+  if (blocks.length === 0) {
     alert("沒有可匯出的資料，請先新增日期並填寫菜單。");
     return;
   }
 
-  XLSX.writeFile(wb, `御品菜單_${new Date().toLocaleDateString("zh-TW").replace(/\//g,"-")}.xlsx`);
+  // 擷取目前頁面所有 CSS 樣式
+  let cssText = "";
+  for (const sheet of document.styleSheets) {
+    try {
+      for (const rule of sheet.cssRules) { cssText += rule.cssText + "\n"; }
+    } catch(e) {}
+  }
+
+  let tablesHTML = "";
+
+  blocks.forEach((block, bi) => {
+    const date = block.querySelector(".week-date")?.value || "";
+    const day  = block.querySelector(".week-day")?.textContent || "";
+    const wid  = block.id.replace("block_", "");
+    const info = weekDataMap[wid] || {};
+    const hLocsCount = (info.hLocs || DEFAULT_HEALTH_LOCS).length;
+    const wLocsCount = (info.wLocs || DEFAULT_WIND_LOCS).length;
+
+    const locSels = [...block.querySelectorAll(".loc-sel")];
+    const locInps = [...block.querySelectorAll(".loc-inp")];
+    const resolvedLocs = locSels.map((s, i) => getLocName(s, locInps[i]));
+    const hLocNames = resolvedLocs.slice(0, hLocsCount);
+    const wLocNames = resolvedLocs.slice(hLocsCount, hLocsCount + wLocsCount);
+
+    // ── 建立表頭 ──
+    const totalCols = 1 + (itemOnlyMode
+      ? (hLocNames.length + wLocNames.length)
+      : (hLocNames.length * 2 + wLocNames.length * 2));
+
+    // row1: 類別 | 健康餐(span) | 風味餐(span)
+    const hSpan = itemOnlyMode ? hLocNames.length : hLocNames.length * 2;
+    const wSpan = itemOnlyMode ? wLocNames.length : wLocNames.length * 2;
+    let hr1 = `<tr>
+      <th class="th-week" rowspan="3">類別</th>
+      <th class="th-health" colspan="${hSpan}">【健康餐】</th>
+      <th class="th-wind" colspan="${wSpan}">【風味餐】</th>
+    </tr>`;
+
+    // row2: 地點
+    let hr2 = "<tr>";
+    hLocNames.forEach((loc, i) => {
+      const cls = i%2===0 ? "th-hloc" : "th-hloc-light";
+      const cs = itemOnlyMode ? 1 : 2;
+      hr2 += `<th class="${cls}" colspan="${cs}" style="border-left:none;border-right:none;">${loc}</th>`;
+    });
+    wLocNames.forEach((loc, i) => {
+      const cls = i%2===0 ? "th-wloc" : "th-wloc-light";
+      const cs = itemOnlyMode ? 1 : 2;
+      hr2 += `<th class="${cls}" colspan="${cs}" style="border-left:none;border-right:none;">${loc}</th>`;
+    });
+    hr2 += "</tr>";
+
+    // row3: 類別/品項 sub-headers（itemOnly 模式只顯示品項）
+    let hr3 = "<tr>";
+    if (!itemOnlyMode) {
+      hLocNames.forEach((_, i) => {
+        ["類別","品項"].forEach(l => {
+          const cls = i%2===0 ? "th-sub th-sub-h" : "th-sub th-sub-h-light";
+          hr3 += `<th class="${cls}">${l}</th>`;
+        });
+      });
+      wLocNames.forEach((_, i) => {
+        ["類別","品項"].forEach(l => {
+          const cls = i%2===0 ? "th-sub th-sub-w" : "th-sub th-sub-w-light";
+          hr3 += `<th class="${cls}">${l}</th>`;
+        });
+      });
+    } else {
+      hLocNames.forEach((_, i) => {
+        const cls = i%2===0 ? "th-sub th-sub-h" : "th-sub th-sub-h-light";
+        hr3 += `<th class="${cls}">品項</th>`;
+      });
+      wLocNames.forEach((_, i) => {
+        const cls = i%2===0 ? "th-sub th-sub-w" : "th-sub th-sub-w-light";
+        hr3 += `<th class="${cls}">品項</th>`;
+      });
+    }
+    hr3 += "</tr>";
+
+    // ── 資料列 ──
+    let rowsHTML = "";
+    block.querySelectorAll("table tr").forEach(tr => {
+      const catTd = tr.querySelector(".td-cat");
+      if (!catTd) return;
+      const rowName = catTd.textContent;
+      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+      const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
+
+      // 行背景色（依列名）
+      const hS  = rowName==="主菜"?"h-main":rowName==="副主菜"?"h-sub":rowName==="米飯"?"h-rice":"h-item";
+      const hS2 = rowName==="主菜"?"h-main-l2":rowName==="副主菜"?"h-sub-l2":rowName==="米飯"?"h-rice-l2":"h-item-l2";
+      const wS  = rowName==="主菜"?"w-main":rowName==="副主菜"?"w-sub":rowName==="米飯"?"w-rice":"w-item";
+      const wS2 = rowName==="主菜"?"w-main-l2":rowName==="副主菜"?"w-sub-l2":rowName==="米飯"?"w-rice-l2":"w-item-l2";
+
+      rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
+
+      const totalLocs = hLocNames.length + wLocNames.length;
+      sels1.forEach((s1, i) => {
+        const isH = i < hLocNames.length;
+        const baseS  = isH ? hS  : wS;
+        const baseS2 = isH ? hS2 : wS2;
+        const col    = i % (isH ? hLocNames.length : wLocNames.length);
+        const useDark = col % 2 === 0;
+
+        const v1 = s1.value && s1.value !== "-" ? s1.value : "";
+        const s2el = sels2[i];
+        const v2 = s2el?.value && s2el.value !== "-" && s2el.value !== "-- 品項 --" ? s2el.value : "";
+
+        // 品項格顏色（inline style 優先，否則 class）
+        let itemBgStyle = "";
+        if (s2el && s2el.value && s2el.value !== "-" && s2el.value !== "-- 品項 --") {
+          const colors = getFoodColors(s2el.value);
+          if (colors) {
+            itemBgStyle = `background:${colors.bg};color:${colors.fg};`;
+          }
+        }
+
+        if (!itemOnlyMode) {
+          rowsHTML += `<td class="td-l1 ${baseS}" style="padding:4px 6px;">${v1}</td>`;
+          rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
+        } else {
+          rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
+        }
+      });
+
+      rowsHTML += "</tr>";
+    });
+
+    tablesHTML += `
+      <div class="week-block" style="margin-bottom:28px;">
+        <div class="week-titlebar">
+          <span class="week-label">日期：${date}</span>
+          <span class="week-day">${day}</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>${hr1}${hr2}${hr3}${rowsHTML}</table>
+        </div>
+      </div>`;
+  });
+
+  const modeLabel = itemOnlyMode ? "僅品項" : "含類別";
+  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
+  const html = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>御品菜單_${dateStr}（${modeLabel}）</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+${cssText}
+body { font-family:'Noto Sans TC',sans-serif; background:#eceff1; padding:18px 12px; }
+h1 { text-align:center; color:#2e7d32; font-size:1.4rem; font-weight:700; margin-bottom:18px; letter-spacing:3px; }
+select { display:none; }
+.tbl-wrap { overflow-x:auto; }
+@media print {
+  body { background:#fff; padding:6px; }
+  .week-block { page-break-inside:avoid; box-shadow:none; }
+}
+</style>
+</head>
+<body>
+<h1>🍱 御品菜單配置（${modeLabel}）</h1>
+<p style="text-align:center;color:#78909c;font-size:0.82rem;margin-bottom:18px;">匯出時間：${new Date().toLocaleString("zh-TW")}</p>
+${tablesHTML}
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `御品菜單_${dateStr}_${modeLabel}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 function renderDB() {
