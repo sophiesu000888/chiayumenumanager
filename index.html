@@ -9,6 +9,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -158,8 +160,8 @@ table tr td:last-child { border-right: none; }
   font-size: 0.82rem; padding: 5px 8px; white-space: nowrap; min-width: 52px;
 }
 
-.td-l1 { padding: 3px; min-width: 90px; }
-.td-l2 { padding: 3px; min-width: 92px; }
+.td-l1 { padding: 3px; min-width: 110px; }
+.td-l2 { padding: 3px; min-width: 110px; }
 
 .h-rice { background: #ffe0b2; }
 .h-rice-l2 { background: #fff3e0; }
@@ -314,8 +316,8 @@ select.sel-l2:disabled {
   }
 
   table { font-size: 0.7rem; min-width: 620px; }
-  .td-l1 { min-width: 62px; }
-  .td-l2 { min-width: 64px; }
+  .td-l1 { min-width: 80px; }
+  .td-l2 { min-width: 80px; }
   select { font-size: 0.68rem; padding: 2px 12px 2px 3px; }
   .td-cat { font-size: 0.72rem; padding: 4px 4px; min-width: 38px; max-width: 52px; }
 
@@ -631,8 +633,17 @@ function getFoodColors(item) {
   return { bg: COLOR_GROUPS[key].bg, fg: COLOR_GROUPS[key].fg || "#333" };
 }
 
-function makeColPair(rowKey, defaultStyle, defaultStyleL2) {
-  const cats = ROW_CATS[rowKey] || [];
+function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
+  let cats = ROW_CATS[rowKey] || [];
+
+  // 主菜列依健康/風味餐欄位過濾第一層類別
+  if (rowKey === "主菜") {
+    if (side === "h") {
+      cats = cats.filter(c => c === "-" || c === "健康餐主菜");
+    } else if (side === "w") {
+      cats = cats.filter(c => c === "-" || c === "風味餐主菜");
+    }
+  }
 
   const sel1 = document.createElement("select");
   sel1.className = "sel-l1";
@@ -888,8 +899,8 @@ function buildWeek(weekNum, initHLocs, initWLocs) {
       else if (len === 3) tdCat.style.fontSize = "0.76rem";
       tr.appendChild(tdCat);
       const [hS, hS2, wS, wS2] = getRowStyles(row);
-      hLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,hS,hS2); tr.appendChild(t1); tr.appendChild(t2); });
-      wLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,wS,wS2); tr.appendChild(t1); tr.appendChild(t2); });
+      hLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,hS,hS2,"h"); tr.appendChild(t1); tr.appendChild(t2); });
+      wLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,wS,wS2,"w"); tr.appendChild(t1); tr.appendChild(t2); });
     });
 
     wrap.appendChild(ctrlBar); wrap.appendChild(tbl);
