@@ -8,6 +8,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -22,7 +23,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@700;900&display=swap');
 
-
+:root {
   --green-dark: #2e7d32;
   --blue-dark: #1565c0;
   --border: #cfd8dc;
@@ -223,9 +224,22 @@ select.sel-l2:disabled {
 }
 .db-panel h2 { font-size: 0.95rem; color: #37474f; margin-bottom: 10px; font-weight: 700; }
 .db-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.db-cat { border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; min-width: 110px; }
-.db-cat-title { color: #fff; font-size: 0.76rem; font-weight: 700; padding: 4px 8px; text-align: center; }
-.db-cat-items { padding: 5px 7px; font-size: 0.74rem; color: #455a64; display: flex; flex-direction: column; gap: 2px; max-height: 130px; overflow-y: auto; }
+.db-cat { border: 1px solid #e0e0e0; border-radius: 6px; overflow: visible; min-width: 110px; display: flex; flex-direction: column; }
+.db-cat-title { color: #fff; font-size: 0.76rem; font-weight: 700; padding: 4px 8px; text-align: center; border-radius: 5px 5px 0 0; }
+
+.db-cat-items {
+  padding: 5px 2px 5px 7px; font-size: 0.74rem; color: #455a64;
+  display: flex; flex-direction: column; gap: 2px;
+  max-height: 260px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: #90a4ae #eceff1;
+  border-radius: 0 0 5px 5px;
+}
+.db-cat-items::-webkit-scrollbar { width: 6px; }
+.db-cat-items::-webkit-scrollbar-track { background: #eceff1; border-radius: 3px; }
+.db-cat-items::-webkit-scrollbar-thumb { background: #90a4ae; border-radius: 3px; }
+.db-cat-items::-webkit-scrollbar-thumb:hover { background: #607d8b; }
 .db-item { padding: 2px 4px; border-radius: 3px; margin-bottom: 1px; font-size: 0.73rem; }
 
 /* 白色分類加細框（避免跟背景混在一起） */
@@ -275,45 +289,53 @@ select.sel-l2:disabled {
 
 /* ── 手機版優化 ── */
 @media (max-width: 600px) {
-  body { padding: 10px 6px; }
+  body { padding: 8px 6px; }
 
-  h1 { font-size: 2rem; letter-spacing: 1px; margin-bottom: 10px; }
+  h1 { font-size: 1.9rem; letter-spacing: 1px; margin-bottom: 10px; }
 
-  .toolbar { gap: 6px; }
-  .toolbar button { padding: 8px 12px; font-size: 0.82rem; flex: 1 1 auto; min-width: 110px; }
+  /* Toolbar: 2-column grid on mobile */
+  .toolbar { gap: 6px; display: grid; grid-template-columns: 1fr 1fr; }
+  .toolbar button { padding: 10px 8px; font-size: 0.8rem; width: 100%; }
 
+  /* Week title bar wraps better */
   .week-titlebar { gap: 6px; padding: 8px 10px; }
-  .week-label { font-size: 0.82rem; }
-  .week-date { font-size: 0.78rem; padding: 4px 6px; flex: 1 1 auto; }
-  .week-day { font-size: 0.88rem; min-width: 40px; padding: 3px 5px; }
-  .btn-del-week { padding: 5px 10px; font-size: 0.78rem; }
+  .week-label { font-size: 0.8rem; }
+  .week-date { font-size: 0.78rem; padding: 4px 6px; flex: 1 1 auto; min-width: 0; }
+  .week-day { font-size: 0.85rem; min-width: 38px; padding: 3px 5px; }
+  .btn-del-week { padding: 5px 10px; font-size: 0.78rem; margin-left: auto; }
 
+  /* Horizontal scroll hint */
   .tbl-wrap::before {
     content: '← 左右滑動查看完整表格 →';
-    display: block;
-    text-align: center;
-    font-size: 0.72rem;
-    color: #90a4ae;
-    padding: 4px 0;
-    background: #f5f5f5;
+    display: block; text-align: center;
+    font-size: 0.7rem; color: #90a4ae;
+    padding: 4px 0; background: #f5f5f5;
+    letter-spacing: 0.5px;
   }
 
-  table { font-size: 0.72rem; min-width: 700px; }
-  .td-l1 { min-width: 70px; }
-  .td-l2 { min-width: 72px; }
-  select { font-size: 0.7rem; padding: 2px 14px 2px 3px; }
-  .td-cat { font-size: 0.74rem; padding: 4px 5px; min-width: 42px; }
+  table { font-size: 0.7rem; min-width: 620px; }
+  .td-l1 { min-width: 62px; }
+  .td-l2 { min-width: 64px; }
+  select { font-size: 0.68rem; padding: 2px 12px 2px 3px; }
+  .td-cat { font-size: 0.72rem; padding: 4px 4px; min-width: 38px; max-width: 52px; }
 
-  .loc-sel { font-size: 0.72rem !important; max-width: 60px !important; }
+  /* Control bar buttons */
+  .ctrlBar-btn { padding: 8px 10px !important; font-size: 0.76rem !important; flex: 1 1 auto; }
 
-  .ctrlBar-btn { padding: 6px 10px !important; font-size: 0.76rem !important; }
+  /* DB panel: show 2 columns on mobile */
+  .db-panel { padding: 10px 8px; }
+  .db-panel h2 { font-size: 0.85rem; }
+  .db-grid { gap: 6px; display: grid; grid-template-columns: repeat(2, 1fr); }
+  .db-cat { min-width: 0; width: 100%; }
+  .db-cat-items { max-height: 160px; font-size: 0.7rem; }
 
-  .db-panel { padding: 12px 10px; }
-  .db-panel h2 { font-size: 0.88rem; }
-  .db-grid { gap: 6px; }
-  .db-cat { min-width: 90px; }
+  /* Management panel */
+  .mgmt-tabs { gap: 5px; }
+  .mgmt-tab { padding: 7px 10px; font-size: 0.8rem; flex: 1 1 auto; text-align: center; }
+  .mgmt-action-btn { padding: 8px 10px; font-size: 0.8rem; }
+  .mgmt-items-list { gap: 5px; }
 
-  .save-toast { bottom: 12px; right: 10px; padding: 6px 14px; font-size: 0.78rem; }
+  .save-toast { bottom: 12px; right: 10px; padding: 7px 14px; font-size: 0.78rem; }
 }
 </style>
 </head>
@@ -332,12 +354,12 @@ select.sel-l2:disabled {
 <div class="schedule-area" id="scheduleArea"></div>
 
 <div class="db-panel">
-  <h2>📦 食材依顏色分類</h2>
+  <h2>📦 食材依顏色分類<span style="font-size:0.74rem;color:#b0bec5;font-weight:400;margin-left:4px;">（可上下滑動查看更多）</span></h2>
   <div class="db-grid" id="dbGrid"></div>
 </div>
 
 <div class="db-panel" style="margin-top:12px;">
-  <h2>📋 食材依類別分類</h2>
+  <h2>📋 食材依類別分類<span style="font-size:0.74rem;color:#b0bec5;font-weight:400;margin-left:4px;">（可上下滑動查看更多）</span></h2>
   <div class="db-grid" id="catGrid"></div>
 </div>
 
@@ -413,6 +435,15 @@ select.sel-l2:disabled {
 <div class="save-toast" id="saveToast">✅ 已自動儲存</div>
 
 <script>
+// ===== 共用 Helper =====
+function getRowStyles(row) {
+  const hS  = row==="主菜"?"h-main":row==="副主菜"?"h-sub":row==="米飯"?"h-rice":"h-item";
+  const hS2 = row==="主菜"?"h-main-l2":row==="副主菜"?"h-sub-l2":row==="米飯"?"h-rice-l2":"h-item-l2";
+  const wS  = row==="主菜"?"w-main":row==="副主菜"?"w-sub":row==="米飯"?"w-rice":"w-item";
+  const wS2 = row==="主菜"?"w-main-l2":row==="副主菜"?"w-sub-l2":row==="米飯"?"w-rice-l2":"w-item-l2";
+  return [hS, hS2, wS, wS2];
+}
+
 // ===== 食材顏色對照 =====
 const FOOD_COLOR = {};
 const COLOR_GROUPS = {
@@ -847,11 +878,16 @@ function buildWeek(weekNum, initHLocs, initWLocs) {
 
     ROWS.forEach(row => {
       const tr = tbl.insertRow();
-      const tdCat=document.createElement("td"); tdCat.className="td-cat"; tdCat.textContent=row; tr.appendChild(tdCat);
-      const hS  = row==="主菜"?"h-main":row==="副主菜"?"h-sub":row==="米飯"?"h-rice":"h-item";
-      const hS2 = row==="主菜"?"h-main-l2":row==="副主菜"?"h-sub-l2":row==="米飯"?"h-rice-l2":"h-item-l2";
-      const wS  = row==="主菜"?"w-main":row==="副主菜"?"w-sub":row==="米飯"?"w-rice":"w-item";
-      const wS2 = row==="主菜"?"w-main-l2":row==="副主菜"?"w-sub-l2":row==="米飯"?"w-rice-l2":"w-item-l2";
+      const tdCat = document.createElement("td");
+      tdCat.className = "td-cat";
+      tdCat.textContent = row;
+      // 字數多時自動縮小字體
+      const len = row.length;
+      if (len >= 5) tdCat.style.fontSize = "0.6rem";
+      else if (len === 4) tdCat.style.fontSize = "0.7rem";
+      else if (len === 3) tdCat.style.fontSize = "0.76rem";
+      tr.appendChild(tdCat);
+      const [hS, hS2, wS, wS2] = getRowStyles(row);
       hLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,hS,hS2); tr.appendChild(t1); tr.appendChild(t2); });
       wLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,wS,wS2); tr.appendChild(t1); tr.appendChild(t2); });
     });
@@ -987,10 +1023,7 @@ function exportHTML(itemOnlyMode) {
       const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
 
       // 行背景色（依列名）
-      const hS  = rowName==="主菜"?"h-main":rowName==="副主菜"?"h-sub":rowName==="米飯"?"h-rice":"h-item";
-      const hS2 = rowName==="主菜"?"h-main-l2":rowName==="副主菜"?"h-sub-l2":rowName==="米飯"?"h-rice-l2":"h-item-l2";
-      const wS  = rowName==="主菜"?"w-main":rowName==="副主菜"?"w-sub":rowName==="米飯"?"w-rice":"w-item";
-      const wS2 = rowName==="主菜"?"w-main-l2":rowName==="副主菜"?"w-sub-l2":rowName==="米飯"?"w-rice-l2":"w-item-l2";
+      const [hS, hS2, wS, wS2] = getRowStyles(rowName);
 
       rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
 
