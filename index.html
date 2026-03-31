@@ -549,12 +549,15 @@ select.sel-l2:disabled {
 
 <!-- Firebase 登入列 -->
 <div class="auth-bar" id="authBar">
-  <div id="authLoggedOut" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+  <div id="authLoggedOut" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;">
     <span class="auth-hint">🔒 請登入以同步資料</span>
     <button class="btn-login" onclick="fbLogin()">
       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 20-8 20-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5L31.8 34c-2.1 1.5-4.8 2-7.8 2-5.2 0-9.5-2.9-11.3-7.1l-6.5 5C9.6 39.7 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.4-4.5 5.8l5.8 5c3.5-3.2 5.4-8 5.4-14.8 0-1.3-.1-2.7-.4-4z"/></svg>
       Google 登入
     </button>
+  </div>
+  <div id="authLoading" style="display:flex;align-items:center;gap:8px;color:#90a4ae;font-size:0.82rem;">
+    <span>⏳ 載入中…</span>
   </div>
   <div id="authLoggedIn" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;">
     <div class="auth-user">
@@ -760,9 +763,12 @@ function fbLogout() {
 }
 
 // ── 更新 UI 登入狀態 ──
+let _prevUserId = null;
 function updateAuthUI(user) {
   const loggedOut = document.getElementById("authLoggedOut");
   const loggedIn  = document.getElementById("authLoggedIn");
+  const loading   = document.getElementById("authLoading");
+  if (loading) loading.style.display = "none";
   if (user) {
     loggedOut.style.display = "none";
     loggedIn.style.display  = "flex";
@@ -770,7 +776,13 @@ function updateAuthUI(user) {
     document.getElementById("authName").textContent = user.displayName || user.email;
     document.getElementById("syncBadge").textContent = "⚡ 已連線";
     document.getElementById("syncBadge").className = "sync-badge";
+    // 只在剛登入時顯示歡迎（避免重複）
+    if (_prevUserId !== user.uid) {
+      _prevUserId = user.uid;
+      setTimeout(() => showSaveToast(`👋 歡迎，${user.displayName || user.email}！`, 3500), 300);
+    }
   } else {
+    _prevUserId = null;
     loggedOut.style.display = "flex";
     loggedIn.style.display  = "none";
   }
@@ -810,11 +822,11 @@ async function saveHistory() {
   }
 }
 
-function showSaveToast(msg) {
+function showSaveToast(msg, duration) {
   const t = document.getElementById("saveToast");
   t.textContent = msg || "✅ 已自動儲存";
   t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 1800);
+  setTimeout(() => t.classList.remove("show"), duration || 2500);
 }
 
 function scheduleAutoSave() {
@@ -1838,37 +1850,55 @@ function startWhenReady() {
   }
   const { auth, onAuthStateChanged, getRedirectResult } = window._fb;
 
-  // 處理 redirect 登入回來的結果
-  getRedirectResult(auth).catch(e => {
-    if (e.code !== 'auth/no-current-user') console.warn("redirect result:", e);
-  });
-
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    updateAuthUI(user);
-    if (user) {
-      // 登入後設定即時監聽（其他人改了會自動更新）
-      if (!fbListenerActive) {
-        fbListenerActive = true;
-        const { db, ref, onValue } = window._fb;
-        onValue(ref(db, "menu"), (snap) => {
-          if (!snap.exists()) return;
-          const data = snap.val();
-          if (data && data.savedBy && data.savedBy.uid !== currentUser?.uid) {
-            // 別人改了 → 靜默重新載入
-            loadAll().then(() => {
-              showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
-            });
-          }
-          if (data && data.savedBy) {
-            const info = document.getElementById("lastSaveInfo");
-            if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
-          }
-        });
+  // 先處理 redirect 登入回來的結果，再監聽 auth 狀態
+  getRedirectResult(auth)
+    .then(result => {
+      if (result && result.user) {
+        // redirect 登入成功，onAuthStateChanged 會自動觸發
+        console.log("redirect login success:", result.user.displayName);
       }
-    }
-    await initApp();
-  });
+    })
+    .catch(e => {
+      if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
+        console.warn("redirect result error:", e.code);
+      }
+    })
+    .finally(() => {
+      // 不管 redirect 結果如何，都開始監聽 auth 狀態
+      let appInitialized = false;
+
+      onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        updateAuthUI(user);
+
+        if (user && !fbListenerActive) {
+          fbListenerActive = true;
+          const { db, ref, onValue } = window._fb;
+          onValue(ref(db, "menu"), (snap) => {
+            if (!snap.exists()) return;
+            const data = snap.val();
+            if (data && data.savedBy && data.savedBy.uid !== currentUser?.uid) {
+              loadAll().then(() => {
+                showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
+              });
+            }
+            if (data && data.savedBy) {
+              const info = document.getElementById("lastSaveInfo");
+              if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
+            }
+          });
+        }
+
+        // initApp 只在第一次觸發，或登入狀態改變時重新載入
+        if (!appInitialized) {
+          appInitialized = true;
+          await initApp();
+        } else if (user) {
+          // 登入後重新從雲端載入資料
+          await initApp();
+        }
+      });
+    });
 }
 
 startWhenReady();
