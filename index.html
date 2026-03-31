@@ -493,232 +493,6 @@ select.sel-l2:disabled {
 .rowcat-chip .chip-del { background:none;border:none;color:#1565c0;opacity:0.5;cursor:pointer;font-size:0.7rem;padding:0 0 0 2px; }
 .rowcat-chip .chip-del:hover { opacity:1; }
 
-/* ===== 右側多抽屜系統 ===== */
-
-/* 標籤群組容器 */
-.drawer-tabs-rail {
-  position: fixed;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* 單一標籤 */
-.side-tab {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  width: 32px;
-  padding: 10px 0;
-  border-radius: 8px 0 0 8px;
-  cursor: pointer;
-  user-select: none;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.15);
-  transition: width 0.15s, box-shadow 0.15s;
-  position: relative;
-}
-.side-tab:hover { width: 36px; box-shadow: -3px 0 12px rgba(0,0,0,0.22); }
-.side-tab.open  { width: 36px; box-shadow: -3px 0 12px rgba(0,0,0,0.28); }
-
-.side-tab .st-icon {
-  font-size: 0.92rem;
-  line-height: 1;
-}
-.side-tab .st-label {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  opacity: 0.9;
-  line-height: 1;
-}
-
-/* 各抽屜標籤顏色 */
-#tab-mgmt   { background: #37474f; color: #fff; }
-#tab-hist   { background: #4a148c; color: #fff; }
-#tab-colors { background: #00695c; color: #fff; }
-#tab-cats   { background: #1565c0; color: #fff; }
-
-/* 遮罩（共用，顯示時疊在最底） */
-.drawer-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.3);
-  z-index: 1150;
-  backdrop-filter: blur(1.5px);
-}
-.drawer-overlay.show { display: block; }
-
-/* 抽屜主體（共用） */
-.side-drawer {
-  position: fixed;
-  top: 0;
-  right: -480px;
-  width: 460px;
-  max-width: 96vw;
-  height: 100vh;
-  background: #fafafa;
-  z-index: 1200;
-  box-shadow: -6px 0 28px rgba(0,0,0,0.22);
-  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.side-drawer.open { right: 0; }
-
-/* 抽屜標頭 */
-.drawer-header {
-  color: #fff;
-  padding: 13px 16px 11px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.drawer-header h2 { font-size: 0.95rem; font-weight: 700; margin: 0; flex: 1; }
-.drawer-close {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: #fff;
-  border-radius: 5px;
-  padding: 4px 10px;
-  font-size: 0.78rem;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.15s;
-}
-.drawer-close:hover { background: rgba(255,255,255,0.28); }
-
-#drawer-mgmt   .drawer-header { background: linear-gradient(135deg,#37474f,#263238); }
-#drawer-hist   .drawer-header { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
-#drawer-colors .drawer-header { background: linear-gradient(135deg,#00897b,#00695c); }
-#drawer-cats   .drawer-header { background: linear-gradient(135deg,#1976d2,#1565c0); }
-
-/* 抽屜內容區 */
-.drawer-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px;
-}
-
-/* ─ Quick-Add 快速新增區 ─ */
-.quick-add-box {
-  background: #fff;
-  border: 2px solid #b0bec5;
-  border-radius: 10px;
-  padding: 12px 13px 10px;
-  margin-bottom: 12px;
-}
-.quick-add-box h3 {
-  font-size: 0.84rem;
-  color: #263238;
-  font-weight: 700;
-  margin-bottom: 9px;
-}
-.quick-add-row {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-  align-items: flex-end;
-}
-.quick-add-row label {
-  font-size: 0.73rem;
-  color: #546e7a;
-  font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.quick-add-row input[type="text"] {
-  padding: 6px 9px;
-  border: 1.5px solid #b0bec5;
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 0.83rem;
-  width: 120px;
-  transition: border-color 0.15s;
-}
-.quick-add-row input[type="text"]:focus { outline: none; border-color: #43a047; }
-.quick-add-row select.qa-sel {
-  padding: 6px 24px 6px 8px;
-  border: 1.5px solid #b0bec5;
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 0.8rem;
-  width: auto;
-  min-width: 90px;
-  background-color: #fff;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23607d8b'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 6px center;
-  transition: border-color 0.15s;
-}
-.quick-add-row select.qa-sel:focus { outline: none; border-color: #43a047; }
-.qa-preview {
-  font-size: 0.71rem;
-  color: #78909c;
-  margin-top: 6px;
-  min-height: 16px;
-}
-.qa-preview .qa-tag {
-  display: inline-block;
-  padding: 1px 7px;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  margin-right: 3px;
-}
-.btn-qa-add {
-  padding: 7px 14px;
-  background: #43a047;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s;
-  align-self: flex-end;
-}
-.btn-qa-add:hover { background: #2e7d32; }
-
-/* ─ 抽屜內 tabs ─ */
-.drawer-tabs {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 11px;
-  flex-wrap: wrap;
-}
-.drawer-tab {
-  padding: 5px 12px;
-  border: 1.5px solid #b0bec5;
-  border-radius: 6px;
-  background: #eceff1;
-  color: #37474f;
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.drawer-tab:hover { background: #cfd8dc; }
-.drawer-tab.active { background: #37474f; color: #fff; border-color: #37474f; }
-
-.drawer-section { display: none; }
-.drawer-section.active { display: block; }
-
 /* ── 手機版優化 ── */
 @media (max-width: 600px) {
   body { padding: 8px 6px; }
@@ -810,158 +584,89 @@ select.sel-l2:disabled {
 
 <div class="schedule-area" id="scheduleArea"></div>
 
-<!-- ===== 右側標籤群 ===== -->
+<!-- ===== 歷史紀錄區塊 ===== -->
 
-<div class="drawer-tabs-rail">
-  <div class="side-tab" id="tab-mgmt" onclick="openDrawer('mgmt')" title="資料管理">
-    <span class="st-icon">⚙️</span>
-    <span class="st-label">管理</span>
-  </div>
-  <div class="side-tab" id="tab-hist" onclick="openDrawer('hist')" title="歷史紀錄">
-    <span class="st-icon">📚</span>
-    <span class="st-label">歷史</span>
-  </div>
-  <div class="side-tab" id="tab-colors" onclick="openDrawer('colors')" title="顏色分組">
-    <span class="st-icon">🎨</span>
-    <span class="st-label">顏色</span>
-  </div>
-  <div class="side-tab" id="tab-cats" onclick="openDrawer('cats')" title="類別分組">
-    <span class="st-icon">📋</span>
-    <span class="st-label">類別</span>
-  </div>
-</div>
-
-<!-- 共用遮罩 -->
-
-<div class="drawer-overlay" id="drawer-overlay" onclick="closeAllDrawers()"></div>
-
-<!-- ① 資料管理抽屜 -->
-
-<div class="side-drawer" id="drawer-mgmt">
-  <div class="drawer-header">
-    <span>⚙️</span>
-    <h2>資料庫管理</h2>
-    <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
-  </div>
-  <div class="drawer-body">
-    <div class="quick-add-box">
-      <h3>⚡ 快速新增品項</h3>
-      <div class="quick-add-row">
-        <label>品項名稱
-          <input type="text" id="qa-name" placeholder="例：柳丁" oninput="qaUpdatePreview()" onkeydown="if(event.key==='Enter')qaAddItem()">
-        </label>
-        <label>類別
-          <select class="qa-sel" id="qa-cat" onchange="qaUpdatePreview()"></select>
-        </label>
-        <label>顏色組
-          <select class="qa-sel" id="qa-color" onchange="qaUpdatePreview()">
-            <option value="">— 不設定 —</option>
-          </select>
-        </label>
-        <button class="btn-qa-add" onclick="qaAddItem()">➕ 新增</button>
-      </div>
-      <div class="qa-preview" id="qa-preview"></div>
-    </div>
-
-```
-<div class="drawer-tabs">
-  <button class="drawer-tab active" onclick="switchDrawerTab('items',this)">🥦 類別品項</button>
-  <button class="drawer-tab" onclick="switchDrawerTab('colors',this)">🎨 顏色分組</button>
-  <button class="drawer-tab" onclick="switchDrawerTab('rowcats',this)">📑 列類別設定</button>
-</div>
-
-<div id="mgmt-items" class="drawer-section active">
-  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-    <select id="mgmt-cat-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtItems()"></select>
-    <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewCategory()">➕ 新增類別</button>
-    <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentCategory()">🗑️ 刪除此類別</button>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-    <input id="mgmt-item-input" type="text" placeholder="輸入新品項名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToCategory()">
-    <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToCategory()">➕ 新增品項</button>
-  </div>
-  <div id="mgmt-items-list" class="mgmt-items-list"></div>
-</div>
-
-<div id="mgmt-colors" class="drawer-section">
-  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-    <select id="mgmt-color-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtColorItems()"></select>
-    <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewColorGroup()">➕ 新增顏色組</button>
-    <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentColorGroup()">🗑️ 刪除</button>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-    <input id="mgmt-color-item-input" type="text" placeholder="輸入食材名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToColorGroup()">
-    <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToColorGroup()">➕ 新增食材</button>
-  </div>
-  <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;font-size:0.82rem;color:#546e7a;">
-    <label>背景色 <input type="color" id="mgmt-color-bg" value="#4cd964" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-    <label>文字色 <input type="color" id="mgmt-color-fg" value="#1a3a00" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-    <label>標題背景 <input type="color" id="mgmt-color-titlebg" value="#27ae60" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-    <button class="mgmt-action-btn" style="background:#546e7a;font-size:0.78rem;" onclick="applyColorGroupColors()">套用</button>
-  </div>
-  <div id="mgmt-color-items-list" class="mgmt-items-list"></div>
-</div>
-
-<div id="mgmt-rowcats" class="drawer-section">
-  <p style="font-size:0.78rem;color:#90a4ae;margin-bottom:10px;">設定每個列（主菜/副主菜/1/2…）可選用哪些類別。</p>
-  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-    <select id="mgmt-row-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtRowCats()"></select>
-  </div>
-  <div id="mgmt-rowcats-list" class="mgmt-rowcats-list"></div>
-  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-    <select id="mgmt-rowcat-add-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;"></select>
-    <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addCatToRow()">➕ 加入此類別</button>
-  </div>
-</div>
-```
-
-  </div>
-</div>
-
-<!-- ② 歷史紀錄抽屜 -->
-
-<div class="side-drawer" id="drawer-hist">
-  <div class="drawer-header">
+<div class="history-panel" id="historyPanel" style="margin-top:24px;">
+  <div class="history-panel-header">
     <span>📚</span>
-    <h2>歷史紀錄 <span id="historyCount" style="font-size:0.75rem;font-weight:400;opacity:0.8;margin-left:4px;">0 筆</span></h2>
-    <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
+    <h2>歷史紀錄</h2>
+    <span class="history-count" id="historyCount">0 筆</span>
+    <button class="btn-clear-history" onclick="clearAllHistory()">🗑️ 清除全部歷史</button>
   </div>
-  <div class="drawer-body" style="padding:0;">
-    <div style="padding:10px 14px;background:#f3e5f5;border-bottom:1px solid #e1bee7;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <span style="font-size:0.76rem;color:#6a1b9a;">在每筆菜單標題列點「📌 存入歷史」</span>
-      <button class="btn-clear-history" style="margin-left:auto;" onclick="clearAllHistory()">🗑️ 清除全部</button>
-    </div>
-    <div id="historyList" style="overflow-y:auto;">
-      <div class="history-empty" id="historyEmpty">尚無歷史紀錄。</div>
-    </div>
+  <div id="historyList">
+    <div class="history-empty" id="historyEmpty">尚無歷史紀錄。在每筆菜單的標題列點選「📌 存入歷史」即可儲存。</div>
   </div>
 </div>
 
-<!-- ③ 顏色分組抽屜（純一覽） -->
-
-<div class="side-drawer" id="drawer-colors">
-  <div class="drawer-header">
-    <span>🎨</span>
-    <h2>食材依顏色分組</h2>
-    <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
-  </div>
-  <div class="drawer-body">
-    <p style="font-size:0.76rem;color:#90a4ae;margin-bottom:10px;">所有食材依顏色分組顯示。要編輯請至⚙️管理 → 🎨顏色分組。</p>
-    <div class="db-grid" id="dbGrid"></div>
-  </div>
+<div class="db-panel">
+  <h2>📦 食材依顏色分類<span style="font-size:0.74rem;color:#b0bec5;font-weight:400;margin-left:4px;">（可上下滑動查看更多）</span></h2>
+  <div class="db-grid" id="dbGrid"></div>
 </div>
 
-<!-- ④ 類別分組抽屜 -->
+<div class="db-panel" style="margin-top:12px;">
+  <h2>📋 食材依類別分類<span style="font-size:0.74rem;color:#b0bec5;font-weight:400;margin-left:4px;">（可上下滑動查看更多）</span></h2>
+  <div class="db-grid" id="catGrid"></div>
+</div>
 
-<div class="side-drawer" id="drawer-cats">
-  <div class="drawer-header">
-    <span>📋</span>
-    <h2>類別分組一覽</h2>
-    <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
+<!-- ===== 管理面板 ===== -->
+
+<div class="db-panel mgmt-panel" style="margin-top:16px;">
+  <h2>⚙️ 資料庫管理</h2>
+  <p style="font-size:0.8rem;color:#78909c;margin-bottom:12px;">在此新增或刪除食材品項、主菜品項與顏色分組，變更會即時反映到菜單下拉選單中。</p>
+
+  <div class="mgmt-tabs">
+    <button class="mgmt-tab active" onclick="switchMgmtTab('items')">🥦 類別品項</button>
+    <button class="mgmt-tab" onclick="switchMgmtTab('colors')">🎨 顏色分組</button>
+    <button class="mgmt-tab" onclick="switchMgmtTab('rowcats')">📑 列類別設定</button>
   </div>
-  <div class="drawer-body">
-    <p style="font-size:0.76rem;color:#90a4ae;margin-bottom:10px;">所有食材依類別分類顯示。要新增品項請至⚙️管理。</p>
-    <div class="db-grid" id="catGrid"></div>
+
+  <div id="mgmt-items" class="mgmt-section">
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <select id="mgmt-cat-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtItems()">
+      </select>
+      <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewCategory()">➕ 新增類別</button>
+      <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentCategory()">🗑️ 刪除此類別</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <input id="mgmt-item-input" type="text" placeholder="輸入新品項名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToCategory()">
+      <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToCategory()">➕ 新增品項</button>
+    </div>
+    <div id="mgmt-items-list" class="mgmt-items-list"></div>
+  </div>
+
+  <div id="mgmt-colors" class="mgmt-section" style="display:none;">
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <select id="mgmt-color-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtColorItems()">
+      </select>
+      <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewColorGroup()">➕ 新增顏色組</button>
+      <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentColorGroup()">🗑️ 刪除此顏色組</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <input id="mgmt-color-item-input" type="text" placeholder="輸入食材名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToColorGroup()">
+      <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToColorGroup()">➕ 新增食材</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center;font-size:0.82rem;color:#546e7a;">
+      <span>顏色設定：</span>
+      <label>背景色 <input type="color" id="mgmt-color-bg" value="#4cd964" style="width:40px;height:28px;border:none;cursor:pointer;border-radius:4px;"></label>
+      <label>文字色 <input type="color" id="mgmt-color-fg" value="#1a3a00" style="width:40px;height:28px;border:none;cursor:pointer;border-radius:4px;"></label>
+      <label>標題背景 <input type="color" id="mgmt-color-titlebg" value="#27ae60" style="width:40px;height:28px;border:none;cursor:pointer;border-radius:4px;"></label>
+      <button class="mgmt-action-btn" style="background:#546e7a;font-size:0.78rem;" onclick="applyColorGroupColors()">套用顏色</button>
+    </div>
+    <div id="mgmt-color-items-list" class="mgmt-items-list"></div>
+  </div>
+
+  <div id="mgmt-rowcats" class="mgmt-section" style="display:none;">
+    <p style="font-size:0.78rem;color:#90a4ae;margin-bottom:10px;">設定每個列（主菜/副主菜/1/2…）可選用哪些類別。</p>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <select id="mgmt-row-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtRowCats()">
+      </select>
+    </div>
+    <div id="mgmt-rowcats-list" class="mgmt-rowcats-list"></div>
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <select id="mgmt-rowcat-add-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;">
+      </select>
+      <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addCatToRow()">➕ 加入此類別</button>
+    </div>
   </div>
 </div>
 
@@ -2131,6 +1836,9 @@ grid.appendChild(div);
 });
 }
 
+renderDB();
+renderCatDB();
+
 // ===== Firebase 初始化流程 =====
 async function initApp() {
 await loadHistory();
@@ -2141,7 +1849,6 @@ addWeek();
 }
 renderHistoryPanel();
 initMgmtItems();
-rerenderDBPanels();
 }
 
 // 超時保護：3秒內 Firebase 沒準備好就直接啟動（本機離線模式）
@@ -2225,99 +1932,20 @@ console.warn(“redirect result error:”, e.code);
 
 startWhenReady();
 
-// ===== 多抽屜系統 =====
-const DRAWER_IDS = [‘mgmt’,‘hist’,‘colors’,‘cats’];
+// ===== 管理面板邏輯 =====
 
-function openDrawer(id) {
-DRAWER_IDS.forEach(d => {
-document.getElementById(‘drawer-’+d)?.classList.remove(‘open’);
-document.getElementById(‘tab-’+d)?.classList.remove(‘open’);
+function switchMgmtTab(tab) {
+document.querySelectorAll(’.mgmt-tab’).forEach((t, i) => {
+const names = [‘items’,‘colors’,‘rowcats’];
+t.classList.toggle(‘active’, names[i] === tab);
 });
-document.getElementById(‘drawer-’+id).classList.add(‘open’);
-document.getElementById(‘tab-’+id).classList.add(‘open’);
-document.getElementById(‘drawer-overlay’).classList.add(‘show’);
-if (id === ‘mgmt’)   { initMgmtItems(); qaInitSelects(); }
-if (id === ‘hist’)   { renderHistoryPanel(); }
-if (id === ‘colors’) { initMgmtColors(); }
-if (id === ‘cats’)   { rerenderDBPanels(); }
-}
-
-function closeAllDrawers() {
-DRAWER_IDS.forEach(d => {
-document.getElementById(‘drawer-’+d)?.classList.remove(‘open’);
-document.getElementById(‘tab-’+d)?.classList.remove(‘open’);
+[‘items’,‘colors’,‘rowcats’].forEach(s => {
+document.getElementById(`mgmt-${s}`).style.display = s===tab ? ‘’ : ‘none’;
 });
-document.getElementById(‘drawer-overlay’).classList.remove(‘show’);
-}
-
-function toggleDrawer() { openDrawer(‘mgmt’); }
-function closeDrawer()  { closeAllDrawers(); }
-
-function switchDrawerTab(tab, btn) {
-const body = btn.closest(’.drawer-body’);
-body.querySelectorAll(’.drawer-tab’).forEach(b => b.classList.remove(‘active’));
-btn.classList.add(‘active’);
-body.querySelectorAll(’.drawer-section’).forEach(s => s.classList.remove(‘active’));
-document.getElementById(‘mgmt-’+tab).classList.add(‘active’);
+if (tab===‘items’) initMgmtItems();
 if (tab===‘colors’) initMgmtColors();
 if (tab===‘rowcats’) initMgmtRowCats();
 }
-
-// ===== 快速新增 =====
-function qaInitSelects() {
-const catSel = document.getElementById(‘qa-cat’);
-catSel.innerHTML = Object.keys(DB).map(k => `<option value="${k}">${k}</option>`).join(’’);
-const colorSel = document.getElementById(‘qa-color’);
-colorSel.innerHTML = ‘<option value="">— 不設定 —</option>’ +
-Object.entries(COLOR_GROUPS).map(([k,g]) =>
-`<option value="${k}">${g.label}（${k}）</option>`
-).join(’’);
-qaUpdatePreview();
-}
-
-function qaUpdatePreview() {
-const name = document.getElementById(‘qa-name’).value.trim();
-const cat  = document.getElementById(‘qa-cat’).value;
-const colorKey = document.getElementById(‘qa-color’).value;
-const prev = document.getElementById(‘qa-preview’);
-if (!name) { prev.innerHTML = ‘<span style="color:#b0bec5;">輸入名稱後會顯示預覽…</span>’; return; }
-const catStyle = CAT_STYLES[cat] || { itemBg:’#eceff1’, itemFg:’#37474f’ };
-let html = `將 <span class="qa-tag" style="background:${catStyle.itemBg};color:${catStyle.itemFg};border:1px solid rgba(0,0,0,0.1);">${name}</span>`;
-html += ` 加到「<b>${cat}</b>」`;
-if (colorKey && COLOR_GROUPS[colorKey]) {
-const g = COLOR_GROUPS[colorKey];
-html += `，顏色：<span class="qa-tag" style="background:${g.bg};color:${g.fg};border:1px solid rgba(0,0,0,0.12);">${g.label}</span>`;
-}
-prev.innerHTML = html;
-}
-
-function qaAddItem() {
-const inp = document.getElementById(‘qa-name’);
-const name = inp.value.trim();
-if (!name) { inp.focus(); return; }
-const cat = document.getElementById(‘qa-cat’).value;
-const colorKey = document.getElementById(‘qa-color’).value;
-if (!DB[cat]) DB[cat] = [’-’];
-if (DB[cat].includes(name)) { alert(`「${name}」在類別「${cat}」中已存在！`); return; }
-DB[cat].push(name);
-if (colorKey && COLOR_GROUPS[colorKey]) {
-if (!COLOR_GROUPS[colorKey].items.includes(name)) {
-COLOR_GROUPS[colorKey].items.push(name);
-FOOD_COLOR[name] = colorKey;
-}
-}
-inp.value = ‘’;
-inp.focus();
-qaUpdatePreview();
-renderMgmtItems();
-rerenderDBPanels();
-scheduleAutoSave();
-showSaveToast(`✅ 已新增「${name}」到「${cat}」${colorKey ? ' + 顏色組' : ''}`);
-}
-
-// ===== 管理面板邏輯 =====
-
-function switchMgmtTab(tab) {}
 
 function initMgmtItems() {
 const sel = document.getElementById(‘mgmt-cat-sel’);
