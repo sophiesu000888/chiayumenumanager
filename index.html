@@ -82,6 +82,8 @@ h1 {
 .toolbar button:hover { opacity: 0.85; }
 
 .btn-add    { background: #66bb6a; color: #fff; }
+.btn-add-hloc { background: #2e7d32; color: #fff; }
+.btn-add-wloc { background: #1565c0; color: #fff; }
 .btn-export { background: #42a5f5; color: #fff; }
 .btn-save   { background: #ff9800; color: #fff; cursor: default !important; }
 .btn-clear  { background: #c62828; color: #fff; }
@@ -120,10 +122,11 @@ h1 {
 
 .btn-save-to-history {
   padding: 4px 12px; cursor: pointer; font-size: 0.8rem; font-family: inherit;
-  color: #fff; font-weight: 600; margin-left: auto;
+  background: #7b1fa2; color: #fff; font-weight: 600; margin-left: auto;
+  border: none; border-radius: 5px;
   transition: background 0.15s;
 }
-.btn-save-to-history:hover { background: #ba68c8; }
+.btn-save-to-history:hover { background: #ce93d8; color: #4a148c; }
 
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
@@ -346,31 +349,35 @@ select.sel-l2:disabled {
   cursor: pointer;
   user-select: none;
   flex-wrap: wrap;
-  background: #fafafa;
+  background: #9c27b0;
   transition: background 0.12s;
 }
-.history-entry-header:hover { background: #f3e5f5; }
+.history-entry-header:hover { background: #e1bee7; }
+.history-entry-header:hover .hist-date { color: #4a148c; }
+.history-entry-header:hover .hist-day { background: rgba(74,20,140,0.15); color: #4a148c; }
+.history-entry-header:hover .hist-saved-at { color: #7b1fa2; }
+.history-entry-header:hover .hist-toggle { color: #6a1b9a; }
 
 .history-entry-header .hist-date {
   font-weight: 700;
-  color: #4a148c;
+  color: #fff;
   font-size: 0.9rem;
 }
 .history-entry-header .hist-day {
-  background: #ede7f6;
-  color: #4a148c;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
   font-size: 0.78rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 10px;
 }
 .history-entry-header .hist-saved-at {
-  color: #90a4ae;
+  color: rgba(255,255,255,0.75);
   font-size: 0.75rem;
 }
 .history-entry-header .hist-toggle {
   margin-left: auto;
-  color: #9c27b0;
+  color: #fff;
   font-size: 0.8rem;
   font-weight: 700;
   transition: transform 0.2s;
@@ -541,6 +548,7 @@ select.sel-l2:disabled {
 
 /* 各抽屜標籤顏色 */
 #tab-mgmt   { background: #37474f; color: #fff; }
+#tab-export { background: #00838f; color: #fff; }
 #tab-hist   { background: #4a148c; color: #fff; }
 #tab-colors { background: #00695c; color: #fff; }
 #tab-cats   { background: #1565c0; color: #fff; }
@@ -598,6 +606,7 @@ select.sel-l2:disabled {
 .drawer-close:hover { background: rgba(255,255,255,0.28); }
 
 #drawer-mgmt   .drawer-header { background: linear-gradient(135deg,#37474f,#263238); }
+#drawer-export .drawer-header { background: linear-gradient(135deg,#00acc1,#00838f); }
 #drawer-hist   .drawer-header { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
 #drawer-colors .drawer-header { background: linear-gradient(135deg,#00897b,#00695c); }
 #drawer-cats   .drawer-header { background: linear-gradient(135deg,#1976d2,#1565c0); }
@@ -798,11 +807,11 @@ select.sel-l2:disabled {
 <h1>ChiaYu Menu Manager</h1>
 
 <div class="toolbar">
-  <button class="btn-add"    onclick="addWeek()">➕ 新增日期</button>
-  <button class="btn-export" onclick="exportHTML(false)">📄 匯出 HTML（含類別）</button>
-  <button class="btn-export" style="background:#26a69a;" onclick="exportHTML(true)">📋 匯出 HTML（僅品項）</button>
-  <button class="btn-save"   id="saveStatus">💾 自動儲存中…</button>
-  <button class="btn-clear"  onclick="clearAll()">🗑️ 清除全部</button>
+  <button class="btn-add"       onclick="addWeek()">➕ 新增日期</button>
+  <button class="btn-add-hloc"  onclick="addGlobalHLoc()">🟢 新增健康餐地點</button>
+  <button class="btn-add-wloc"  onclick="addGlobalWLoc()">🔵 新增風味餐地點</button>
+  <button class="btn-save"      id="saveStatus">💾 自動儲存中…</button>
+  <button class="btn-clear"     onclick="clearAll()">🗑️ 清除全部</button>
 </div>
 
 <div class="schedule-area" id="scheduleArea"></div>
@@ -812,6 +821,10 @@ select.sel-l2:disabled {
   <div class="side-tab" id="tab-mgmt" onclick="openDrawer('mgmt')" title="資料管理">
     <span class="st-icon">⚙️</span>
     <span class="st-label">管理</span>
+  </div>
+  <div class="side-tab" id="tab-export" onclick="openDrawer('export')" title="匯出">
+    <span class="st-icon">📤</span>
+    <span class="st-label">匯出</span>
   </div>
   <div class="side-tab" id="tab-hist" onclick="openDrawer('hist')" title="歷史紀錄">
     <span class="st-icon">📚</span>
@@ -909,7 +922,34 @@ select.sel-l2:disabled {
   </div>
 </div>
 
-<!-- ② 歷史紀錄抽屜 -->
+<!-- ② 匯出抽屜 -->
+<div class="side-drawer" id="drawer-export">
+  <div class="drawer-header">
+    <span>📤</span>
+    <h2>匯出選項</h2>
+    <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <p style="font-size:0.78rem;color:#90a4ae;margin-bottom:16px;">選擇匯出格式，將目前所有日期的菜單輸出為 HTML 檔案。</p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <button onclick="exportHTML(false);closeAllDrawers();" style="background:#42a5f5;color:#fff;border:none;border-radius:8px;padding:14px 18px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#1976d2'" onmouseout="this.style.background='#42a5f5'">
+        📄 匯出 HTML（含類別）
+        <div style="font-size:0.74rem;font-weight:400;margin-top:4px;opacity:0.85;">顯示「類別」和「品項」兩欄</div>
+      </button>
+      <button onclick="exportHTML(true);closeAllDrawers();" style="background:#26a69a;color:#fff;border:none;border-radius:8px;padding:14px 18px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#00796b'" onmouseout="this.style.background='#26a69a'">
+        📋 匯出 HTML（僅品項）
+        <div style="font-size:0.74rem;font-weight:400;margin-top:4px;opacity:0.85;">只顯示「品項」欄，精簡版</div>
+      </button>
+      <hr style="border:none;border-top:1px solid #e0e0e0;margin:4px 0;">
+      <button onclick="exportAllHistory();closeAllDrawers();" style="background:#7b1fa2;color:#fff;border:none;border-radius:8px;padding:14px 18px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#4a148c'" onmouseout="this.style.background='#7b1fa2'">
+        📦 匯出全部歷史紀錄
+        <div style="font-size:0.74rem;font-weight:400;margin-top:4px;opacity:0.85;">將所有歷史紀錄統整為一個 HTML 檔案</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 歷史紀錄抽屜 -->
 <div class="side-drawer" id="drawer-hist">
   <div class="drawer-header">
     <span>📚</span>
@@ -958,11 +998,7 @@ select.sel-l2:disabled {
 <script>
 // ===== 共用 Helper =====
 function getRowStyles(row) {
-  const hS  = row==="主菜"?"h-main":row==="副主菜"?"h-sub":row==="米飯"?"h-rice":"h-item";
-  const hS2 = row==="主菜"?"h-main-l2":row==="副主菜"?"h-sub-l2":row==="米飯"?"h-rice-l2":"h-item-l2";
-  const wS  = row==="主菜"?"w-main":row==="副主菜"?"w-sub":row==="米飯"?"w-rice":"w-item";
-  const wS2 = row==="主菜"?"w-main-l2":row==="副主菜"?"w-sub-l2":row==="米飯"?"w-rice-l2":"w-item-l2";
-  return [hS, hS2, wS, wS2];
+  return ["h-item", "h-item-l2", "w-item", "w-item-l2"];
 }
 
 // ===== 食材顏色對照 =====
@@ -1530,6 +1566,66 @@ select { display:none; }
   URL.revokeObjectURL(a.href);
 }
 
+// ===== 匯出全部歷史紀錄（統整為一個表）=====
+function exportAllHistory() {
+  if (historyList.length === 0) { alert("目前沒有歷史紀錄可匯出。"); return; }
+
+  let cssText = "";
+  for (const sheet of document.styleSheets) {
+    try {
+      for (const rule of sheet.cssRules) { cssText += rule.cssText + "\n"; }
+    } catch(e) {}
+  }
+
+  let tablesHTML = "";
+  historyList.forEach(entry => {
+    const tableHTML = buildHistoryTableHTML(entry);
+    tablesHTML += `
+      <div class="week-block" style="margin-bottom:28px;">
+        <div class="week-titlebar">
+          <span class="week-label">日期：${entry.date}</span>
+          <span class="week-day">${entry.day || ""}</span>
+          <span style="font-size:0.74rem;color:#b0bec5;margin-left:8px;">儲存於 ${entry.savedAt || ""}${entry.savedBy ? " ✍️ " + entry.savedBy : ""}</span>
+        </div>
+        <div class="tbl-wrap">${tableHTML}</div>
+      </div>`;
+  });
+
+  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
+  const html = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chiayumenu_全部歷史_${dateStr}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+${cssText}
+body { font-family:'Noto Sans TC',sans-serif; background:#eceff1; padding:18px 12px; }
+h1 { text-align:center; color:#4a148c; font-size:1.4rem; font-weight:700; margin-bottom:6px; letter-spacing:3px; }
+select { display:none; }
+.tbl-wrap { overflow-x:auto; }
+@media print {
+  body { background:#fff; padding:6px; }
+  .week-block { page-break-inside:avoid; box-shadow:none; margin-bottom:20px; }
+}
+</style>
+</head>
+<body>
+<h1>chiayumenu 全部歷史紀錄</h1>
+<p style="text-align:center;color:#78909c;font-size:0.82rem;margin-bottom:18px;">共 ${historyList.length} 筆　|　匯出時間：${new Date().toLocaleString("zh-TW")}</p>
+${tablesHTML}
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `chiayumenu_allhistory_${dateStr}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 async function loadAll() {
   let saved = null;
 
@@ -1803,23 +1899,6 @@ function buildWeek(weekNum, initHLocs, initWLocs) {
     const wrap = document.createElement("div");
     wrap.className = "tbl-wrap";
 
-    const ctrlBar = document.createElement("div");
-    ctrlBar.style.cssText = "display:flex;gap:8px;padding:6px 12px;background:#f0f4f8;border-bottom:1px solid #ddd;flex-wrap:wrap;";
-
-    const btnH = document.createElement("button");
-    btnH.textContent = "➕ 新增健康餐地點";
-    btnH.className = "ctrlBar-btn";
-    btnH.style.cssText = "background:#66bb6a;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:0.8rem;cursor:pointer;font-family:inherit;";
-    btnH.onclick = () => { hLocs.push("新地點"); rebuildTable(); scheduleAutoSave(); };
-
-    const btnW = document.createElement("button");
-    btnW.textContent = "➕ 新增風味餐地點";
-    btnW.className = "ctrlBar-btn";
-    btnW.style.cssText = "background:#42a5f5;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:0.8rem;cursor:pointer;font-family:inherit;";
-    btnW.onclick = () => { wLocs.push("新地點"); rebuildTable(); scheduleAutoSave(); };
-
-    ctrlBar.appendChild(btnH); ctrlBar.appendChild(btnW);
-
     const tbl = document.createElement("table");
 
     const hr1 = tbl.insertRow();
@@ -1878,11 +1957,12 @@ function buildWeek(weekNum, initHLocs, initWLocs) {
       wLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,wS,wS2,"w"); tr.appendChild(t1); tr.appendChild(t2); });
     });
 
-    wrap.appendChild(ctrlBar); wrap.appendChild(tbl);
+    wrap.appendChild(tbl);
     block.appendChild(wrap);
   }
 
   rebuildTable();
+  block._rebuildTable = rebuildTable;
   return block;
 }
 
@@ -1890,6 +1970,35 @@ function addWeek() {
   weekCount++;
   const block = buildWeek(weekCount);
   document.getElementById("scheduleArea").appendChild(block);
+  scheduleAutoSave();
+}
+
+// 對所有現有日期新增健康餐地點
+function addGlobalHLoc() {
+  const blocks = document.querySelectorAll(".week-block");
+  if (blocks.length === 0) { alert("請先新增日期。"); return; }
+  blocks.forEach(block => {
+    const wid = block.id.replace("block_", "");
+    const info = weekDataMap[wid];
+    if (!info) return;
+    info.hLocs.push("新地點");
+    // 觸發重建（借用 block 上掛的 rebuildTable）
+    block._rebuildTable && block._rebuildTable();
+  });
+  scheduleAutoSave();
+}
+
+// 對所有現有日期新增風味餐地點
+function addGlobalWLoc() {
+  const blocks = document.querySelectorAll(".week-block");
+  if (blocks.length === 0) { alert("請先新增日期。"); return; }
+  blocks.forEach(block => {
+    const wid = block.id.replace("block_", "");
+    const info = weekDataMap[wid];
+    if (!info) return;
+    info.wLocs.push("新地點");
+    block._rebuildTable && block._rebuildTable();
+  });
   scheduleAutoSave();
 }
 
@@ -2214,7 +2323,7 @@ function _startFirebase() {
 startWhenReady();
 
 // ===== 多抽屜系統 =====
-const DRAWER_IDS = ['mgmt','hist','colors','cats'];
+const DRAWER_IDS = ['mgmt','export','hist','colors','cats'];
 
 function openDrawer(id) {
   DRAWER_IDS.forEach(d => {
