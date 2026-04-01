@@ -5,7 +5,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -262,8 +261,10 @@ select.sel-l2:disabled {
   display: flex; align-items: center; gap: 7px;
 }
 .auth-bar img.auth-avatar {
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 24px; height: 24px; border-radius: 50%;
   border: 2px solid #66bb6a;
+  flex-shrink: 0; object-fit: cover;
+  display: block;
 }
 .auth-bar .auth-name { color: #fff; font-weight: 600; }
 .btn-login {
@@ -554,32 +555,13 @@ select.sel-l2:disabled {
 }
 
 /* 各抽屜標籤顏色 */
-#tab-chat   { background: #c62828; color: #fff; }
 #tab-mgmt   { background: #37474f; color: #fff; }
 #tab-export { background: #00838f; color: #fff; }
 #tab-hist   { background: #4a148c; color: #fff; }
 #tab-colors { background: #00695c; color: #fff; }
 #tab-cats   { background: #1565c0; color: #fff; }
 
-/* 聊天 tab 閃爍動畫（收到新訊息時） */
-@keyframes chatTabBlink {
-  0%, 100% { background: #c62828; box-shadow: none; }
-  50%       { background: #ff1744; box-shadow: 0 0 14px #ff5252; }
-}
-#tab-chat.has-unread { animation: chatTabBlink 0.85s ease-in-out infinite; }
 
-/* 未讀數字徽章 */
-#tab-chat .chat-tab-badge {
-  display: none;
-  position: absolute;
-  top: 3px; left: 3px;
-  background: #fff; color: #c62828;
-  border-radius: 50%; width: 15px; height: 15px;
-  font-size: 0.6rem; font-weight: 900;
-  line-height: 15px; text-align: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
-}
-#tab-chat.has-unread .chat-tab-badge { display: block; }
 
 /* 遮罩（共用，顯示時疊在最底） */
 .drawer-overlay {
@@ -638,32 +620,6 @@ select.sel-l2:disabled {
 #drawer-hist   .drawer-header { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
 #drawer-colors .drawer-header { background: linear-gradient(135deg,#00897b,#00695c); }
 #drawer-cats   .drawer-header { background: linear-gradient(135deg,#1976d2,#1565c0); }
-#drawer-chat   .drawer-header { background: linear-gradient(135deg,#e53935,#b71c1c); }
-
-/* ⓪ 聊天抽屜內部佈局 */
-#drawer-chat {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-}
-#drawer-chat .chat-panels-area {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-/* 手機：聊天抽屜只佔右側 50% 寬度 */
-@media (max-width: 600px) {
-  #drawer-chat {
-    width: 50vw;
-    max-width: 50vw;
-    height: 100vh;
-  }
-  .chat-panel {
-    flex-shrink: 0;
-  }
-}
 
 /* 抽屜內容區 */
 .drawer-body {
@@ -831,11 +787,7 @@ select.sel-l2:disabled {
   font-size: 0.75rem; color: #a5d6a7; font-weight: 600;
   animation: fadeInChip 0.3s ease;
 }
-.online-user-chip img {
-  width: 16px; height: 16px; border-radius: 50%;
-  border: 1px solid rgba(102,187,106,0.5);
-  flex-shrink: 0; object-fit: cover;
-}
+.online-user-chip img { display: none; }
 .online-dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: #66bb6a;
@@ -852,177 +804,6 @@ select.sel-l2:disabled {
   to   { opacity: 1; transform: scale(1); }
 }
 
-
-/* ===== 聊天抽屜樣式 ===== */
-.chat-drawer-body {
-  display: flex; flex-direction: column; height: 100%; overflow: hidden;
-}
-
-/* 在線用戶列表區 */
-.chat-online-list {
-  padding: 10px 12px 8px;
-  background: #1c2a30;
-  border-bottom: 2px solid #263238;
-  flex-shrink: 0;
-}
-.chat-online-list-title {
-  font-size: 0.7rem; color: #78909c; font-weight: 700;
-  letter-spacing: 1px; margin-bottom: 7px; text-transform: uppercase;
-}
-.chat-online-chips {
-  display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; align-items: center;
-}
-.chat-user-chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(102,187,106,0.15); border: 1px solid rgba(102,187,106,0.35);
-  border-radius: 20px; padding: 4px 10px 4px 6px;
-  font-size: 0.75rem; color: #a5d6a7; font-weight: 600;
-  cursor: pointer; transition: background 0.15s, border-color 0.15s;
-  user-select: none;
-}
-.chat-user-chip:hover {
-  background: rgba(102,187,106,0.3); border-color: rgba(102,187,106,0.6);
-}
-.chat-user-chip.active-chat {
-  background: rgba(102,187,106,0.35); border-color: #66bb6a;
-  box-shadow: 0 0 6px rgba(102,187,106,0.4);
-}
-.chat-user-chip img {
-  width: 16px; height: 16px; border-radius: 50%;
-  border: 1px solid rgba(102,187,106,0.5);
-  flex-shrink: 0; object-fit: cover;
-}
-.chat-no-online {
-  color: #546e7a; font-size: 0.78rem; font-style: italic; padding: 4px 0;
-}
-
-/* 聊天視窗堆疊區 */
-.chat-panels-area {
-  flex: 1; overflow-y: auto; background: #1c2a30;
-  display: flex; flex-direction: column;
-}
-.chat-panel-empty {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  color: #546e7a; font-size: 0.82rem; gap: 8px; padding: 24px;
-  text-align: center; background: #1c2a30;
-}
-.chat-panel-empty .empty-icon { font-size: 2rem; }
-
-/* 單一聊天面板（抽屜內） */
-.chat-panel {
-  display: flex; flex-direction: column;
-  border-bottom: 1.5px solid #263238;
-  min-height: 200px; flex: 1;
-}
-.chat-panel-header {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 10px; background: #1c2a30;
-  cursor: pointer; user-select: none; flex-shrink: 0;
-}
-.chat-panel-header img {
-  width: 16px; height: 16px; border-radius: 50%;
-  border: 1.5px solid #66bb6a; flex-shrink: 0; object-fit: cover;
-}
-.chat-panel-header .cp-name {
-  flex: 1; font-size: 0.78rem; font-weight: 700;
-  color: #eceff1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.chat-panel-header .cp-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #66bb6a; flex-shrink: 0;
-  box-shadow: 0 0 4px #66bb6a;
-}
-.chat-panel-header .cp-badge {
-  background: #ef5350; color: #fff;
-  border-radius: 10px; font-size: 0.64rem;
-  font-weight: 700; padding: 1px 6px; min-width: 16px;
-  text-align: center; display: none;
-}
-.chat-panel-header .cp-close {
-  background: none; border: none; color: #546e7a;
-  cursor: pointer; font-size: 0.85rem; padding: 0 0 0 4px;
-  transition: color 0.15s; line-height: 1;
-}
-.chat-panel-header .cp-close:hover { color: #ef9a9a; }
-.chat-panel-header .cp-toggle {
-  color: #78909c; font-size: 0.7rem; transition: transform 0.2s;
-}
-.chat-panel-header.collapsed .cp-toggle { transform: rotate(-90deg); }
-
-.chat-panel-body {
-  flex: 1; overflow-y: auto; padding: 8px 10px;
-  display: flex; flex-direction: column; gap: 5px;
-  scroll-behavior: smooth;
-  scrollbar-width: thin; scrollbar-color: #37474f #1c2a30;
-  min-height: 120px; background: #1c2a30;
-}
-.chat-panel-body::-webkit-scrollbar { width: 3px; }
-.chat-panel-body::-webkit-scrollbar-track { background: #131e23; }
-.chat-panel-body::-webkit-scrollbar-thumb { background: #37474f; border-radius: 2px; }
-.chat-panel-body.cpb-collapsed { display: none; }
-
-.chat-panel-input-row {
-  display: flex; gap: 5px;
-  padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid #1c2a30; flex-shrink: 0;
-  background: #1c2a30;
-  align-items: flex-end;
-}
-.chat-panel-input-row.cpir-collapsed { display: none; }
-.chat-panel-input {
-  flex: 1; background: #263238; border: 1px solid #37474f;
-  border-radius: 14px; padding: 5px 10px;
-  color: #eceff1; font-family: inherit; font-size: 0.83rem;
-  outline: none; resize: none; height: auto; max-height: 64px; min-height: 32px;
-  line-height: 1.4;
-  transition: border-color 0.15s;
-}
-.chat-panel-input:focus { border-color: #66bb6a; }
-.chat-panel-input::placeholder { color: #546e7a; }
-.chat-panel-send {
-  background: #2e7d32; border: none; border-radius: 50%;
-  width: 28px; height: 28px; cursor: pointer; color: #fff;
-  font-size: 0.8rem; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  align-self: flex-end; transition: background 0.15s;
-}
-.chat-panel-send:hover { background: #43a047; }
-.chat-panel-send:disabled { background: #37474f; cursor: default; }
-
-/* 訊息氣泡（抽屜內共用） */
-.chat-bubble {
-  max-width: 85%; padding: 6px 10px;
-  border-radius: 12px; font-size: 0.83rem;
-  line-height: 1.5; word-break: break-word;
-  animation: bubbleIn 0.18s ease;
-}
-@keyframes bubbleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.chat-bubble.me {
-  align-self: flex-end;
-  background: #2e7d32; color: #e8f5e9;
-  border-bottom-right-radius: 3px;
-}
-.chat-bubble.them {
-  align-self: flex-start;
-  background: #37474f; color: #eceff1;
-  border-bottom-left-radius: 3px;
-}
-.chat-bubble .chat-bubble-name {
-  font-size: 0.62rem; font-weight: 700;
-  opacity: 0.65; margin-bottom: 2px;
-}
-.chat-bubble .chat-bubble-time {
-  font-size: 0.6rem; opacity: 0.45;
-  margin-top: 2px; text-align: right;
-}
-.chat-system-msg {
-  text-align: center; font-size: 0.66rem;
-  color: #546e7a; padding: 2px 0;
-}
 
 /* 舊浮動視窗全隱藏 */
 .chat-windows-container { display: none !important; }
@@ -1145,11 +926,6 @@ select.sel-l2:disabled {
 
 <!-- ===== 右側標籤群 ===== -->
 <div class="drawer-tabs-rail">
-  <div class="side-tab" id="tab-chat" onclick="openDrawer('chat')" title="即時聊天">
-    <span class="chat-tab-badge" id="chatTabBadge"></span>
-    <span class="st-icon">💬</span>
-    <span class="st-label">聊天</span>
-  </div>
   <div class="side-tab" id="tab-mgmt" onclick="openDrawer('mgmt')" title="資料管理">
     <span class="st-icon">⚙️</span>
     <span class="st-label">管理</span>
@@ -1175,13 +951,6 @@ select.sel-l2:disabled {
 <!-- 共用遮罩 -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-<!-- ⓪ 聊天抽屜（第一個） -->
-<div class="side-drawer" id="drawer-chat" style="display:flex;flex-direction:column;padding:0;">
-  <div class="drawer-header" style="flex-shrink:0;">
-    <span>💬</span>
-    <h2>即時聊天 <span id="chatDrawerOnlineCount" style="font-size:0.72rem;font-weight:400;opacity:0.75;margin-left:4px;"></span></h2>
-    <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
-  </div>
   <!-- 在線用戶列 -->
   <div class="chat-online-list" id="chatOnlineList">
     <div class="chat-online-list-title">👥 在線成員</div>
@@ -1190,7 +959,6 @@ select.sel-l2:disabled {
     </div>
   </div>
   <!-- 聊天面板堆疊區 -->
-  <div class="chat-panels-area" id="chatPanelsArea">
     <div class="chat-panel-empty" id="chatPanelEmpty">
       <span class="empty-icon">💬</span>
       <span>點選上方在線成員即可開始聊天</span>
@@ -1407,8 +1175,6 @@ select.sel-l2:disabled {
 </div>
 
 
-<!-- 聊天視窗容器 -->
-<div class="chat-windows-container" id="chatWindowsContainer"></div>
 
 <div class="save-toast" id="saveToast">✅ 已自動儲存</div>
 
@@ -1481,7 +1247,6 @@ const HISTORY_KEY = "yupin_menu_history_v1";
 const ALLOWED_EMAILS = [
   "sophiesu000@gmail.com",   // ← 在此填入允許的帳號
   "s802316s@gmail.com",
-  "suyiwei181@gmail.com",
 ];
 
 function isAllowed(user) {
@@ -3239,7 +3004,20 @@ function _startFirebase() {
 
   function renderOnlineUsers(users) {
     _lastOnlineUsers = users || [];
-    renderOnlineChatUsers(_lastOnlineUsers);
+    const el = document.getElementById("onlineUsersList");
+    if (!el) return;
+    if (!users || users.length === 0) {
+      el.innerHTML = '<span style="color:#455a64;font-size:0.72rem;">—</span>';
+      return;
+    }
+    el.innerHTML = users.map(u => {
+      const isMe = currentUser && u.uid === currentUser.uid;
+      const meStyle = isMe ? 'opacity:0.6;cursor:default;' : 'cursor:pointer;';
+      return `<span class="online-user-chip" style="${meStyle}">
+        <span class="online-dot"></span>
+        ${u.name || "未知用戶"}${isMe ? " （我）" : ""}
+      </span>`;
+    }).join("");
   }
 
   onAuthStateChanged(auth, async (user) => {
@@ -3310,334 +3088,6 @@ function _startFirebase() {
   });
 }
 
-// ===== 即時聊天系統（抽屜版） =====
-const openChatPanels = {};   // roomId -> { el, collapsed, unread }
-let chatMsgListeners = {};   // roomId -> unsubscribe fn
-let myMsgRefs = [];          // 記錄自己發的訊息 ref，登出時刪除
-let _totalUnread = 0;        // 全局未讀計數（用於 tab 閃爍）
-
-function getChatRoomId(uid1, uid2) {
-  return [uid1, uid2].sort().join("_");
-}
-
-// ── 更新 tab 上的未讀徽章與閃爍 ──
-function updateChatTabBadge() {
-  const tab   = document.getElementById("tab-chat");
-  const badge = document.getElementById("chatTabBadge");
-  if (!tab || !badge) return;
-  if (_totalUnread > 0) {
-    tab.classList.add("has-unread");
-    badge.textContent = _totalUnread > 9 ? "9+" : _totalUnread;
-  } else {
-    tab.classList.remove("has-unread");
-    badge.textContent = "";
-  }
-}
-
-// ── 渲染在線用戶（聊天抽屜內） ──
-function renderOnlineChatUsers(users) {
-  // 同步更新頂部 auth-bar 的在線區
-  const authOnline = document.getElementById("onlineUsersList");
-  if (authOnline) {
-    if (!users || users.length === 0) {
-      authOnline.innerHTML = '<span style="color:#455a64;font-size:0.72rem;">—</span>';
-    } else {
-      authOnline.innerHTML = users.map(u => {
-        const isMe = currentUser && u.uid === currentUser.uid;
-        const meStyle = isMe ? 'opacity:0.6;cursor:default;' : 'cursor:pointer;';
-        const clickAttr = isMe ? '' : `onclick="openDrawer('chat');openChatWith(${JSON.stringify({uid:u.uid,name:u.name,photo:u.photo}).replace(/"/g,'&quot;')})"`;
-        return `<span class="online-user-chip" style="${meStyle}" ${clickAttr}>
-          <span class="online-dot"></span>
-          ${u.photo ? `<img src="${u.photo}" alt="">` : ""}
-          ${u.name || "未知用戶"}${isMe ? " （我）" : " 💬"}
-        </span>`;
-      }).join("");
-    }
-  }
-
-  // 更新聊天抽屜內的在線用戶列
-  const chips = document.getElementById("chatOnlineChips");
-  const counter = document.getElementById("chatDrawerOnlineCount");
-  if (!chips) return;
-
-  const others = users ? users.filter(u => !currentUser || u.uid !== currentUser.uid) : [];
-  if (counter) counter.textContent = others.length > 0 ? `（${others.length} 人在線）` : "";
-
-  if (others.length === 0) {
-    chips.innerHTML = '<span class="chat-no-online">🔇 目前無人在線，等待其他成員上線中…</span>';
-  } else {
-    chips.innerHTML = others.map(u => {
-      const isActive = Object.keys(openChatPanels).includes(getChatRoomId(currentUser?.uid || "", u.uid));
-      return `<span class="chat-user-chip${isActive ? " active-chat" : ""}"
-        onclick="openChatWith(${JSON.stringify({uid:u.uid,name:u.name,photo:u.photo}).replace(/"/g,'&quot;')})"
-        title="與 ${u.name} 聊天">
-        <span class="online-dot"></span>
-        ${u.photo ? `<img src="${u.photo}" alt="">` : ""}
-        ${u.name || "未知用戶"} 💬
-      </span>`;
-    }).join("");
-  }
-}
-
-// ── 開啟與某人的聊天 ──
-function openChatWith(targetUser) {
-  if (!currentUser) return;
-  if (targetUser.uid === currentUser.uid) return;
-
-  const roomId = getChatRoomId(currentUser.uid, targetUser.uid);
-
-  if (openChatPanels[roomId]) {
-    // 已存在：滾動到它
-    const el = openChatPanels[roomId].el;
-    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    focusChatPanelInput(roomId);
-    return;
-  }
-
-  // 移除「空白提示」
-  const empty = document.getElementById("chatPanelEmpty");
-  if (empty) empty.style.display = "none";
-
-  const panel = buildChatPanel(roomId, targetUser);
-  document.getElementById("chatPanelsArea").appendChild(panel);
-  openChatPanels[roomId] = { el: panel, collapsed: false, unread: 0 };
-
-  listenChatRoom(roomId);
-  focusChatPanelInput(roomId);
-
-  // 更新在線列的 active 樣式
-  renderOnlineChatUsers(_lastOnlineUsers);
-}
-
-// ── 建立單一聊天面板 ──
-function buildChatPanel(roomId, targetUser) {
-  const panel = document.createElement("div");
-  panel.className = "chat-panel";
-  panel.id = `chatpanel_${roomId}`;
-  panel.innerHTML = `
-    <div class="chat-panel-header" id="cpheader_${roomId}" onclick="toggleChatPanel('${roomId}')">
-      <span class="cp-dot"></span>
-      ${targetUser.photo ? `<img src="${targetUser.photo}" alt="">` : ""}
-      <span class="cp-name">${targetUser.name || "用戶"}</span>
-      <span class="cp-badge" id="cpbadge_${roomId}"></span>
-      <span class="cp-toggle">▼</span>
-      <button class="cp-close" onclick="closeChatPanel('${roomId}');event.stopPropagation();" title="關閉">✕</button>
-    </div>
-    <div class="chat-panel-body" id="cpbody_${roomId}">
-      <div class="chat-system-msg">開始與 ${targetUser.name || "對方"} 的對話</div>
-    </div>
-    <div class="chat-panel-input-row" id="cpinput_${roomId}">
-      <textarea class="chat-panel-input" id="cptxt_${roomId}" placeholder="輸入訊息…" rows="1"
-        onkeydown="chatPanelKeyDown(event,'${roomId}')"
-        oninput="this.style.height='32px';this.style.height=Math.min(this.scrollHeight,64)+'px'"></textarea>
-      <button class="chat-panel-send" onclick="sendChatPanelMsg('${roomId}')" id="cpsend_${roomId}">➤</button>
-    </div>
-  `;
-  return panel;
-}
-
-// ── 監聽聊天室訊息 ──
-function listenChatRoom(roomId) {
-  if (chatMsgListeners[roomId]) return;
-  import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(mod => {
-    const { getDatabase, ref, onChildAdded, query, limitToLast, orderByKey } = mod;
-    const db = getDatabase();
-    // 先用 get 載入歷史訊息，再用 onChildAdded 監聽新訊息
-    // 這樣可確保第一則訊息（傳送後立刻出現）也能被捕捉
-    const msgsRef = ref(db, `chat/${roomId}/messages`);
-    const recentQuery = query(msgsRef, limitToLast(80));
-    const seenKeys = new Set();
-
-    // Step1: 載入最近 80 則歷史
-    mod.get(recentQuery).then(snap => {
-      if (snap.exists()) {
-        snap.forEach(child => {
-          seenKeys.add(child.key);
-          appendChatBubbleToPanel(roomId, child.val(), child.key);
-        });
-      }
-      // Step2: 監聽之後新增的訊息（排除剛載入的歷史）
-      const unsub = onChildAdded(recentQuery, (snap) => {
-        if (seenKeys.has(snap.key)) return; // 已顯示過的跳過
-        seenKeys.add(snap.key);
-        const msg = snap.val();
-        if (!msg) return;
-        appendChatBubbleToPanel(roomId, msg, snap.key);
-      });
-      chatMsgListeners[roomId] = unsub;
-    }).catch(() => {
-      // get 失敗時 fallback 直接 onChildAdded
-      const seenKeys2 = new Set();
-      const unsub = onChildAdded(recentQuery, (snap) => {
-        if (seenKeys2.has(snap.key)) return;
-        seenKeys2.add(snap.key);
-        const msg = snap.val();
-        if (!msg) return;
-        appendChatBubbleToPanel(roomId, msg, snap.key);
-      });
-      chatMsgListeners[roomId] = unsub;
-    });
-  });
-}
-
-// ── 加入訊息氣泡 ──
-function appendChatBubbleToPanel(roomId, msg, key) {
-  const body = document.getElementById(`cpbody_${roomId}`);
-  if (!body) return;
-
-  const isMe = msg.uid === currentUser?.uid;
-  const time = msg.at ? new Date(msg.at).toLocaleTimeString("zh-TW", { hour:"2-digit", minute:"2-digit" }) : "";
-
-  const bubble = document.createElement("div");
-  bubble.className = `chat-bubble ${isMe ? "me" : "them"}`;
-  bubble.dataset.key = key;
-  bubble.innerHTML = `
-    ${!isMe ? `<div class="chat-bubble-name">${msg.name || "對方"}</div>` : ""}
-    ${escapeHtml(msg.text)}
-    <div class="chat-bubble-time">${time}</div>
-  `;
-  body.appendChild(bubble);
-  body.scrollTop = body.scrollHeight;
-
-  // 未讀計數：面板折疊 或 聊天抽屜未開啟 且 不是自己的訊息
-  const state = openChatPanels[roomId];
-  const drawerOpen = document.getElementById("drawer-chat")?.classList.contains("open");
-  if (!isMe && (state?.collapsed || !drawerOpen)) {
-    if (state) {
-      state.unread = (state.unread || 0) + 1;
-      const badge = document.getElementById(`cpbadge_${roomId}`);
-      if (badge) { badge.textContent = state.unread; badge.style.display = "inline"; }
-    }
-    _totalUnread++;
-    updateChatTabBadge();
-  }
-}
-
-// ── 傳送訊息 ──
-async function sendChatPanelMsg(roomId) {
-  const inp = document.getElementById(`cptxt_${roomId}`);
-  const text = inp?.value.trim();
-  if (!text || !currentUser) return;
-
-  const btn = document.getElementById(`cpsend_${roomId}`);
-  if (btn) btn.disabled = true;
-
-  try {
-    await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(async mod => {
-      const { getDatabase, ref, push, onDisconnect } = mod;
-      const db = getDatabase();
-      const msgsRef = ref(db, `chat/${roomId}/messages`);
-      const newRef = await push(msgsRef, {
-        uid:  currentUser.uid,
-        name: currentUser.displayName || currentUser.email,
-        text: text,
-        at:   Date.now()
-      });
-      myMsgRefs.push(newRef);
-      onDisconnect(newRef).remove();
-    });
-    inp.value = "";
-    inp.style.height = "auto";
-  } catch(e) {
-    console.error("傳送失敗", e);
-  } finally {
-    if (btn) btn.disabled = false;
-    inp?.focus();
-  }
-}
-
-function chatPanelKeyDown(e, roomId) {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendChatPanelMsg(roomId);
-  }
-}
-
-function toggleChatPanel(roomId) {
-  const state = openChatPanels[roomId];
-  if (!state) return;
-  state.collapsed = !state.collapsed;
-  const header = document.getElementById(`cpheader_${roomId}`);
-  const body   = document.getElementById(`cpbody_${roomId}`);
-  const input  = document.getElementById(`cpinput_${roomId}`);
-  if (header) header.classList.toggle("collapsed", state.collapsed);
-  if (body)   body.classList.toggle("cpb-collapsed", state.collapsed);
-  if (input)  input.classList.toggle("cpir-collapsed", state.collapsed);
-
-  if (!state.collapsed) {
-    // 展開：清除此面板未讀
-    _totalUnread = Math.max(0, _totalUnread - (state.unread || 0));
-    state.unread = 0;
-    const badge = document.getElementById(`cpbadge_${roomId}`);
-    if (badge) { badge.textContent = ""; badge.style.display = "none"; }
-    updateChatTabBadge();
-    const b = document.getElementById(`cpbody_${roomId}`);
-    if (b) b.scrollTop = b.scrollHeight;
-    focusChatPanelInput(roomId);
-  }
-}
-
-function closeChatPanel(roomId) {
-  const state = openChatPanels[roomId];
-  if (!state) return;
-  _totalUnread = Math.max(0, _totalUnread - (state.unread || 0));
-  updateChatTabBadge();
-  state.el.remove();
-  delete openChatPanels[roomId];
-  if (chatMsgListeners[roomId]) {
-    chatMsgListeners[roomId]();
-    delete chatMsgListeners[roomId];
-  }
-  // 若無任何面板，顯示空白提示
-  if (Object.keys(openChatPanels).length === 0) {
-    const empty = document.getElementById("chatPanelEmpty");
-    if (empty) empty.style.display = "";
-  }
-  renderOnlineChatUsers(_lastOnlineUsers);
-}
-
-function focusChatPanelInput(roomId) {
-  setTimeout(() => {
-    const inp = document.getElementById(`cptxt_${roomId}`);
-    if (!inp) return;
-    inp.focus();
-    // 手機鍵盤彈出後滾動輸入框到可見區域
-    setTimeout(() => inp.scrollIntoView({ block: "end", behavior: "smooth" }), 350);
-  }, 120);
-}
-
-// 手機版：鍵盤彈出時讓聊天抽屜 body 捲動到底部，確保輸入框可見
-if (window.visualViewport) {
-  window.visualViewport.addEventListener("resize", () => {
-    const drawerChat = document.getElementById("drawer-chat");
-    if (!drawerChat || !drawerChat.classList.contains("open")) return;
-    const area = document.getElementById("chatPanelsArea");
-    if (area) area.scrollTop = area.scrollHeight;
-  });
-}
-
-// 開啟聊天抽屜時清零全部未讀（因為用戶看到了）
-function onOpenChatDrawer() {
-  // 清除所有面板的未讀
-  Object.keys(openChatPanels).forEach(roomId => {
-    const state = openChatPanels[roomId];
-    if (state) {
-      state.unread = 0;
-      const badge = document.getElementById(`cpbadge_${roomId}`);
-      if (badge) { badge.textContent = ""; badge.style.display = "none"; }
-    }
-  });
-  _totalUnread = 0;
-  updateChatTabBadge();
-}
-
-// 兼容舊函數名稱（buildChatWindow → openChatWith）
-function openChatWindow(targetUser) { openChatWith(targetUser); }
-function closeChatWindow(roomId) { closeChatPanel(roomId); }
-function closeAllChatWindows() {
-  Object.keys(openChatPanels).forEach(closeChatPanel);
-}
-
 // 登出時刪除自己所有的聊天訊息
 async function deleteMyChatMsgs() {
   if (myMsgRefs.length === 0) return;
@@ -3662,7 +3112,7 @@ function escapeHtml(str) {
 startWhenReady();
 
 // ===== 多抽屜系統 =====
-const DRAWER_IDS = ['chat','mgmt','export','hist','colors','cats'];
+const DRAWER_IDS = ['mgmt','export','hist','colors','cats'];
 
 function openDrawer(id) {
   DRAWER_IDS.forEach(d => {
@@ -3672,7 +3122,6 @@ function openDrawer(id) {
   document.getElementById('drawer-'+id).classList.add('open');
   document.getElementById('tab-'+id).classList.add('open');
   document.getElementById('drawer-overlay').classList.add('show');
-  if (id === 'chat')   { onOpenChatDrawer(); }
   if (id === 'mgmt')   { initMgmtItems(); qaInitSelects(); }
   if (id === 'export') { updateImgDateHint(); updateHistDateHint(); }
   if (id === 'hist')   { renderHistoryPanel(); }
