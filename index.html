@@ -749,32 +749,37 @@ input.sel-l2-inp:disabled {
 .drawer-section.active { display: block; }
 
 /* ── 份數 badge ── */
+/* ── 份數 badge（修正版） ── */
 .loc-qty-wrap {
   display: flex;
   align-items: center;
-  gap: 2px;
+
+  gap: 6px;                 /* 原本太擠 → 放大 */
+  padding: 6px 10px;        /* 原本太扁 → 增加高度 */
+
   background: rgba(255,255,255,0.18);
-  border-radius: 20px;
-  padding: 2px 7px 2px 5px;
+  border-radius: 12px;      /* 原本 20px 太像膠囊 */
   margin-left: 2px;
   border: 1px solid rgba(255,255,255,0.3);
 }
-.loc-qty-star {
-  color: rgba(255,255,255,0.85);
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-.loc-qty-inp {
-  width: 22px;
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 700;
+
+/* input 正常尺寸 */
+.loc-qty-wrap input {
+  height: 26px;
+  min-width: 40px;
   text-align: center;
-  outline: none;
-  font-family: inherit;
-  -moz-appearance: textfield;
+  padding: 2px 6px;
+  box-sizing: border-box;
+}
+
+/* 按鈕不要被壓扁 */
+.loc-qty-wrap button {
+  height: 26px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 }
 .loc-qty-inp::-webkit-outer-spin-button,
 .loc-qty-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
