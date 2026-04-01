@@ -728,7 +728,52 @@ select.sel-l2:disabled {
 .drawer-section { display: none; }
 .drawer-section.active { display: block; }
 
-/* ── 手機版優化 ── */
+/* ── 份數 badge ── */
+.loc-qty-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 20px;
+  padding: 2px 7px 2px 5px;
+  margin-left: 2px;
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: background 0.15s;
+}
+.loc-qty-wrap:focus-within {
+  background: rgba(255,255,255,0.32);
+}
+.loc-qty-star {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+.loc-qty-inp {
+  width: 32px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  -moz-appearance: textfield;
+}
+.loc-qty-inp::-webkit-outer-spin-button,
+.loc-qty-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.loc-qty-inp::placeholder { color: rgba(255,255,255,0.4); font-weight: 400; }
+.loc-qty-unit {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+
 @media (max-width: 600px) {
   body { padding: 8px 6px; }
 
@@ -1238,6 +1283,7 @@ function saveAll() {
 
     const locSels = [...block.querySelectorAll(".loc-sel")];
     const locInps = [...block.querySelectorAll(".loc-inp")];
+    const locQtys = [...block.querySelectorAll(".loc-qty-inp")];
     let locIdx = 0;
     const resolvedHLocs = hLocs.map(() => {
       const s = locSels[locIdx]; const inp = locInps[locIdx]; locIdx++;
@@ -1249,6 +1295,8 @@ function saveAll() {
       if (!s) return "";
       return s.value === "__custom__" ? (inp?.value || "") : s.value;
     });
+    const resolvedHQtys = hLocs.map((_, i) => locQtys[i]?.value || "");
+    const resolvedWQtys = wLocs.map((_, i) => locQtys[hLocs.length + i]?.value || "");
 
     const cells = [];
     block.querySelectorAll("table tr").forEach((tr) => {
@@ -1262,7 +1310,7 @@ function saveAll() {
       });
     });
 
-    data.push({ wid, date, hLocs: resolvedHLocs, wLocs: resolvedWLocs, cells });
+    data.push({ wid, date, hLocs: resolvedHLocs, wLocs: resolvedWLocs, hQtys: resolvedHQtys, wQtys: resolvedWQtys, cells });
   });
 
   // 記錄修改者資訊
@@ -1307,6 +1355,7 @@ function extractWeekData(block) {
 
   const locSels = [...block.querySelectorAll(".loc-sel")];
   const locInps = [...block.querySelectorAll(".loc-inp")];
+  const locQtys = [...block.querySelectorAll(".loc-qty-inp")];
   let locIdx = 0;
   const resolvedHLocs = hLocs.map(() => {
     const s = locSels[locIdx]; const inp = locInps[locIdx]; locIdx++;
@@ -1318,6 +1367,8 @@ function extractWeekData(block) {
     if (!s) return "";
     return s.value === "__custom__" ? (inp?.value || "") : s.value;
   });
+  const resolvedHQtys = hLocs.map((_, i) => locQtys[i]?.value || "");
+  const resolvedWQtys = wLocs.map((_, i) => locQtys[hLocs.length + i]?.value || "");
 
   const cells = [];
   block.querySelectorAll("table tr").forEach((tr) => {
@@ -1331,7 +1382,7 @@ function extractWeekData(block) {
     });
   });
 
-  return { date, day, hLocs: resolvedHLocs, wLocs: resolvedWLocs, cells };
+  return { date, day, hLocs: resolvedHLocs, wLocs: resolvedWLocs, hQtys: resolvedHQtys, wQtys: resolvedWQtys, cells };
 }
 
 // ===== 儲存單筆到歷史紀錄 =====
@@ -1446,10 +1497,14 @@ function buildHistoryTableHTML(entry) {
   // row2 地點
   html += "<tr>";
   hLocs.forEach((loc, i) => {
-    html += `<th class="${i%2===0?"th-hloc":"th-hloc-light"}" colspan="2" style="border-left:none;border-right:none;">${loc}</th>`;
+    const qty = (entry.hQtys||[])[i];
+    const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
+    html += `<th class="${i%2===0?"th-hloc":"th-hloc-light"}" colspan="2" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
   });
   wLocs.forEach((loc, i) => {
-    html += `<th class="${i%2===0?"th-wloc":"th-wloc-light"}" colspan="2" style="border-left:none;border-right:none;">${loc}</th>`;
+    const qty = (entry.wQtys||[])[i];
+    const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
+    html += `<th class="${i%2===0?"th-wloc":"th-wloc-light"}" colspan="2" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
   });
   html += "</tr>";
 
@@ -1508,7 +1563,7 @@ function restoreFromHistory(idx) {
   if (!confirm(`確定將「${entry.date}」的歷史紀錄還原為新一筆菜單？`)) return;
 
   weekCount++;
-  const block = buildWeek(weekCount, entry.hLocs, entry.wLocs);
+  const block = buildWeek(weekCount, entry.hLocs, entry.wLocs, entry.hQtys, entry.wQtys);
   document.getElementById("scheduleArea").appendChild(block);
 
   const di = block.querySelector(".week-date");
@@ -1519,12 +1574,15 @@ function restoreFromHistory(idx) {
 
   const locSels = [...block.querySelectorAll(".loc-sel")];
   const locInps = [...block.querySelectorAll(".loc-inp")];
+  const locQtys = [...block.querySelectorAll(".loc-qty-inp")];
   const allLocs = [...(entry.hLocs||[]), ...(entry.wLocs||[])];
+  const allQtys = [...(entry.hQtys||[]), ...(entry.wQtys||[])];
   allLocs.forEach((loc, i) => {
     const s = locSels[i]; const inp = locInps[i];
     if (!s) return;
     s.style.display = "none";
     if(inp) { inp.style.display="flex"; inp.value=loc; }
+    if(locQtys[i] && allQtys[i]) locQtys[i].value = allQtys[i];
   });
 
   const rowMap = {};
@@ -1843,8 +1901,22 @@ async function exportAsImage(itemOnlyMode) {
     const wSpan = itemOnlyMode ? wLocNames.length : wLocNames.length * 2;
     let hr1 = `<tr><th class="th-week" rowspan="3">類別</th><th class="th-health" colspan="${hSpan}">【健康餐】</th><th class="th-wind" colspan="${wSpan}">【風味餐】</th></tr>`;
     let hr2 = "<tr>";
-    hLocNames.forEach((loc, i) => { hr2 += `<th class="${i%2===0?"th-hloc":"th-hloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}</th>`; });
-    wLocNames.forEach((loc, i) => { hr2 += `<th class="${i%2===0?"th-wloc":"th-wloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}</th>`; });
+
+    // read qty values from DOM
+    const locQtyInps = [...block.querySelectorAll(".loc-qty-inp")];
+    const hQtyVals = hLocNames.map((_, i) => locQtyInps[i]?.value || "");
+    const wQtyVals = wLocNames.map((_, i) => locQtyInps[hLocNames.length + i]?.value || "");
+
+    hLocNames.forEach((loc, i) => {
+      const qty = hQtyVals[i];
+      const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
+      hr2 += `<th class="${i%2===0?"th-hloc":"th-hloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
+    });
+    wLocNames.forEach((loc, i) => {
+      const qty = wQtyVals[i];
+      const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
+      hr2 += `<th class="${i%2===0?"th-wloc":"th-wloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
+    });
     hr2 += "</tr>";
     let hr3 = "<tr>";
     if (!itemOnlyMode) {
@@ -1952,8 +2024,16 @@ function exportAllHistoryExcel() {
 
     // 標頭列
     const header1 = ["類別"];
-    hLocs.forEach(loc => { header1.push(`健康餐-${loc}-類別`); header1.push(`健康餐-${loc}-品項`); });
-    wLocs.forEach(loc => { header1.push(`風味餐-${loc}-類別`); header1.push(`風味餐-${loc}-品項`); });
+    hLocs.forEach((loc, i) => {
+      const qty = (entry.hQtys||[])[i];
+      const locLabel = qty ? `健康餐-${loc}(${qty}份)` : `健康餐-${loc}`;
+      header1.push(`${locLabel}-類別`); header1.push(`${locLabel}-品項`);
+    });
+    wLocs.forEach((loc, i) => {
+      const qty = (entry.wQtys||[])[i];
+      const locLabel = qty ? `風味餐-${loc}(${qty}份)` : `風味餐-${loc}`;
+      header1.push(`${locLabel}-類別`); header1.push(`${locLabel}-品項`);
+    });
 
     const rows = [header1];
 
@@ -2041,7 +2121,7 @@ async function loadAll() {
   saved.data.forEach(item => {
     weekCount++;
     const wid = `w${weekCount}`;
-    const block = buildWeek(weekCount, item.hLocs, item.wLocs);
+    const block = buildWeek(weekCount, item.hLocs, item.wLocs, item.hQtys, item.wQtys);
     document.getElementById("scheduleArea").appendChild(block);
 
     const di = block.querySelector(".week-date");
@@ -2052,12 +2132,15 @@ async function loadAll() {
 
     const locSels = [...block.querySelectorAll(".loc-sel")];
     const locInps = [...block.querySelectorAll(".loc-inp")];
+    const locQtys = [...block.querySelectorAll(".loc-qty-inp")];
     const allLocs = [...(item.hLocs||[]), ...(item.wLocs||[])];
+    const allQtys = [...(item.hQtys||[]), ...(item.wQtys||[])];
     allLocs.forEach((loc, i) => {
       const s = locSels[i]; const inp = locInps[i];
       if (!s) return;
       s.style.display = "none";
       if(inp) { inp.style.display="flex"; inp.value=loc; }
+      if(locQtys[i] && allQtys[i]) locQtys[i].value = allQtys[i];
     });
 
     const rowMap = {};
@@ -2170,7 +2253,7 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   return [td1, td2];
 }
 
-function makeLocTh(loc, type, onDelete, locIndex) {
+function makeLocTh(loc, type, onDelete, locIndex, initQty) {
   const th = document.createElement("th");
   const isDark = (locIndex % 2 === 0);
   if (type === "h") {
@@ -2183,7 +2266,7 @@ function makeLocTh(loc, type, onDelete, locIndex) {
   th.style.borderRight = "none";
 
   const wrap = document.createElement("div");
-  wrap.style.cssText = "display:flex;align-items:center;justify-content:center;gap:4px;";
+  wrap.style.cssText = "display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:nowrap;";
 
   const SHARED_LOC_STYLE = "background:transparent;border:none;outline:none;color:#fff;font-size:0.92rem;font-weight:700;letter-spacing:2px;text-align:center;max-width:100px;cursor:pointer;font-family:inherit;";
 
@@ -2221,6 +2304,30 @@ function makeLocTh(loc, type, onDelete, locIndex) {
   });
   inp.addEventListener("input", scheduleAutoSave);
 
+  // ── 份數 badge ──
+  const qtyWrap = document.createElement("div");
+  qtyWrap.className = "loc-qty-wrap";
+
+  const qtyStar = document.createElement("span");
+  qtyStar.className = "loc-qty-star";
+  qtyStar.textContent = "✦";
+
+  const qtyInp = document.createElement("input");
+  qtyInp.type = "number";
+  qtyInp.className = "loc-qty-inp";
+  qtyInp.min = "0";
+  qtyInp.placeholder = "份數";
+  if (initQty) qtyInp.value = initQty;
+  qtyInp.addEventListener("input", scheduleAutoSave);
+
+  const qtyUnit = document.createElement("span");
+  qtyUnit.className = "loc-qty-unit";
+  qtyUnit.textContent = "份";
+
+  qtyWrap.appendChild(qtyStar);
+  qtyWrap.appendChild(qtyInp);
+  qtyWrap.appendChild(qtyUnit);
+
   const delBtn = document.createElement("button");
   delBtn.textContent = "✕";
   delBtn.title = "刪除此欄";
@@ -2229,15 +2336,18 @@ function makeLocTh(loc, type, onDelete, locIndex) {
   delBtn.addEventListener("mouseleave", () => { delBtn.style.color = "rgba(255,255,255,0.4)"; });
   delBtn.addEventListener("click", onDelete);
 
-  wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(delBtn);
+  wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap); wrap.appendChild(delBtn);
   th.appendChild(wrap);
   return th;
 }
 
-function buildWeek(weekNum, initHLocs, initWLocs) {
+function buildWeek(weekNum, initHLocs, initWLocs, initHQtys, initWQtys) {
   const wid = `w${weekNum}`;
   let hLocs = initHLocs ? [...initHLocs] : [...DEFAULT_HEALTH_LOCS];
   let wLocs = initWLocs ? [...initWLocs] : [...DEFAULT_WIND_LOCS];
+  // qty arrays parallel to hLocs/wLocs
+  let hQtys = initHQtys ? [...initHQtys] : hLocs.map(()=>"");
+  let wQtys = initWQtys ? [...initWQtys] : wLocs.map(()=>"");
 
   weekDataMap[wid] = { hLocs, wLocs };
 
@@ -2270,6 +2380,14 @@ function buildWeek(weekNum, initHLocs, initWLocs) {
     });
   }, 0);
 
+  function readCurrentQtys() {
+    // Read current qty values from DOM before rebuild
+    const qtyInps = [...block.querySelectorAll(".loc-qty-inp")];
+    const allQtys = qtyInps.map(q => q.value || "");
+    hQtys = allQtys.slice(0, hLocs.length);
+    wQtys = allQtys.slice(hLocs.length, hLocs.length + wLocs.length);
+  }
+
   function rebuildTable() {
     weekDataMap[wid].hLocs = hLocs;
     weekDataMap[wid].wLocs = wLocs;
@@ -2298,17 +2416,19 @@ function buildWeek(weekNum, initHLocs, initWLocs) {
     const hr2 = tbl.insertRow();
     hLocs.forEach((loc, i) => {
       hr2.appendChild(makeLocTh(loc, "h", () => {
+        readCurrentQtys();
         if (hLocs.length<=1) { alert("至少需保留一個健康餐地點"); return; }
         if (!confirm(`刪除「${loc}」欄位？`)) return;
-        hLocs.splice(i,1); rebuildTable(); scheduleAutoSave();
-      }, i));
+        hLocs.splice(i,1); hQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
+      }, i, hQtys[i]));
     });
     wLocs.forEach((loc, i) => {
       hr2.appendChild(makeLocTh(loc, "w", () => {
+        readCurrentQtys();
         if (wLocs.length<=1) { alert("至少需保留一個風味餐地點"); return; }
         if (!confirm(`刪除「${loc}」欄位？`)) return;
-        wLocs.splice(i,1); rebuildTable(); scheduleAutoSave();
-      }, i));
+        wLocs.splice(i,1); wQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
+      }, i, wQtys[i]));
     });
 
     const hr3 = tbl.insertRow();
@@ -2344,6 +2464,8 @@ function buildWeek(weekNum, initHLocs, initWLocs) {
 
   rebuildTable();
   block._rebuildTable = rebuildTable;
+  block._hQtysRef = hQtys;
+  block._wQtysRef = wQtys;
   return block;
 }
 
@@ -2362,8 +2484,12 @@ function addGlobalHLoc() {
     const wid = block.id.replace("block_", "");
     const info = weekDataMap[wid];
     if (!info) return;
+    // 讀取目前 qty 值後再 push
+    const qtyInps = [...block.querySelectorAll(".loc-qty-inp")];
+    const allQtys = qtyInps.map(q => q.value || "");
     info.hLocs.push("新地點");
-    // 觸發重建（借用 block 上掛的 rebuildTable）
+    // 把新 qty 空值插到 h 範圍末尾
+    if (block._hQtysRef) block._hQtysRef.push("");
     block._rebuildTable && block._rebuildTable();
   });
   scheduleAutoSave();
@@ -2378,6 +2504,7 @@ function addGlobalWLoc() {
     const info = weekDataMap[wid];
     if (!info) return;
     info.wLocs.push("新地點");
+    if (block._wQtysRef) block._wQtysRef.push("");
     block._rebuildTable && block._rebuildTable();
   });
   scheduleAutoSave();
