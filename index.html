@@ -857,6 +857,16 @@ select.sel-l2:disabled {
 </head>
 <body>
 
+<!-- 存取控制遮罩 -->
+<div id="accessOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(15,20,25,0.92);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div style="background:#1c2a30;border-radius:16px;padding:36px 40px;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.6);border:1.5px solid #37474f;">
+    <div style="font-size:3rem;margin-bottom:12px;" id="overlayIcon">🔒</div>
+    <div style="font-size:1.1rem;font-weight:700;color:#eceff1;margin-bottom:10px;" id="overlayTitle">存取受限</div>
+    <div style="font-size:0.85rem;color:#90a4ae;line-height:1.7;margin-bottom:24px;" id="overlayMsg">請使用授權的 Google 帳號登入才能使用此系統。</div>
+    <div id="overlayActions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;"></div>
+  </div>
+</div>
+
 <!-- 登入列 + 在線用戶（同一列） -->
 <div class="auth-bar" id="authBar" style="justify-content:space-between;">
 
@@ -1207,6 +1217,64 @@ let weekDataMap = {};
 const STORAGE_KEY = "yupin_menu_v2";
 const HISTORY_KEY = "yupin_menu_history_v1";
 
+// ===== 允許使用的 Google 帳號白名單 =====
+const ALLOWED_EMAILS = [
+  "sophiesu000@gmail.com",   // ← 在此填入允許的帳號
+  "s802316s@gmail.com",
+];
+
+function isAllowed(user) {
+  if (!user) return false;
+  return ALLOWED_EMAILS.map(e => e.trim().toLowerCase()).includes((user.email || "").toLowerCase());
+}
+
+function showAccessOverlay(mode) {
+  // mode: 'nologin' | 'denied'
+  const overlay = document.getElementById("accessOverlay");
+  const icon    = document.getElementById("overlayIcon");
+  const title   = document.getElementById("overlayTitle");
+  const msg     = document.getElementById("overlayMsg");
+  const actions = document.getElementById("overlayActions");
+
+  if (mode === "nologin") {
+    icon.textContent  = "🔒";
+    title.textContent = "請先登入";
+    msg.textContent   = "此系統需要使用授權的 Google 帳號才能存取，請登入後繼續。";
+    actions.innerHTML = `<button onclick="fbLogin()" style="background:#fff;color:#333;border:none;border-radius:7px;padding:9px 22px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 20-8 20-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5L31.8 34c-2.1 1.5-4.8 2-7.8 2-5.2 0-9.5-2.9-11.3-7.1l-6.5 5C9.6 39.7 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.4-4.5 5.8l5.8 5c3.5-3.2 5.4-8 5.4-14.8 0-1.3-.1-2.7-.4-4z"/></svg>
+      Google 登入
+    </button>`;
+  } else if (mode === "denied") {
+    icon.textContent  = "⛔";
+    title.textContent = "無存取權限";
+    msg.innerHTML     = `您的帳號 <strong style="color:#ef9a9a;">${currentUser?.email || ""}</strong> 未在授權名單內，<br>無法使用此系統。<br><br>請聯絡管理員取得授權。`;
+    actions.innerHTML = `<button onclick="fbLogout()" style="background:#ef5350;color:#fff;border:none;border-radius:7px;padding:9px 22px;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:inherit;">登出並切換帳號</button>`;
+  }
+
+  overlay.style.display = "flex";
+  // 鎖定背景滾動
+  document.body.style.overflow = "hidden";
+}
+
+function hideAccessOverlay() {
+  const overlay = document.getElementById("accessOverlay");
+  overlay.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+function checkAccess(user) {
+  if (!user) {
+    showAccessOverlay("nologin");
+    return false;
+  }
+  if (!isAllowed(user)) {
+    showAccessOverlay("denied");
+    return false;
+  }
+  hideAccessOverlay();
+  return true;
+}
+
 // ===== Firebase 狀態 =====
 let currentUser = null;   // Firebase user 物件
 let fbListenerActive = false;
@@ -1245,6 +1313,12 @@ function updateAuthUI(user) {
     loggedIn.style.display  = "flex";
     document.getElementById("authAvatar").src  = user.photoURL || "";
     document.getElementById("authName").textContent = user.displayName || user.email;
+    // 檢查是否在白名單
+    if (!isAllowed(user)) {
+      document.getElementById("syncBadge").textContent = "⛔ 無權限";
+      document.getElementById("syncBadge").className = "sync-badge offline";
+      return; // 不顯示歡迎訊息
+    }
     document.getElementById("syncBadge").textContent = "⚡ 已連線";
     document.getElementById("syncBadge").className = "sync-badge";
     // 只在剛登入時顯示歡迎（避免重複）
@@ -2817,7 +2891,8 @@ setTimeout(() => {
     const loggedOut = document.getElementById("authLoggedOut");
     if (loading) loading.style.display = "none";
     if (loggedOut) loggedOut.style.display = "flex";
-    initApp();
+    // Firebase 離線也要檢查存取（未登入狀態）
+    showAccessOverlay("nologin");
   }
 }, 3000);
 
@@ -2909,6 +2984,14 @@ function _startFirebase() {
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     updateAuthUI(user);
+
+    // ── 存取控制：未登入或不在白名單 ──
+    if (!checkAccess(user)) {
+      if (user) {
+        clearPresence();
+      }
+      return; // 停止後續所有初始化
+    }
 
     if (user) {
       setupPresence(user);
