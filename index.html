@@ -804,6 +804,135 @@ select.sel-l2:disabled {
   to   { opacity: 1; transform: scale(1); }
 }
 
+
+/* ===== 即時聊天視窗 ===== */
+.chat-windows-container {
+  position: fixed; bottom: 0; right: 48px;
+  display: flex; align-items: flex-end; gap: 10px;
+  z-index: 1050; pointer-events: none;
+}
+.chat-window {
+  width: 280px; background: #1c2a30;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
+  display: flex; flex-direction: column;
+  max-height: 380px; pointer-events: all;
+  border: 1px solid #37474f; border-bottom: none;
+  animation: chatSlideUp 0.25s ease;
+  overflow: hidden;
+}
+@keyframes chatSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.chat-win-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; background: #263238;
+  cursor: pointer; user-select: none; flex-shrink: 0;
+  border-radius: 12px 12px 0 0;
+}
+.chat-win-header img {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid #66bb6a; flex-shrink: 0;
+}
+.chat-win-header .chat-win-name {
+  flex: 1; font-size: 0.8rem; font-weight: 700;
+  color: #eceff1; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.chat-win-header .chat-win-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #66bb6a; flex-shrink: 0;
+  box-shadow: 0 0 4px #66bb6a;
+}
+.chat-win-header .chat-win-close {
+  background: none; border: none; color: #78909c;
+  cursor: pointer; font-size: 0.9rem; padding: 0 0 0 4px;
+  line-height: 1; transition: color 0.15s;
+}
+.chat-win-header .chat-win-close:hover { color: #ef9a9a; }
+.chat-win-header .chat-unread-badge {
+  background: #ef5350; color: #fff;
+  border-radius: 10px; font-size: 0.66rem;
+  font-weight: 700; padding: 1px 6px; min-width: 18px;
+  text-align: center;
+}
+.chat-win-body {
+  flex: 1; overflow-y: auto; padding: 10px 10px 6px;
+  display: flex; flex-direction: column; gap: 6px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin; scrollbar-color: #37474f #1c2a30;
+}
+.chat-win-body::-webkit-scrollbar { width: 4px; }
+.chat-win-body::-webkit-scrollbar-track { background: #1c2a30; }
+.chat-win-body::-webkit-scrollbar-thumb { background: #37474f; border-radius: 2px; }
+.chat-win-body.collapsed { display: none; }
+.chat-bubble {
+  max-width: 85%; padding: 6px 10px;
+  border-radius: 12px; font-size: 0.78rem;
+  line-height: 1.45; word-break: break-word;
+  animation: bubbleIn 0.18s ease;
+}
+@keyframes bubbleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.chat-bubble.me {
+  align-self: flex-end;
+  background: #2e7d32; color: #e8f5e9;
+  border-bottom-right-radius: 3px;
+}
+.chat-bubble.them {
+  align-self: flex-start;
+  background: #37474f; color: #eceff1;
+  border-bottom-left-radius: 3px;
+}
+.chat-bubble .chat-bubble-name {
+  font-size: 0.65rem; font-weight: 700;
+  opacity: 0.65; margin-bottom: 2px;
+}
+.chat-bubble .chat-bubble-time {
+  font-size: 0.62rem; opacity: 0.45;
+  margin-top: 2px; text-align: right;
+}
+.chat-win-input-row {
+  display: flex; gap: 6px; padding: 7px 8px;
+  border-top: 1px solid #263238; flex-shrink: 0;
+  background: #1c2a30;
+}
+.chat-win-input-row.collapsed { display: none; }
+.chat-win-input {
+  flex: 1; background: #263238; border: 1px solid #37474f;
+  border-radius: 16px; padding: 6px 12px;
+  color: #eceff1; font-family: inherit; font-size: 0.78rem;
+  outline: none; resize: none; max-height: 72px;
+  transition: border-color 0.15s;
+}
+.chat-win-input:focus { border-color: #66bb6a; }
+.chat-win-input::placeholder { color: #546e7a; }
+.chat-win-send {
+  background: #2e7d32; border: none; border-radius: 50%;
+  width: 30px; height: 30px; cursor: pointer;
+  color: #fff; font-size: 0.85rem; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  align-self: flex-end; transition: background 0.15s;
+}
+.chat-win-send:hover { background: #43a047; }
+.chat-win-send:disabled { background: #37474f; cursor: default; }
+.chat-system-msg {
+  text-align: center; font-size: 0.68rem;
+  color: #546e7a; padding: 2px 0;
+}
+.online-user-chip { cursor: pointer; }
+.online-user-chip:hover {
+  background: rgba(102,187,106,0.28);
+  border-color: rgba(102,187,106,0.6);
+}
+
+@media (max-width: 600px) {
+  .chat-windows-container { right: 0; left: 0; justify-content: flex-end; }
+  .chat-window { width: calc(100vw - 16px); max-width: 320px; }
+}
 @media (max-width: 600px) {
   body { padding: 8px 6px; }
 
@@ -1151,6 +1280,10 @@ select.sel-l2:disabled {
   </div>
 </div>
 
+
+<!-- 聊天視窗容器 -->
+<div class="chat-windows-container" id="chatWindowsContainer"></div>
+
 <div class="save-toast" id="saveToast">✅ 已自動儲存</div>
 
 <script>
@@ -1219,8 +1352,8 @@ const HISTORY_KEY = "yupin_menu_history_v1";
 
 // ===== 允許使用的 Google 帳號白名單 =====
 const ALLOWED_EMAILS = [
-  "sophiesu000@gmail.com",   // ← 在此填入允許的帳號
-  "s802316s@gmail.com",
+  "example1@gmail.com",   // ← 在此填入允許的帳號
+  "example2@gmail.com",
 ];
 
 function isAllowed(user) {
@@ -1296,8 +1429,10 @@ function fbLogin() {
     });
   }
 }
-function fbLogout() {
+async function fbLogout() {
   const { auth, signOut } = window._fb;
+  await deleteMyChatMsgs();   // 刪除本次對話訊息
+  closeAllChatWindows();       // 關閉所有聊天視窗
   signOut(auth);
 }
 
@@ -2962,6 +3097,7 @@ function _startFirebase() {
       });
       presenceRef = null;
     }
+    closeAllChatWindows();
     renderOnlineUsers([]);
   }
 
@@ -2972,13 +3108,16 @@ function _startFirebase() {
       el.innerHTML = '<span style="color:#455a64;font-size:0.72rem;">（尚無在線用戶）</span>';
       return;
     }
-    el.innerHTML = users.map(u => `
-      <span class="online-user-chip">
+    el.innerHTML = users.map(u => {
+      const isMe = currentUser && u.uid === currentUser.uid;
+      const clickAttr = isMe ? '' : `onclick="openChatWith(${JSON.stringify({uid:u.uid,name:u.name,photo:u.photo}).replace(/"/g,'&quot;')})" title="點擊開始對話"`;
+      const meStyle = isMe ? 'opacity:0.6;cursor:default;' : 'cursor:pointer;';
+      return `<span class="online-user-chip" style="${meStyle}" ${clickAttr}>
         <span class="online-dot"></span>
         ${u.photo ? `<img src="${u.photo}" alt="">` : ""}
-        ${u.name || "未知用戶"}
-      </span>
-    `).join("");
+        ${u.name || "未知用戶"}${isMe ? " （我）" : " 💬"}
+      </span>`;
+    }).join("");
   }
 
   onAuthStateChanged(auth, async (user) => {
@@ -3031,6 +3170,214 @@ function _startFirebase() {
     }
   });
 }
+
+// ===== 即時聊天系統 =====
+const openChatWindows = {};   // roomId -> { el, collapsed, unread, listener }
+let chatMsgListeners = {};    // roomId -> unsubscribe fn
+let myMsgRefs = [];           // 記錄自己發的訊息 ref，登出時刪除
+
+function getChatRoomId(uid1, uid2) {
+  // 固定順序，雙方共用同一個 room
+  return [uid1, uid2].sort().join("_");
+}
+
+function openChatWith(targetUser) {
+  if (!currentUser) return;
+  if (targetUser.uid === currentUser.uid) return; // 不能和自己聊
+
+  const roomId = getChatRoomId(currentUser.uid, targetUser.uid);
+
+  if (openChatWindows[roomId]) {
+    // 已開啟：展開並聚焦
+    expandChatWindow(roomId);
+    return;
+  }
+
+  const win = buildChatWindow(roomId, targetUser);
+  document.getElementById("chatWindowsContainer").appendChild(win);
+  openChatWindows[roomId] = { el: win, collapsed: false, unread: 0 };
+
+  listenChatRoom(roomId);
+  focusChatInput(roomId);
+}
+
+function buildChatWindow(roomId, targetUser) {
+  const win = document.createElement("div");
+  win.className = "chat-window";
+  win.id = `chatwin_${roomId}`;
+  win.innerHTML = `
+    <div class="chat-win-header" onclick="toggleChatWindow('${roomId}')">
+      <span class="chat-win-dot"></span>
+      ${targetUser.photo ? `<img src="${targetUser.photo}" alt="">` : ""}
+      <span class="chat-win-name">${targetUser.name || "用戶"}</span>
+      <span class="chat-unread-badge" id="unread_${roomId}" style="display:none;"></span>
+      <button class="chat-win-close" onclick="closeChatWindow('${roomId}');event.stopPropagation();" title="關閉">✕</button>
+    </div>
+    <div class="chat-win-body" id="chatbody_${roomId}">
+      <div class="chat-system-msg">開始與 ${targetUser.name || "對方"} 的對話</div>
+    </div>
+    <div class="chat-win-input-row" id="chatinputrow_${roomId}">
+      <textarea class="chat-win-input" id="chatinput_${roomId}" placeholder="輸入訊息…" rows="1"
+        onkeydown="chatKeyDown(event,'${roomId}')"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,72)+'px'"></textarea>
+      <button class="chat-win-send" onclick="sendChatMsg('${roomId}')" id="chatsend_${roomId}">➤</button>
+    </div>
+  `;
+  return win;
+}
+
+function listenChatRoom(roomId) {
+  if (chatMsgListeners[roomId]) return;
+  import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(mod => {
+    const { getDatabase, ref, onChildAdded, query, limitToLast } = mod;
+    const db = getDatabase();
+    const msgsRef = query(ref(db, `chat/${roomId}/messages`), limitToLast(80));
+    const unsub = onChildAdded(msgsRef, (snap) => {
+      const msg = snap.val();
+      if (!msg) return;
+      appendChatBubble(roomId, msg, snap.key);
+    });
+    chatMsgListeners[roomId] = unsub;
+  });
+}
+
+function appendChatBubble(roomId, msg, key) {
+  const body = document.getElementById(`chatbody_${roomId}`);
+  if (!body) return;
+
+  const isMe = msg.uid === currentUser?.uid;
+  const time = msg.at ? new Date(msg.at).toLocaleTimeString("zh-TW", { hour:"2-digit", minute:"2-digit" }) : "";
+
+  const bubble = document.createElement("div");
+  bubble.className = `chat-bubble ${isMe ? "me" : "them"}`;
+  bubble.dataset.key = key;
+  bubble.innerHTML = `
+    ${!isMe ? `<div class="chat-bubble-name">${msg.name || "對方"}</div>` : ""}
+    ${escapeHtml(msg.text)}
+    <div class="chat-bubble-time">${time}</div>
+  `;
+  body.appendChild(bubble);
+  body.scrollTop = body.scrollHeight;
+
+  // 未讀計數（視窗折疊時）
+  const winState = openChatWindows[roomId];
+  if (winState && winState.collapsed && !isMe) {
+    winState.unread = (winState.unread || 0) + 1;
+    const badge = document.getElementById(`unread_${roomId}`);
+    if (badge) { badge.textContent = winState.unread; badge.style.display = "inline"; }
+  }
+}
+
+async function sendChatMsg(roomId) {
+  const inp = document.getElementById(`chatinput_${roomId}`);
+  const text = inp.value.trim();
+  if (!text || !currentUser) return;
+
+  const btn = document.getElementById(`chatsend_${roomId}`);
+  btn.disabled = true;
+
+  try {
+    await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(async mod => {
+      const { getDatabase, ref, push, serverTimestamp, onDisconnect } = mod;
+      const db = getDatabase();
+      const msgsRef = ref(db, `chat/${roomId}/messages`);
+      const newRef = await push(msgsRef, {
+        uid:  currentUser.uid,
+        name: currentUser.displayName || currentUser.email,
+        text: text,
+        at:   Date.now()
+      });
+      // 登出時自動刪除此訊息
+      myMsgRefs.push(newRef);
+      onDisconnect(newRef).remove();
+    });
+    inp.value = "";
+    inp.style.height = "auto";
+  } catch(e) {
+    console.error("傳送失敗", e);
+  } finally {
+    btn.disabled = false;
+    inp.focus();
+  }
+}
+
+function chatKeyDown(e, roomId) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMsg(roomId);
+  }
+}
+
+function toggleChatWindow(roomId) {
+  const state = openChatWindows[roomId];
+  if (!state) return;
+  state.collapsed = !state.collapsed;
+  const body = document.getElementById(`chatbody_${roomId}`);
+  const inputRow = document.getElementById(`chatinputrow_${roomId}`);
+  if (body) body.classList.toggle("collapsed", state.collapsed);
+  if (inputRow) inputRow.classList.toggle("collapsed", state.collapsed);
+  if (!state.collapsed) {
+    // 展開：清除未讀
+    state.unread = 0;
+    const badge = document.getElementById(`unread_${roomId}`);
+    if (badge) { badge.textContent = ""; badge.style.display = "none"; }
+    const b = document.getElementById(`chatbody_${roomId}`);
+    if (b) b.scrollTop = b.scrollHeight;
+    focusChatInput(roomId);
+  }
+}
+
+function expandChatWindow(roomId) {
+  const state = openChatWindows[roomId];
+  if (!state) return;
+  if (state.collapsed) toggleChatWindow(roomId);
+  else focusChatInput(roomId);
+}
+
+function closeChatWindow(roomId) {
+  const state = openChatWindows[roomId];
+  if (!state) return;
+  state.el.remove();
+  delete openChatWindows[roomId];
+  // 停止監聽
+  if (chatMsgListeners[roomId]) {
+    chatMsgListeners[roomId]();
+    delete chatMsgListeners[roomId];
+  }
+}
+
+function focusChatInput(roomId) {
+  setTimeout(() => {
+    const inp = document.getElementById(`chatinput_${roomId}`);
+    if (inp) inp.focus();
+  }, 100);
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+    .replace(/\n/g,"<br>");
+}
+
+// 登出時刪除自己所有的聊天訊息
+async function deleteMyChatMsgs() {
+  if (myMsgRefs.length === 0) return;
+  try {
+    await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(async mod => {
+      for (const r of myMsgRefs) {
+        await mod.remove(r).catch(() => {});
+      }
+    });
+  } catch(e) {}
+  myMsgRefs = [];
+}
+
+// 關閉所有聊天視窗
+function closeAllChatWindows() {
+  Object.keys(openChatWindows).forEach(closeChatWindow);
+}
+
 
 startWhenReady();
 
