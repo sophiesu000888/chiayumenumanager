@@ -253,6 +253,39 @@ input.sel-l2-inp:disabled {
   border-color: #e0e0e0; cursor: default;
 }
 
+/* ── 模糊查找下拉選單 ── */
+.fuzzy-dropdown {
+  position: absolute;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #b0bec5;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  max-height: 200px;
+  overflow-y: auto;
+  min-width: 120px;
+  font-size: 0.78rem;
+  font-family: inherit;
+}
+.fuzzy-dropdown-item {
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #37474f;
+  transition: background 0.1s;
+}
+.fuzzy-dropdown-item:hover, .fuzzy-dropdown-item.active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.fuzzy-dropdown-item mark {
+  background: #fff9c4;
+  color: #e65100;
+  font-weight: 700;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
 .save-toast {
   position: fixed; bottom: 20px; right: 20px;
   background: #43a047; color: #fff;
@@ -2430,18 +2463,6 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     `<option value="${c}" ${c==="-"?"selected":""}>${c === "-" ? "" : c}</option>`
   ).join("");
 
-  // ── L2: 改為 input + datalist ──
-  const dlId = "dl_" + Math.random().toString(36).slice(2, 9);
-  const dl = document.createElement("datalist");
-  dl.id = dlId;
-
-  const inp2 = document.createElement("input");
-  inp2.type = "text";
-  inp2.className = "sel-l2 sel-l2-inp";
-  inp2.setAttribute("list", dlId);
-  inp2.placeholder = "品項";
-  inp2.autocomplete = "off";
-
   const td1 = document.createElement("td");
   td1.className = `td-l1 ${defaultStyle}`;
   const td2 = document.createElement("td");
@@ -2449,17 +2470,110 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
 
   function populateDatalistFromCat(cat) {
     const items = DB[cat] || [];
-    dl.innerHTML = items.filter(i => i !== "-").map(i => `<option value="${i}">`).join("");
+    _allItems = items.filter(i => i !== "-");
   }
 
   function buildFullDatalist() {
-    // Build datalist with all items from allowed cats for this row
     const allItems = new Set();
     cats.filter(c => c !== "-").forEach(c => {
       (DB[c] || []).filter(i => i !== "-").forEach(i => allItems.add(i));
     });
-    dl.innerHTML = [...allItems].map(i => `<option value="${i}">`).join("");
+    _allItems = [...allItems];
   }
+
+  // ── 自訂 fuzzy dropdown ──
+  let _allItems = [];
+  let _activeIdx = -1;
+  let _isSelecting = false;
+
+  const dropdown = document.createElement("div");
+  dropdown.className = "fuzzy-dropdown";
+  dropdown.style.display = "none";
+  document.body.appendChild(dropdown);
+
+  function positionDropdown() {
+    const rect = inp2.getBoundingClientRect();
+    dropdown.style.left = (rect.left + window.scrollX) + "px";
+    dropdown.style.top  = (rect.bottom + window.scrollY + 2) + "px";
+    dropdown.style.width = Math.max(rect.width, 120) + "px";
+  }
+
+  function showDropdown(keyword) {
+    if (!keyword) { hideDropdown(); return; }
+    const kw = keyword.toLowerCase();
+    const matched = _allItems.filter(i => i.toLowerCase().includes(kw));
+    if (!matched.length) { hideDropdown(); return; }
+    _activeIdx = -1;
+    dropdown.innerHTML = matched.map(item => {
+      const idx = item.toLowerCase().indexOf(kw);
+      const hi = item.slice(0, idx) +
+        `<mark>${item.slice(idx, idx + keyword.length)}</mark>` +
+        item.slice(idx + keyword.length);
+      return `<div class="fuzzy-dropdown-item" data-val="${item}">${hi}</div>`;
+    }).join("");
+    dropdown.querySelectorAll(".fuzzy-dropdown-item").forEach(el => {
+      el.addEventListener("mousedown", e => {
+        e.preventDefault();
+        _isSelecting = true;
+        selectItem(el.dataset.val);
+        _isSelecting = false;
+      });
+    });
+    positionDropdown();
+    dropdown.style.display = "block";
+  }
+
+  function hideDropdown() {
+    dropdown.style.display = "none";
+    _activeIdx = -1;
+  }
+
+  function selectItem(val) {
+    inp2.value = val;
+    hideDropdown();
+    inp2.dispatchEvent(new Event("input"));
+    // auto-fill L1
+    if (sel1.value === "-") {
+      for (const cat of cats) {
+        if (cat === "-") continue;
+        if ((DB[cat] || []).includes(val)) {
+          sel1.value = cat;
+          populateDatalistFromCat(cat);
+          break;
+        }
+      }
+    }
+    applyItemColor(val);
+    scheduleAutoSave();
+  }
+
+  // 鍵盤導航
+  inp2.addEventListener("keydown", e => {
+    if (dropdown.style.display === "none") return;
+    const items = dropdown.querySelectorAll(".fuzzy-dropdown-item");
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      _activeIdx = Math.min(_activeIdx + 1, items.length - 1);
+      items.forEach((el, i) => el.classList.toggle("active", i === _activeIdx));
+      if (items[_activeIdx]) items[_activeIdx].scrollIntoView({ block: "nearest" });
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      _activeIdx = Math.max(_activeIdx - 1, 0);
+      items.forEach((el, i) => el.classList.toggle("active", i === _activeIdx));
+      if (items[_activeIdx]) items[_activeIdx].scrollIntoView({ block: "nearest" });
+    } else if (e.key === "Enter") {
+      if (_activeIdx >= 0 && items[_activeIdx]) {
+        e.preventDefault();
+        selectItem(items[_activeIdx].dataset.val);
+      }
+    } else if (e.key === "Escape") {
+      hideDropdown();
+    }
+  });
+
+  // 視窗 resize/scroll 時重新定位
+  window.addEventListener("scroll", () => { if (dropdown.style.display !== "none") positionDropdown(); }, true);
+  window.addEventListener("resize", () => { if (dropdown.style.display !== "none") positionDropdown(); });
 
   function applyClosedState() {
     buildFullDatalist();  // 讓 L1="-" 時也能從品項欄直接選
@@ -2501,6 +2615,7 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     td2.className = `td-l2 ${defaultStyleL2}`;
     td2.style.background = ""; td2.style.color = "";
     inp2.style.color = ""; inp2.style.fontWeight = ""; inp2.style.borderColor = "";
+    hideDropdown();
     if (!cat || cat === "-") { applyClosedState(); scheduleAutoSave(); return; }
     populateDatalistFromCat(cat);
     inp2.value = "";
@@ -2509,14 +2624,15 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     scheduleAutoSave();
   });
 
-  // 取得目前 datalist 所有合法選項
+  // 取得目前合法選項
   function getValidItems() {
-    return [...dl.querySelectorAll("option")].map(o => o.value);
+    return _allItems;
   }
 
   inp2.addEventListener("input", () => {
     const item = inp2.value.trim();
     applyItemColor(item);
+    showDropdown(item);
 
     // Auto-fill L1 category if item typed directly and matches a known item
     if (item && sel1.value === "-") {
@@ -2534,14 +2650,18 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
 
   // 離開欄位時驗證：若不在合法品項內則清空
   inp2.addEventListener("blur", () => {
-    const item = inp2.value.trim();
-    if (!item) return;
-    const valid = getValidItems();
-    if (valid.length > 0 && !valid.includes(item)) {
-      inp2.value = "";
-      applyItemColor("");
-      scheduleAutoSave();
-    }
+    if (_isSelecting) return;
+    setTimeout(() => {
+      hideDropdown();
+      const item = inp2.value.trim();
+      if (!item) return;
+      const valid = getValidItems();
+      if (valid.length > 0 && !valid.includes(item)) {
+        inp2.value = "";
+        applyItemColor("");
+        scheduleAutoSave();
+      }
+    }, 150);
   });
 
   // Allow typing even when cat not selected (auto mode)
@@ -2554,7 +2674,6 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
 
   td1.appendChild(sel1);
   td2.appendChild(inp2);
-  td2.appendChild(dl);
   return [td1, td2];
 }
 
