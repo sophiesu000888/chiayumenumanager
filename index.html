@@ -5,6 +5,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -944,12 +945,6 @@ select.sel-l2:disabled {
   transition: color 0.15s; line-height: 1;
 }
 .chat-panel-header .cp-close:hover { color: #ef9a9a; }
-.chat-panel-header .cp-del {
-  background: none; border: none; color: #546e7a;
-  cursor: pointer; font-size: 0.75rem; padding: 0 0 0 4px;
-  transition: color 0.15s; line-height: 1;
-}
-.chat-panel-header .cp-del:hover { color: #ef5350; }
 .chat-panel-header .cp-toggle {
   color: #78909c; font-size: 0.7rem; transition: transform 0.2s;
 }
@@ -3426,7 +3421,6 @@ function buildChatPanel(roomId, targetUser) {
       <span class="cp-name">${targetUser.name || "用戶"}</span>
       <span class="cp-badge" id="cpbadge_${roomId}"></span>
       <span class="cp-toggle">▼</span>
-      <button class="cp-del" onclick="deleteChatRoom('${roomId}');event.stopPropagation();" title="刪除對話記錄">🗑</button>
       <button class="cp-close" onclick="closeChatPanel('${roomId}');event.stopPropagation();" title="關閉">✕</button>
     </div>
     <div class="chat-panel-body" id="cpbody_${roomId}">
@@ -3600,34 +3594,6 @@ function closeChatPanel(roomId) {
     if (empty) empty.style.display = "";
   }
   renderOnlineChatUsers(_lastOnlineUsers);
-}
-
-// ── 刪除整個對話記錄 ──
-async function deleteChatRoom(roomId) {
-  if (!confirm("確定刪除這段對話的所有訊息？\n（雙方都會看不到，且無法復原）")) return;
-
-  // 先停止監聽、清空畫面
-  if (chatMsgListeners[roomId]) {
-    chatMsgListeners[roomId]();
-    delete chatMsgListeners[roomId];
-  }
-  const body = document.getElementById(`cpbody_${roomId}`);
-  if (body) {
-    body.innerHTML = '<div class="chat-system-msg">🗑 對話已刪除</div>';
-  }
-
-  // 刪除 Firebase 上的訊息
-  try {
-    await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(async mod => {
-      const { getDatabase, ref, remove } = mod;
-      const db = getDatabase();
-      await remove(ref(db, `chat/${roomId}/messages`));
-    });
-  } catch(e) {
-    console.error("刪除對話失敗", e);
-    const body2 = document.getElementById(`cpbody_${roomId}`);
-    if (body2) body2.innerHTML += '<div class="chat-system-msg" style="color:#ef9a9a;">⚠️ 刪除失敗，請重試</div>';
-  }
 }
 
 function focusChatPanelInput(roomId) {
