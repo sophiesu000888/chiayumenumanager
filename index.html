@@ -2468,6 +2468,12 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   const td2 = document.createElement("td");
   td2.className = `td-l2 ${defaultStyleL2}`;
 
+  const inp2 = document.createElement("input");
+  inp2.type = "text";
+  inp2.className = "sel-l2 sel-l2-inp";
+  inp2.placeholder = "品項";
+  inp2.autocomplete = "off";
+
   function populateDatalistFromCat(cat) {
     const items = DB[cat] || [];
     _allItems = items.filter(i => i !== "-");
