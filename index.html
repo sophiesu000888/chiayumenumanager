@@ -7,6 +7,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -625,6 +627,12 @@ select.sel-l2:disabled {
 
 /* 抽屜內容區 */
 .drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 14px 16px;
+  -webkit-overflow-scrolling: touch;
+}
 
 /* ─ Quick-Add 快速新增區 ─ */
 .quick-add-box {
@@ -2895,6 +2903,7 @@ function renderCatDB() {
 
 // ===== Firebase 初始化流程 =====
 async function initApp() {
+  await loadDBConfig();   // 先從 Firebase 同步最新類別/品項/顏色設定
   await loadHistory();
   const loaded = await loadAll();
   if (!loaded) {
@@ -2962,6 +2971,7 @@ function _startFirebase() {
         name: user.displayName || user.email,
         photo: user.photoURL || "",
         uid: user.uid,
+        email: user.email || "",
         online: true,
         lastSeen: serverTimestamp()
       };
@@ -2995,11 +3005,14 @@ function _startFirebase() {
     _lastOnlineUsers = users || [];
     const el = document.getElementById("onlineUsersList");
     if (!el) return;
-    if (!users || users.length === 0) {
+    // 只顯示在白名單內的在線用戶
+    const allowedSet = new Set(ALLOWED_EMAILS.map(e => e.trim().toLowerCase()));
+    const filtered = (users || []).filter(u => allowedSet.has((u.email || "").toLowerCase()));
+    if (filtered.length === 0) {
       el.innerHTML = '<span style="color:#455a64;font-size:0.72rem;">—</span>';
       return;
     }
-    el.innerHTML = users.map(u => {
+    el.innerHTML = filtered.map(u => {
       const isMe = currentUser && u.uid === currentUser.uid;
       const meStyle = isMe ? 'opacity:0.6;cursor:default;' : 'cursor:pointer;';
       return `<span class="online-user-chip" style="${meStyle}">
@@ -3029,9 +3042,22 @@ function _startFirebase() {
 
     if (user && !fbListenerActive) {
       fbListenerActive = true;
-      let _lastMenuAt = null;       // 記錄上次資料時間戳
-      let _menuListenerReady = false; // 忽略第一次觸發（連線時的初始快照）
+      let _lastMenuAt = null;
+      let _menuListenerReady = false;
+      let _dbconfigListenerReady = false;
       const { db, ref, onValue } = window._fb;
+
+      // ── 監聽 dbconfig（類別/品項/顏色）別人改了即時同步 ──
+      onValue(ref(db, "dbconfig"), (snap) => {
+        if (!snap.exists()) { _dbconfigListenerReady = true; return; }
+        if (!_dbconfigListenerReady) { _dbconfigListenerReady = true; return; } // 略過初始快照
+        const val = snap.val();
+        if (val?.updatedBy && val.updatedBy.uid !== currentUser?.uid) {
+          applyDBConfig(val);
+          showSaveToast(`🔄 ${val.updatedBy.name} 更新了類別／品項`);
+        }
+      });
+
       onValue(ref(db, "menu"), (snap) => {
         if (!snap.exists()) { _menuListenerReady = true; return; }
         const data = snap.val();
@@ -3191,6 +3217,75 @@ function qaAddItem() {
   showSaveToast(`✅ 已新增「${name}」到「${cat}」${colorKey ? ' + 顏色組' : ''}`);
 }
 
+// ===== 即時刷新所有日期菜單的下拉選單 =====
+function refreshAllDropdowns(changedCat) {
+  document.querySelectorAll(".week-block").forEach(block => {
+    block.querySelectorAll("table tr").forEach(tr => {
+      const catTd = tr.querySelector(".td-cat");
+      if (!catTd) return;
+      const rowName = catTd.textContent;
+      const rowCats = ROW_CATS[rowName] || [];
+      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+      sels1.forEach(sel1 => {
+        const curVal = sel1.value;
+        sel1.innerHTML = rowCats.map(c =>
+          `<option value="${c}" ${c === curVal ? "selected" : ""}>${c}</option>`
+        ).join("");
+        if (!rowCats.includes(curVal)) sel1.value = "-";
+        // 若目前選的正好是被更動的類別，同步刷新 sel2
+        if (sel1.value === changedCat) {
+          const td2 = sel1.closest("td")?.nextElementSibling;
+          const sel2 = td2?.querySelector("select");
+          if (sel2 && !sel2.disabled) {
+            const curVal2 = sel2.value;
+            const items = DB[changedCat] || [];
+            sel2.innerHTML = `<option value="">-- 品項 --</option>` +
+              items.map(i => `<option value="${i}">${i}</option>`).join("");
+            if (items.includes(curVal2)) sel2.value = curVal2;
+          }
+        }
+      });
+    });
+  });
+}
+
+// ===== DB / ROW_CATS / COLOR_GROUPS 同步到 Firebase =====
+function saveDBConfig() {
+  if (!window._fbReady || !currentUser) return;
+  const { db, ref, set } = window._fb;
+  set(ref(db, "dbconfig"), {
+    DB, ROW_CATS, COLOR_GROUPS,
+    updatedBy: {
+      name: currentUser.displayName || currentUser.email,
+      uid: currentUser.uid,
+      at: new Date().toLocaleString("zh-TW")
+    }
+  }).catch(e => console.warn("dbconfig 儲存失敗", e));
+}
+
+async function loadDBConfig() {
+  if (!window._fbReady || !currentUser) return;
+  const { db, ref, get } = window._fb;
+  try {
+    const snap = await get(ref(db, "dbconfig"));
+    if (snap.exists()) applyDBConfig(snap.val());
+  } catch(e) { console.warn("dbconfig 載入失敗", e); }
+}
+
+function applyDBConfig(val) {
+  if (!val) return;
+  if (val.DB)           Object.assign(DB, val.DB);
+  if (val.ROW_CATS)     Object.assign(ROW_CATS, val.ROW_CATS);
+  if (val.COLOR_GROUPS) Object.assign(COLOR_GROUPS, val.COLOR_GROUPS);
+  // 重建 FOOD_COLOR 索引
+  Object.entries(COLOR_GROUPS).forEach(([key, g]) => {
+    (g.items || []).forEach(item => { FOOD_COLOR[item] = key; });
+  });
+  rerenderDBPanels();
+  initMgmtItems();
+  Object.keys(DB).forEach(cat => refreshAllDropdowns(cat));
+}
+
 // ===== 管理面板邏輯 =====
 
 function switchMgmtTab(tab) {}
@@ -3229,7 +3324,9 @@ function addItemToCategory() {
   inp.value = '';
   renderMgmtItems();
   rerenderDBPanels();
+  refreshAllDropdowns(cat);
   scheduleAutoSave();
+  saveDBConfig();
 }
 
 function removeItemFromCategory(cat, item) {
@@ -3237,7 +3334,9 @@ function removeItemFromCategory(cat, item) {
   DB[cat] = DB[cat].filter(i => i !== item);
   renderMgmtItems();
   rerenderDBPanels();
+  refreshAllDropdowns(cat);
   scheduleAutoSave();
+  saveDBConfig();
 }
 
 // 數字列（1~7），新增/刪除類別時自動同步
@@ -3250,7 +3349,6 @@ function addNewCategory() {
   if (DB[key]) { alert('此類別已存在！'); return; }
   DB[key] = ['-'];
   CAT_STYLES[key] = { titleBg:'#607d8b', titleFg:'#fff', itemBg:'#eceff1', itemFg:'#37474f' };
-  // 自動加入 1~7 列
   DATA_ROWS.forEach(row => {
     if (!ROW_CATS[row]) ROW_CATS[row] = ['-'];
     if (!ROW_CATS[row].includes(key)) ROW_CATS[row].push(key);
@@ -3259,7 +3357,9 @@ function addNewCategory() {
   document.getElementById('mgmt-cat-sel').value = key;
   renderMgmtItems();
   rerenderDBPanels();
+  refreshAllDropdowns(key);
   scheduleAutoSave();
+  saveDBConfig();
 }
 
 function deleteCurrentCategory() {
@@ -3267,13 +3367,14 @@ function deleteCurrentCategory() {
   if (!confirm(`確定刪除整個「${cat}」類別及其所有品項？`)) return;
   delete DB[cat];
   delete CAT_STYLES[cat];
-  // 從所有 ROW_CATS 列中移除此類別
   Object.keys(ROW_CATS).forEach(row => {
     ROW_CATS[row] = (ROW_CATS[row] || []).filter(c => c !== cat);
   });
   initMgmtItems();
   rerenderDBPanels();
+  refreshAllDropdowns(cat);
   scheduleAutoSave();
+  saveDBConfig();
 }
 
 function initMgmtColors() {
@@ -3318,6 +3419,7 @@ function addItemToColorGroup() {
   renderMgmtColorItems();
   rerenderDBPanels();
   scheduleAutoSave();
+  saveDBConfig();
 }
 
 function removeItemFromColorGroup(key, item) {
@@ -3327,6 +3429,7 @@ function removeItemFromColorGroup(key, item) {
   renderMgmtColorItems();
   rerenderDBPanels();
   scheduleAutoSave();
+  saveDBConfig();
 }
 
 function addNewColorGroup() {
@@ -3339,6 +3442,7 @@ function addNewColorGroup() {
   initMgmtColors();
   document.getElementById('mgmt-color-sel').value = k;
   renderMgmtColorItems();
+  saveDBConfig();
 }
 
 function deleteCurrentColorGroup() {
@@ -3348,6 +3452,7 @@ function deleteCurrentColorGroup() {
   delete COLOR_GROUPS[key];
   initMgmtColors();
   rerenderDBPanels();
+  saveDBConfig();
 }
 
 function applyColorGroupColors() {
@@ -3358,6 +3463,7 @@ function applyColorGroupColors() {
   COLOR_GROUPS[key].titleBg = document.getElementById('mgmt-color-titlebg').value;
   renderMgmtColorItems();
   rerenderDBPanels();
+  saveDBConfig();
 }
 
 function initMgmtRowCats() {
@@ -3391,11 +3497,15 @@ function addCatToRow() {
   if (ROW_CATS[row].includes(cat)) return;
   ROW_CATS[row].push(cat);
   renderMgmtRowCats();
+  refreshAllDropdowns(cat);
+  saveDBConfig();
 }
 
 function removeCatFromRow(row, cat) {
   ROW_CATS[row] = (ROW_CATS[row]||[]).filter(c=>c!==cat);
   renderMgmtRowCats();
+  refreshAllDropdowns(cat);
+  saveDBConfig();
 }
 
 function rerenderDBPanels() {
