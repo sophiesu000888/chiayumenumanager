@@ -807,104 +807,86 @@ select.sel-l2:disabled {
 }
 
 
-/* ===== 聊天抽屜 ===== */
-#tab-chat { background: #1a6b3a; color: #fff; }
-#tab-chat.has-unread {
-  animation: chatTabFlash 0.8s ease-in-out infinite alternate;
+/* ===== 即時聊天視窗 ===== */
+.chat-windows-container {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 40vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  z-index: 1050;
+  pointer-events: none;
 }
-@keyframes chatTabFlash {
-  from { background: #1a6b3a; box-shadow: none; }
-  to   { background: #43a047; box-shadow: -4px 0 16px rgba(102,187,106,0.7); }
-}
-#tab-chat .chat-tab-badge {
-  position: absolute; top: 6px; right: 4px;
-  background: #ef5350; color: #fff;
-  border-radius: 10px; font-size: 0.56rem; font-weight: 700;
-  padding: 1px 5px; min-width: 15px; text-align: center;
-  display: none; line-height: 1.4;
-}
-#tab-chat.has-unread .chat-tab-badge { display: block; }
-
-/* 聊天抽屜內佈局 */
-#drawer-chat { background: #1c2a30; }
-#drawer-chat .drawer-header { background: #263238; border-bottom: 1px solid #37474f; }
-
-.chat-rooms-list {
+.chat-window {
+  width: 100%;
+  max-width: 100%;
+  background: #1c2a30;
+  border-radius: 0;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.35);
   display: flex; flex-direction: column;
-  flex: 1; overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  pointer-events: all;
+  border: none;
+  border-left: 2px solid #37474f;
+  animation: chatSlideRight 0.25s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
 }
-
-/* 每個對話房間 */
-.chat-room-panel {
-  display: flex; flex-direction: column;
-  flex: 1; overflow: hidden;
+.chat-window + .chat-window {
+  border-top: 2px solid #263238;
 }
-.chat-room-tabs {
-  display: flex; gap: 0;
-  background: #1a2328; flex-shrink: 0;
-  border-bottom: 1px solid #263238;
-  overflow-x: auto;
+@keyframes chatSlideRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
-.chat-room-tab {
-  display: flex; align-items: center; gap: 6px;
-  padding: 8px 14px; cursor: pointer; user-select: none;
-  font-size: 0.78rem; font-weight: 600; color: #78909c;
-  border-bottom: 2px solid transparent;
-  white-space: nowrap; transition: all 0.15s; flex-shrink: 0;
-  position: relative;
+.chat-win-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; background: #263238;
+  cursor: pointer; user-select: none; flex-shrink: 0;
+  border-radius: 0;
 }
-.chat-room-tab img {
-  width: 18px; height: 18px; border-radius: 50%;
-  border: 1.5px solid #546e7a;
+.chat-win-header img {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid #66bb6a; flex-shrink: 0;
 }
-.chat-room-tab.active {
-  color: #a5d6a7; border-bottom-color: #66bb6a;
-  background: rgba(102,187,106,0.06);
+.chat-win-header .chat-win-name {
+  flex: 1; font-size: 0.8rem; font-weight: 700;
+  color: #eceff1; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
-.chat-room-tab .tab-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #66bb6a; box-shadow: 0 0 4px #66bb6a;
-  flex-shrink: 0;
+.chat-win-header .chat-win-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #66bb6a; flex-shrink: 0;
+  box-shadow: 0 0 4px #66bb6a;
 }
-.chat-room-tab .tab-close {
-  background: none; border: none; color: #546e7a;
-  cursor: pointer; font-size: 0.7rem; padding: 0 0 0 2px;
+.chat-win-header .chat-win-close {
+  background: none; border: none; color: #78909c;
+  cursor: pointer; font-size: 0.9rem; padding: 0 0 0 4px;
   line-height: 1; transition: color 0.15s;
 }
-.chat-room-tab .tab-close:hover { color: #ef9a9a; }
-.chat-room-tab .tab-unread {
+.chat-win-header .chat-win-close:hover { color: #ef9a9a; }
+.chat-win-header .chat-unread-badge {
   background: #ef5350; color: #fff;
-  border-radius: 10px; font-size: 0.6rem;
-  font-weight: 700; padding: 1px 5px; min-width: 14px;
-  text-align: center; display: none; line-height: 1.3;
+  border-radius: 10px; font-size: 0.66rem;
+  font-weight: 700; padding: 1px 6px; min-width: 18px;
+  text-align: center;
 }
-.chat-room-tab.has-unread .tab-unread { display: inline; }
-
-.chat-room-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
-.chat-room-content.active { display: flex; }
-
-/* 訊息區 */
 .chat-win-body {
-  flex: 1; overflow-y: auto; padding: 12px 12px 6px;
-  display: flex; flex-direction: column; gap: 7px;
+  flex: 1; overflow-y: auto; padding: 10px 10px 6px;
+  display: flex; flex-direction: column; gap: 6px;
   scroll-behavior: smooth;
   scrollbar-width: thin; scrollbar-color: #37474f #1c2a30;
 }
 .chat-win-body::-webkit-scrollbar { width: 4px; }
 .chat-win-body::-webkit-scrollbar-track { background: #1c2a30; }
 .chat-win-body::-webkit-scrollbar-thumb { background: #37474f; border-radius: 2px; }
-
-.chat-empty-hint {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 10px; color: #546e7a;
-  font-size: 0.82rem; text-align: center; padding: 20px;
-}
-.chat-empty-hint .chat-empty-icon { font-size: 2.5rem; }
-
-/* 氣泡 */
+.chat-win-body.collapsed { display: none; }
 .chat-bubble {
-  max-width: 82%; padding: 7px 11px;
-  border-radius: 14px; font-size: 0.8rem;
+  max-width: 85%; padding: 6px 10px;
+  border-radius: 12px; font-size: 0.88rem;
   line-height: 1.5; word-break: break-word;
   animation: bubbleIn 0.18s ease;
 }
@@ -923,47 +905,89 @@ select.sel-l2:disabled {
   border-bottom-left-radius: 3px;
 }
 .chat-bubble .chat-bubble-name {
-  font-size: 0.64rem; font-weight: 700;
+  font-size: 0.65rem; font-weight: 700;
   opacity: 0.65; margin-bottom: 2px;
 }
 .chat-bubble .chat-bubble-time {
-  font-size: 0.62rem; opacity: 0.4;
-  margin-top: 3px; text-align: right;
+  font-size: 0.62rem; opacity: 0.45;
+  margin-top: 2px; text-align: right;
 }
-.chat-system-msg {
-  text-align: center; font-size: 0.68rem;
-  color: #546e7a; padding: 2px 0;
-}
-
-/* 輸入列 */
 .chat-win-input-row {
-  display: flex; gap: 8px; padding: 8px 10px;
+  display: flex; gap: 6px; padding: 7px 8px;
   border-top: 1px solid #263238; flex-shrink: 0;
   background: #1c2a30;
 }
+.chat-win-input-row.collapsed { display: none; }
 .chat-win-input {
   flex: 1; background: #263238; border: 1px solid #37474f;
-  border-radius: 18px; padding: 7px 14px;
-  color: #eceff1; font-family: inherit; font-size: 0.8rem;
-  outline: none; resize: none; max-height: 80px;
-  transition: border-color 0.15s; line-height: 1.4;
+  border-radius: 16px; padding: 6px 12px;
+  color: #eceff1; font-family: inherit; font-size: 0.88rem;
+  outline: none; resize: none; max-height: 72px;
+  transition: border-color 0.15s;
 }
 .chat-win-input:focus { border-color: #66bb6a; }
 .chat-win-input::placeholder { color: #546e7a; }
 .chat-win-send {
   background: #2e7d32; border: none; border-radius: 50%;
-  width: 34px; height: 34px; cursor: pointer;
-  color: #fff; font-size: 0.95rem; flex-shrink: 0;
+  width: 30px; height: 30px; cursor: pointer;
+  color: #fff; font-size: 0.85rem; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   align-self: flex-end; transition: background 0.15s;
 }
 .chat-win-send:hover { background: #43a047; }
 .chat-win-send:disabled { background: #37474f; cursor: default; }
-
+.chat-system-msg {
+  text-align: center; font-size: 0.68rem;
+  color: #546e7a; padding: 2px 0;
+}
 .online-user-chip { cursor: pointer; }
 .online-user-chip:hover {
   background: rgba(102,187,106,0.28);
   border-color: rgba(102,187,106,0.6);
+}
+
+@media (max-width: 600px) {
+  /* 手機版：聊天視窗改為右側抽屜，只佔 50% 寬度 */
+  .chat-windows-container {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 50vw;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    z-index: 1050;
+    pointer-events: none;
+  }
+  .chat-window {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+    border-left: 2px solid #37474f;
+    flex: 1;
+    pointer-events: all;
+    animation: chatSlideRight 0.25s ease;
+  }
+  @keyframes chatSlideRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+  /* 多視窗時平均分配高度 */
+  .chat-window + .chat-window {
+    border-top: 2px solid #263238;
+  }
+  /* 輸入列避免被手機瀏覽器底部 UI 遮住 */
+  .chat-win-input-row {
+    padding-bottom: calc(7px + env(safe-area-inset-bottom, 0px));
+  }
+  /* 讓訊息區填滿剩餘空間 */
+  .chat-window .chat-win-body {
+    flex: 1;
+    min-height: 0;
+  }
 }
 @media (max-width: 600px) {
   body { padding: 8px 6px; }
@@ -1079,11 +1103,6 @@ select.sel-l2:disabled {
 
 <!-- ===== 右側標籤群 ===== -->
 <div class="drawer-tabs-rail">
-  <div class="side-tab" id="tab-chat" onclick="openDrawer('chat')" title="即時聊天">
-    <span class="st-icon">💬</span>
-    <span class="st-label">聊天</span>
-    <span class="chat-tab-badge" id="chatTabBadge">0</span>
-  </div>
   <div class="side-tab" id="tab-mgmt" onclick="openDrawer('mgmt')" title="資料管理">
     <span class="st-icon">⚙️</span>
     <span class="st-label">管理</span>
@@ -1108,24 +1127,6 @@ select.sel-l2:disabled {
 
 <!-- 共用遮罩 -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeAllDrawers()"></div>
-
-<!-- 💬 聊天抽屜 -->
-<div class="side-drawer" id="drawer-chat" style="background:#1c2a30;">
-  <div class="drawer-header" style="background:#263238;border-bottom:1px solid #37474f;">
-    <span>💬</span>
-    <h2 style="color:#eceff1;">即時聊天</h2>
-    <button class="drawer-close" onclick="closeAllDrawers()" style="color:#eceff1;">✕</button>
-  </div>
-  <!-- 無對話時的提示 -->
-  <div id="chatEmptyHint" class="chat-empty-hint">
-    <div class="chat-empty-icon">💬</div>
-    <div style="color:#546e7a;font-size:0.82rem;">點擊上方「在線用戶」的名字<br>即可開始對話</div>
-  </div>
-  <!-- 多人頁籤列 -->
-  <div id="chatRoomTabs" class="chat-room-tabs" style="display:none;"></div>
-  <!-- 各對話內容區 -->
-  <div id="chatRoomContents" style="display:flex;flex-direction:column;flex:1;overflow:hidden;"></div>
-</div>
 
 <!-- ① 資料管理抽屜 -->
 <div class="side-drawer" id="drawer-mgmt">
@@ -1335,6 +1336,9 @@ select.sel-l2:disabled {
   </div>
 </div>
 
+
+<!-- 聊天視窗容器 -->
+<div class="chat-windows-container" id="chatWindowsContainer"></div>
 
 <div class="save-toast" id="saveToast">✅ 已自動儲存</div>
 
@@ -3193,16 +3197,16 @@ function _startFirebase() {
 
     if (user && !fbListenerActive) {
       fbListenerActive = true;
-      let isFirstSnapshot = true;   // 第一次快照是初始載入，不算「別人更新」
       const { db, ref, onValue } = window._fb;
       onValue(ref(db, "menu"), (snap) => {
-        if (isFirstSnapshot) { isFirstSnapshot = false; return; }
         if (!snap.exists()) return;
         const data = snap.val();
         if (data && data.savedBy && data.savedBy.uid !== currentUser?.uid) {
-          // 只顯示 toast 提示，不呼叫 loadAll()（避免寫回觸發循環）
-          showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
-          // 靜默更新 lastSaveInfo 顯示
+          loadAll().then(() => {
+            showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
+          });
+        }
+        if (data && data.savedBy) {
           const info = document.getElementById("lastSaveInfo");
           if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
         }
@@ -3211,6 +3215,8 @@ function _startFirebase() {
 
     if (!appInitialized) {
       appInitialized = true;
+      await initApp();
+    } else if (user) {
       await initApp();
     }
   });
@@ -3223,162 +3229,58 @@ function _startFirebase() {
 }
 
 // ===== 即時聊天系統 =====
-// ===== 即時聊天（抽屜版） =====
-const openChatWindows = {};   // roomId -> { targetUser, unread }
+const openChatWindows = {};   // roomId -> { el, collapsed, unread, listener }
 let chatMsgListeners = {};    // roomId -> unsubscribe fn
-let myMsgRefs = [];           // 登出時刪除
-let activeChatRoom = null;    // 目前顯示的 roomId
-let totalUnread = 0;          // 聊天抽屜總未讀數
+let myMsgRefs = [];           // 記錄自己發的訊息 ref，登出時刪除
 
 function getChatRoomId(uid1, uid2) {
+  // 固定順序，雙方共用同一個 room
   return [uid1, uid2].sort().join("_");
 }
 
-// ── 未讀徽章管理 ──
-function updateChatTabBadge() {
-  const tab = document.getElementById("tab-chat");
-  const badge = document.getElementById("chatTabBadge");
-  if (!tab || !badge) return;
-  totalUnread = Object.values(openChatWindows).reduce((s, r) => s + (r.unread || 0), 0);
-  badge.textContent = totalUnread > 99 ? "99+" : totalUnread;
-  if (totalUnread > 0) {
-    tab.classList.add("has-unread");
-  } else {
-    tab.classList.remove("has-unread");
-  }
-}
-
-function clearChatTabBadge() {
-  // 打開抽屜時，清除目前選中房間的未讀
-  if (activeChatRoom && openChatWindows[activeChatRoom]) {
-    openChatWindows[activeChatRoom].unread = 0;
-    const tabEl = document.getElementById(`ctab_${activeChatRoom}`);
-    if (tabEl) {
-      tabEl.classList.remove("has-unread");
-      const badge = tabEl.querySelector(".tab-unread");
-      if (badge) badge.textContent = "";
-    }
-  }
-  updateChatTabBadge();
-}
-
-// ── 開啟與某人的對話 ──
 function openChatWith(targetUser) {
   if (!currentUser) return;
-  if (targetUser.uid === currentUser.uid) return;
+  if (targetUser.uid === currentUser.uid) return; // 不能和自己聊
 
   const roomId = getChatRoomId(currentUser.uid, targetUser.uid);
 
-  if (!openChatWindows[roomId]) {
-    openChatWindows[roomId] = { targetUser, unread: 0 };
-    _buildChatRoomTab(roomId, targetUser);
-    _buildChatRoomContent(roomId, targetUser);
-    listenChatRoom(roomId);
+  if (openChatWindows[roomId]) {
+    // 已開啟：展開並聚焦
+    expandChatWindow(roomId);
+    return;
   }
 
-  // 切換到這個房間並打開抽屜
-  switchChatRoom(roomId);
-  openDrawer('chat');
+  const win = buildChatWindow(roomId, targetUser);
+  document.getElementById("chatWindowsContainer").appendChild(win);
+  openChatWindows[roomId] = { el: win, collapsed: false, unread: 0 };
+
+  listenChatRoom(roomId);
+  focusChatInput(roomId);
 }
 
-function _buildChatRoomTab(roomId, targetUser) {
-  const tabsEl = document.getElementById("chatRoomTabs");
-  tabsEl.style.display = "flex";
-  document.getElementById("chatEmptyHint").style.display = "none";
-
-  const tab = document.createElement("div");
-  tab.className = "chat-room-tab";
-  tab.id = `ctab_${roomId}`;
-  tab.onclick = () => switchChatRoom(roomId);
-  tab.innerHTML = `
-    <span class="tab-dot"></span>
-    ${targetUser.photo ? `<img src="${targetUser.photo}" alt="">` : ""}
-    <span>${targetUser.name || "用戶"}</span>
-    <span class="tab-unread"></span>
-    <button class="tab-close" onclick="closeChatRoom('${roomId}');event.stopPropagation();" title="關閉">✕</button>
-  `;
-  tabsEl.appendChild(tab);
-}
-
-function _buildChatRoomContent(roomId, targetUser) {
-  const contentsEl = document.getElementById("chatRoomContents");
-  const panel = document.createElement("div");
-  panel.className = "chat-room-content";
-  panel.id = `ccontent_${roomId}`;
-  panel.innerHTML = `
+function buildChatWindow(roomId, targetUser) {
+  const win = document.createElement("div");
+  win.className = "chat-window";
+  win.id = `chatwin_${roomId}`;
+  win.innerHTML = `
+    <div class="chat-win-header" onclick="toggleChatWindow('${roomId}')">
+      <span class="chat-win-dot"></span>
+      ${targetUser.photo ? `<img src="${targetUser.photo}" alt="">` : ""}
+      <span class="chat-win-name">${targetUser.name || "用戶"}</span>
+      <span class="chat-unread-badge" id="unread_${roomId}" style="display:none;"></span>
+      <button class="chat-win-close" onclick="closeChatWindow('${roomId}');event.stopPropagation();" title="關閉">✕</button>
+    </div>
     <div class="chat-win-body" id="chatbody_${roomId}">
       <div class="chat-system-msg">開始與 ${targetUser.name || "對方"} 的對話</div>
     </div>
-    <div class="chat-win-input-row">
-      <textarea class="chat-win-input" id="chatinput_${roomId}" placeholder="輸入訊息… (Enter 送出)" rows="1"
+    <div class="chat-win-input-row" id="chatinputrow_${roomId}">
+      <textarea class="chat-win-input" id="chatinput_${roomId}" placeholder="輸入訊息…" rows="1"
         onkeydown="chatKeyDown(event,'${roomId}')"
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"></textarea>
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,72)+'px'"></textarea>
       <button class="chat-win-send" onclick="sendChatMsg('${roomId}')" id="chatsend_${roomId}">➤</button>
     </div>
   `;
-  contentsEl.appendChild(panel);
-}
-
-function switchChatRoom(roomId) {
-  activeChatRoom = roomId;
-  // 切換 tab active
-  document.querySelectorAll(".chat-room-tab").forEach(t => t.classList.remove("active"));
-  document.getElementById(`ctab_${roomId}`)?.classList.add("active");
-  // 切換 content active
-  document.querySelectorAll(".chat-room-content").forEach(c => c.classList.remove("active"));
-  document.getElementById(`ccontent_${roomId}`)?.classList.add("active");
-  // 清除此房間未讀
-  if (openChatWindows[roomId]) {
-    openChatWindows[roomId].unread = 0;
-    const tabEl = document.getElementById(`ctab_${roomId}`);
-    if (tabEl) {
-      tabEl.classList.remove("has-unread");
-      const b = tabEl.querySelector(".tab-unread");
-      if (b) b.textContent = "";
-    }
-  }
-  updateChatTabBadge();
-  // 捲到底 + 聚焦
-  setTimeout(() => {
-    const body = document.getElementById(`chatbody_${roomId}`);
-    if (body) body.scrollTop = body.scrollHeight;
-    const inp = document.getElementById(`chatinput_${roomId}`);
-    if (inp) inp.focus();
-  }, 50);
-}
-
-function focusActiveChatRoom() {
-  if (activeChatRoom) {
-    switchChatRoom(activeChatRoom);
-  } else {
-    // 若有任何房間，切到第一個
-    const first = Object.keys(openChatWindows)[0];
-    if (first) switchChatRoom(first);
-  }
-}
-
-function closeChatRoom(roomId) {
-  // 移除 tab
-  document.getElementById(`ctab_${roomId}`)?.remove();
-  // 移除 content
-  document.getElementById(`ccontent_${roomId}`)?.remove();
-  // 停止監聽
-  if (chatMsgListeners[roomId]) {
-    chatMsgListeners[roomId]();
-    delete chatMsgListeners[roomId];
-  }
-  delete openChatWindows[roomId];
-
-  // 若還有其他房間，切到第一個；否則顯示空提示
-  const remaining = Object.keys(openChatWindows);
-  if (remaining.length > 0) {
-    switchChatRoom(remaining[0]);
-  } else {
-    activeChatRoom = null;
-    document.getElementById("chatRoomTabs").style.display = "none";
-    document.getElementById("chatEmptyHint").style.display = "flex";
-  }
-  updateChatTabBadge();
+  return win;
 }
 
 function listenChatRoom(roomId) {
@@ -3414,23 +3316,12 @@ function appendChatBubble(roomId, msg, key) {
   body.appendChild(bubble);
   body.scrollTop = body.scrollHeight;
 
-  // 未讀：抽屜未開，或抽屜開著但不是這個房間
-  if (!isMe) {
-    const drawerOpen = document.getElementById("drawer-chat")?.classList.contains("open");
-    const isActive = activeChatRoom === roomId;
-    if (!drawerOpen || !isActive) {
-      const state = openChatWindows[roomId];
-      if (state) {
-        state.unread = (state.unread || 0) + 1;
-        const tabEl = document.getElementById(`ctab_${roomId}`);
-        if (tabEl) {
-          tabEl.classList.add("has-unread");
-          const b = tabEl.querySelector(".tab-unread");
-          if (b) b.textContent = state.unread > 99 ? "99+" : state.unread;
-        }
-      }
-      updateChatTabBadge();
-    }
+  // 未讀計數（視窗折疊時）
+  const winState = openChatWindows[roomId];
+  if (winState && winState.collapsed && !isMe) {
+    winState.unread = (winState.unread || 0) + 1;
+    const badge = document.getElementById(`unread_${roomId}`);
+    if (badge) { badge.textContent = winState.unread; badge.style.display = "inline"; }
   }
 }
 
@@ -3444,7 +3335,7 @@ async function sendChatMsg(roomId) {
 
   try {
     await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(async mod => {
-      const { getDatabase, ref, push, onDisconnect } = mod;
+      const { getDatabase, ref, push, serverTimestamp, onDisconnect } = mod;
       const db = getDatabase();
       const msgsRef = ref(db, `chat/${roomId}/messages`);
       const newRef = await push(msgsRef, {
@@ -3453,6 +3344,7 @@ async function sendChatMsg(roomId) {
         text: text,
         at:   Date.now()
       });
+      // 登出時自動刪除此訊息
       myMsgRefs.push(newRef);
       onDisconnect(newRef).remove();
     });
@@ -3473,6 +3365,44 @@ function chatKeyDown(e, roomId) {
   }
 }
 
+function toggleChatWindow(roomId) {
+  const state = openChatWindows[roomId];
+  if (!state) return;
+  state.collapsed = !state.collapsed;
+  const body = document.getElementById(`chatbody_${roomId}`);
+  const inputRow = document.getElementById(`chatinputrow_${roomId}`);
+  if (body) body.classList.toggle("collapsed", state.collapsed);
+  if (inputRow) inputRow.classList.toggle("collapsed", state.collapsed);
+  if (!state.collapsed) {
+    // 展開：清除未讀
+    state.unread = 0;
+    const badge = document.getElementById(`unread_${roomId}`);
+    if (badge) { badge.textContent = ""; badge.style.display = "none"; }
+    const b = document.getElementById(`chatbody_${roomId}`);
+    if (b) b.scrollTop = b.scrollHeight;
+    focusChatInput(roomId);
+  }
+}
+
+function expandChatWindow(roomId) {
+  const state = openChatWindows[roomId];
+  if (!state) return;
+  if (state.collapsed) toggleChatWindow(roomId);
+  else focusChatInput(roomId);
+}
+
+function closeChatWindow(roomId) {
+  const state = openChatWindows[roomId];
+  if (!state) return;
+  state.el.remove();
+  delete openChatWindows[roomId];
+  // 停止監聽
+  if (chatMsgListeners[roomId]) {
+    chatMsgListeners[roomId]();
+    delete chatMsgListeners[roomId];
+  }
+}
+
 function focusChatInput(roomId) {
   setTimeout(() => {
     const inp = document.getElementById(`chatinput_${roomId}`);
@@ -3487,6 +3417,7 @@ function escapeHtml(str) {
     .replace(/\n/g,"<br>");
 }
 
+// 登出時刪除自己所有的聊天訊息
 async function deleteMyChatMsgs() {
   if (myMsgRefs.length === 0) return;
   try {
@@ -3499,15 +3430,16 @@ async function deleteMyChatMsgs() {
   myMsgRefs = [];
 }
 
+// 關閉所有聊天視窗
 function closeAllChatWindows() {
-  Object.keys(openChatWindows).forEach(closeChatRoom);
+  Object.keys(openChatWindows).forEach(closeChatWindow);
 }
 
 
 startWhenReady();
 
 // ===== 多抽屜系統 =====
-const DRAWER_IDS = ['chat','mgmt','export','hist','colors','cats'];
+const DRAWER_IDS = ['mgmt','export','hist','colors','cats'];
 
 function openDrawer(id) {
   DRAWER_IDS.forEach(d => {
@@ -3517,7 +3449,6 @@ function openDrawer(id) {
   document.getElementById('drawer-'+id).classList.add('open');
   document.getElementById('tab-'+id).classList.add('open');
   document.getElementById('drawer-overlay').classList.add('show');
-  if (id === 'chat')   { clearChatTabBadge(); focusActiveChatRoom(); }
   if (id === 'mgmt')   { initMgmtItems(); qaInitSelects(); }
   if (id === 'export') { updateImgDateHint(); updateHistDateHint(); }
   if (id === 'hist')   { renderHistoryPanel(); }
