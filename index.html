@@ -752,83 +752,78 @@ input.sel-l2-inp:disabled {
 .loc-qty-wrap {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   background: rgba(255,255,255,0.18);
   border-radius: 20px;
-  padding: 3px 10px 3px 8px;
-  margin-left: 3px;
-  border: 1.5px solid rgba(255,255,255,0.35);
-  transition: background 0.15s, border-color 0.15s;
-  backdrop-filter: blur(2px);
-}
-.loc-qty-wrap:focus-within {
-  background: rgba(255,255,255,0.28);
-  border-color: rgba(255,255,255,0.6);
+  padding: 2px 7px 2px 5px;
+  margin-left: 2px;
+  border: 1px solid rgba(255,255,255,0.3);
 }
 .loc-qty-star {
-  color: rgba(255,255,255,0.9);
-  font-size: 0.72rem;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.7rem;
   font-weight: 700;
-  line-height: 1;
-  user-select: none;
-  flex-shrink: 0;
 }
 .loc-qty-inp {
-  width: 36px;
+  width: 32px;
   background: transparent;
   border: none;
-  outline: none;
   color: #fff;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   text-align: center;
+  outline: none;
   font-family: inherit;
-  letter-spacing: 0.5px;
   -moz-appearance: textfield;
 }
 .loc-qty-inp::-webkit-outer-spin-button,
 .loc-qty-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.loc-qty-inp::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; font-size: 0.72rem; }
+.loc-qty-inp::placeholder { color: rgba(255,255,255,0.4); font-weight: 400; }
 .loc-qty-unit {
-  color: rgba(255,255,255,0.85);
-  font-size: 0.75rem;
-  font-weight: 700;
-  white-space: nowrap;
-  flex-shrink: 0;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
-/* ── 地點複製/貼上按鈕 ── */
-.loc-cp-btn {
+/* ── 地點操作按鈕（複製／貼上／清除）── */
+.loc-cp-btn, .loc-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: rgba(255,255,255,0.85);
-  border-radius: 4px;
-  padding: 1px 6px;
-  font-size: 0.62rem;
+  border: 1px solid rgba(255,255,255,0.28);
+  color: rgba(255,255,255,0.82);
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 0.65rem;
   font-weight: 700;
   cursor: pointer;
   line-height: 1.4;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
   font-family: inherit;
   white-space: nowrap;
+  letter-spacing: 0.3px;
 }
-.loc-cp-btn:hover { background: rgba(255,255,255,0.32); color: #fff; }
-.loc-cp-btn.copied { background: rgba(255,220,0,0.35); border-color: rgba(255,220,0,0.6); color: #ffe57f; }
+.loc-cp-btn:hover {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.55);
+  color: #fff;
+}
+.loc-cp-btn.copied {
+  background: rgba(255,220,50,0.28);
+  border-color: rgba(255,220,50,0.55);
+  color: #ffe97f;
+}
 .loc-clear-btn {
-  background: rgba(239,154,154,0.2);
-  border: 1px solid rgba(239,154,154,0.4);
-  color: rgba(239,154,154,0.9);
-  border-radius: 4px;
-  padding: 1px 6px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  cursor: pointer;
-  line-height: 1.4;
-  transition: background 0.15s, color 0.15s;
-  font-family: inherit;
-  white-space: nowrap;
+  background: rgba(239,154,154,0.15);
+  border-color: rgba(239,154,154,0.35);
+  color: rgba(239,154,154,0.85);
 }
-.loc-clear-btn:hover { background: rgba(239,83,80,0.35); border-color: rgba(239,83,80,0.6); color: #ffcdd2; }
+.loc-clear-btn:hover {
+  background: rgba(239,83,80,0.28);
+  border-color: rgba(239,83,80,0.55);
+  color: #ffcdd2;
+}
 
 
 
@@ -2687,12 +2682,10 @@ function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste, onCl
   const qtyInp = document.createElement("input");
   qtyInp.type = "text";
   qtyInp.inputMode = "numeric";
-  qtyInp.pattern = "[0-9]*";
   qtyInp.className = "loc-qty-inp";
   qtyInp.placeholder = "份數";
   if (initQty) qtyInp.value = initQty;
   qtyInp.addEventListener("input", () => {
-    // 只允許數字
     qtyInp.value = qtyInp.value.replace(/[^0-9]/g, "");
     scheduleAutoSave();
   });
@@ -3245,6 +3238,7 @@ function _startFirebase() {
       presenceRef = ref(db, `presence/${user.uid}`);
       const userData = {
         name: user.displayName || user.email,
+        email: user.email || "",
         photo: user.photoURL || "",
         uid: user.uid,
         online: true,
@@ -3280,11 +3274,16 @@ function _startFirebase() {
     _lastOnlineUsers = users || [];
     const el = document.getElementById("onlineUsersList");
     if (!el) return;
-    if (!users || users.length === 0) {
+    // 只顯示白名單內的在線用戶
+    const allowedUsers = (users || []).filter(u => {
+      if (!u.email) return false;
+      return ALLOWED_EMAILS.map(e => e.trim().toLowerCase()).includes(u.email.toLowerCase());
+    });
+    if (allowedUsers.length === 0) {
       el.innerHTML = '<span style="color:#455a64;font-size:0.72rem;">—</span>';
       return;
     }
-    el.innerHTML = users.map(u => {
+    el.innerHTML = allowedUsers.map(u => {
       const isMe = currentUser && u.uid === currentUser.uid;
       const meStyle = isMe ? 'opacity:0.6;cursor:default;' : 'cursor:pointer;';
       return `<span class="online-user-chip" style="${meStyle}">
