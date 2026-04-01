@@ -770,7 +770,7 @@ input.sel-l2-inp:disabled {
   font-weight: 700;
 }
 .loc-qty-inp {
-  width: 3ch;
+  width: 4ch;
   background: transparent;
   border: none;
   color: #fff;
@@ -837,17 +837,17 @@ button {
   color: #ffe97f;
 }
 .loc-clear-btn {
-  background: rgba(239,154,154,0.15);
-  border-color: rgba(239,154,154,0.35);
-  color: rgba(239,154,154,0.85);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.28);
+  color: #ff6b6b;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.18);
 }
 .loc-clear-btn:hover {
-  background: rgba(239,83,80,0.28);
-  border-color: rgba(239,83,80,0.55);
-  color: #ffcdd2;
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.55);
+  color: #ff4444;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(239,83,80,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
 
@@ -2509,24 +2509,39 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     scheduleAutoSave();
   });
 
+  // 取得目前 datalist 所有合法選項
+  function getValidItems() {
+    return [...dl.querySelectorAll("option")].map(o => o.value);
+  }
+
   inp2.addEventListener("input", () => {
     const item = inp2.value.trim();
     applyItemColor(item);
 
     // Auto-fill L1 category if item typed directly and matches a known item
     if (item && sel1.value === "-") {
-      // Search all cats for this item
       for (const cat of cats) {
         if (cat === "-") continue;
         if ((DB[cat] || []).includes(item)) {
           sel1.value = cat;
-          // Update datalist to this cat's items
           populateDatalistFromCat(cat);
           break;
         }
       }
     }
     scheduleAutoSave();
+  });
+
+  // 離開欄位時驗證：若不在合法品項內則清空
+  inp2.addEventListener("blur", () => {
+    const item = inp2.value.trim();
+    if (!item) return;
+    const valid = getValidItems();
+    if (valid.length > 0 && !valid.includes(item)) {
+      inp2.value = "";
+      applyItemColor("");
+      scheduleAutoSave();
+    }
   });
 
   // Allow typing even when cat not selected (auto mode)
@@ -2761,8 +2776,14 @@ function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste, onCl
     if (onClear) onClear();
   });
 
-  wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap);
-  wrap.appendChild(copyBtn); wrap.appendChild(pasteBtn); wrap.appendChild(clearBtn); wrap.appendChild(delBtn);
+  wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap); wrap.appendChild(delBtn);
+
+  // ── 第二行：複製／貼上／清除 ──
+  const btnRow = document.createElement("div");
+  btnRow.style.cssText = "display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin-top:1px;";
+  btnRow.appendChild(copyBtn); btnRow.appendChild(pasteBtn); btnRow.appendChild(clearBtn);
+  wrap.appendChild(btnRow);
+
   th.appendChild(wrap);
   return th;
 }
