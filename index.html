@@ -2,6 +2,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -3141,16 +3143,16 @@ function _startFirebase() {
 
     if (user && !fbListenerActive) {
       fbListenerActive = true;
+      let isFirstSnapshot = true;   // 第一次快照是初始載入，不算「別人更新」
       const { db, ref, onValue } = window._fb;
       onValue(ref(db, "menu"), (snap) => {
+        if (isFirstSnapshot) { isFirstSnapshot = false; return; }
         if (!snap.exists()) return;
         const data = snap.val();
         if (data && data.savedBy && data.savedBy.uid !== currentUser?.uid) {
-          loadAll().then(() => {
-            showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
-          });
-        }
-        if (data && data.savedBy) {
+          // 只顯示 toast 提示，不呼叫 loadAll()（避免寫回觸發循環）
+          showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
+          // 靜默更新 lastSaveInfo 顯示
           const info = document.getElementById("lastSaveInfo");
           if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
         }
@@ -3159,8 +3161,6 @@ function _startFirebase() {
 
     if (!appInitialized) {
       appInitialized = true;
-      await initApp();
-    } else if (user) {
       await initApp();
     }
   });
