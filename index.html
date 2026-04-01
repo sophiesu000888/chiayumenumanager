@@ -752,31 +752,34 @@ input.sel-l2-inp:disabled {
 .loc-qty-wrap {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   background: rgba(255,255,255,0.18);
   border-radius: 20px;
-  padding: 2px 7px 2px 5px;
-  margin-left: 2px;
-  border: 1px solid rgba(255,255,255,0.3);
-  transition: background 0.15s;
+  padding: 3px 10px 3px 8px;
+  margin-left: 3px;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  transition: background 0.15s, border-color 0.15s;
+  backdrop-filter: blur(2px);
 }
 .loc-qty-wrap:focus-within {
-  background: rgba(255,255,255,0.32);
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.6);
 }
 .loc-qty-star {
-  color: rgba(255,255,255,0.85);
-  font-size: 0.7rem;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.72rem;
   font-weight: 700;
   line-height: 1;
   user-select: none;
+  flex-shrink: 0;
 }
 .loc-qty-inp {
-  width: 32px;
+  width: 36px;
   background: transparent;
   border: none;
   outline: none;
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   text-align: center;
   font-family: inherit;
@@ -785,12 +788,13 @@ input.sel-l2-inp:disabled {
 }
 .loc-qty-inp::-webkit-outer-spin-button,
 .loc-qty-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.loc-qty-inp::placeholder { color: rgba(255,255,255,0.4); font-weight: 400; }
+.loc-qty-inp::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; font-size: 0.72rem; }
 .loc-qty-unit {
-  color: rgba(255,255,255,0.75);
-  font-size: 0.7rem;
-  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.75rem;
+  font-weight: 700;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ── 地點複製/貼上按鈕 ── */
@@ -810,6 +814,21 @@ input.sel-l2-inp:disabled {
 }
 .loc-cp-btn:hover { background: rgba(255,255,255,0.32); color: #fff; }
 .loc-cp-btn.copied { background: rgba(255,220,0,0.35); border-color: rgba(255,220,0,0.6); color: #ffe57f; }
+.loc-clear-btn {
+  background: rgba(239,154,154,0.2);
+  border: 1px solid rgba(239,154,154,0.4);
+  color: rgba(239,154,154,0.9);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.loc-clear-btn:hover { background: rgba(239,83,80,0.35); border-color: rgba(239,83,80,0.6); color: #ffcdd2; }
 
 
 
@@ -2576,7 +2595,37 @@ function pasteLocColumn(block, colIdx) {
   showSaveToast("✅ 已貼上品項到此欄");
 }
 
-function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste) {
+// ===== 地點欄清除 =====
+function clearLocColumn(block, colIdx) {
+  if (!confirm("確定清空此地點的所有菜單內容？")) return;
+
+  const rowMap = {};
+  block.querySelectorAll("table tr").forEach(tr => {
+    const catTd = tr.querySelector(".td-cat");
+    if (!catTd) return;
+    rowMap[catTd.textContent] = tr;
+  });
+
+  Object.values(rowMap).forEach(tr => {
+    const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+    const s1 = sels1[colIdx];
+    const i2 = inps2[colIdx];
+    if (s1) {
+      s1.value = "-";
+      s1.dispatchEvent(new Event("change"));
+    }
+    if (i2) {
+      i2.value = "";
+      i2.dispatchEvent(new Event("input"));
+    }
+  });
+
+  scheduleAutoSave();
+  showSaveToast("🗑️ 已清空此欄品項");
+}
+
+function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste, onClear) {
   const th = document.createElement("th");
   const isDark = (locIndex % 2 === 0);
   if (type === "h") {
@@ -2636,12 +2685,17 @@ function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste) {
   qtyStar.textContent = "✦";
 
   const qtyInp = document.createElement("input");
-  qtyInp.type = "number";
+  qtyInp.type = "text";
+  qtyInp.inputMode = "numeric";
+  qtyInp.pattern = "[0-9]*";
   qtyInp.className = "loc-qty-inp";
-  qtyInp.min = "0";
   qtyInp.placeholder = "份數";
   if (initQty) qtyInp.value = initQty;
-  qtyInp.addEventListener("input", scheduleAutoSave);
+  qtyInp.addEventListener("input", () => {
+    // 只允許數字
+    qtyInp.value = qtyInp.value.replace(/[^0-9]/g, "");
+    scheduleAutoSave();
+  });
 
   const qtyUnit = document.createElement("span");
   qtyUnit.className = "loc-qty-unit";
@@ -2680,8 +2734,17 @@ function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste) {
   // 每次顯示時根據 clipboard 狀態更新
   th._pasteBtn = pasteBtn;
 
+  // ── 清除按鈕 ──
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "loc-clear-btn";
+  clearBtn.title = "清空此欄所有品項";
+  clearBtn.textContent = "清除";
+  clearBtn.addEventListener("click", () => {
+    if (onClear) onClear();
+  });
+
   wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap);
-  wrap.appendChild(copyBtn); wrap.appendChild(pasteBtn); wrap.appendChild(delBtn);
+  wrap.appendChild(copyBtn); wrap.appendChild(pasteBtn); wrap.appendChild(clearBtn); wrap.appendChild(delBtn);
   th.appendChild(wrap);
   return th;
 }
@@ -2760,31 +2823,29 @@ function buildWeek(weekNum, initHLocs, initWLocs, initHQtys, initWQtys) {
 
     const hr2 = tbl.insertRow();
     hLocs.forEach((loc, i) => {
-      const colIdx = i;  // 在整個表格中的欄位 index
+      const colIdx = i;
       hr2.appendChild(makeLocTh(loc, "h", () => {
         readCurrentQtys();
         if (hLocs.length<=1) { alert("至少需保留一個健康餐地點"); return; }
         if (!confirm(`刪除「${loc}」欄位？`)) return;
         hLocs.splice(i,1); hQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
       }, i, hQtys[i],
-      // onCopy
       (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
-      // onPaste
-      () => pasteLocColumn(block, colIdx)
+      () => pasteLocColumn(block, colIdx),
+      () => clearLocColumn(block, colIdx)
       ));
     });
     wLocs.forEach((loc, i) => {
-      const colIdx = hLocs.length + i;  // 風味餐欄位 index 接在健康餐後面
+      const colIdx = hLocs.length + i;
       hr2.appendChild(makeLocTh(loc, "w", () => {
         readCurrentQtys();
         if (wLocs.length<=1) { alert("至少需保留一個風味餐地點"); return; }
         if (!confirm(`刪除「${loc}」欄位？`)) return;
         wLocs.splice(i,1); wQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
       }, i, wQtys[i],
-      // onCopy
       (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
-      // onPaste
-      () => pasteLocColumn(block, colIdx)
+      () => pasteLocColumn(block, colIdx),
+      () => clearLocColumn(block, colIdx)
       ));
     });
 
@@ -2828,7 +2889,28 @@ function buildWeek(weekNum, initHLocs, initWLocs, initHQtys, initWQtys) {
 
 function addWeek() {
   weekCount++;
-  const block = buildWeek(weekCount);
+
+  // 以最新日期（最後一筆）的地點設定為預設值
+  const blocks = document.querySelectorAll(".week-block");
+  let initHLocs, initWLocs;
+  if (blocks.length > 0) {
+    const lastBlock = blocks[blocks.length - 1];
+    const lastWid = lastBlock.id.replace("block_", "");
+    const lastInfo = weekDataMap[lastWid];
+    if (lastInfo) {
+      // 讀取最新日期目前實際的地點名稱（從 DOM）
+      const locSels = [...lastBlock.querySelectorAll(".loc-sel")];
+      const locInps = [...lastBlock.querySelectorAll(".loc-inp")];
+      const allNames = locSels.map((s, i) => {
+        if (s.style.display === "none") return locInps[i]?.value || "";
+        return s.value === "__custom__" ? (locInps[i]?.value || "") : s.value;
+      });
+      initHLocs = allNames.slice(0, lastInfo.hLocs.length);
+      initWLocs = allNames.slice(lastInfo.hLocs.length, lastInfo.hLocs.length + lastInfo.wLocs.length);
+    }
+  }
+
+  const block = buildWeek(weekCount, initHLocs, initWLocs);
   document.getElementById("scheduleArea").appendChild(block);
   scheduleAutoSave();
 }
