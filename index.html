@@ -1820,7 +1820,7 @@ function restoreFromHistory(idx) {
       s1.value = c.v1;
       s1.dispatchEvent(new Event("change"));
       setTimeout(() => {
-        if (inp2 && c.v2) {
+        if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
           inp2.value = c.v2;
           inp2.dispatchEvent(new Event("input"));
         }
@@ -2179,7 +2179,7 @@ async function exportAsImage(itemOnlyMode) {
       rowsHTML += "</tr>";
     });
 
-    tablesHTML += `<div class="week-block" style="margin-bottom:28px;"><div class="week-titlebar"><span class="week-label">日期：${date}</span><span class="week-day">${day}</span></div><div class="tbl-wrap"><table>${hr1}${hr2}${hr3}${rowsHTML}</table></div></div>`;
+    tablesHTML += `<div class="week-block" style="margin-bottom:28px;"><div class="week-titlebar"><span class="week-label">日期：${date}</span>${(day && day !== "請選日期") ? `<span class="week-day">${day}</span>` : ""}</div><div class="tbl-wrap"><table>${hr1}${hr2}${hr3}${rowsHTML}</table></div></div>`;
   });
 
   // 建立離屏 iframe 來渲染
@@ -2190,7 +2190,7 @@ async function exportAsImage(itemOnlyMode) {
   iDoc.open();
   iDoc.write(`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-<style>${cssText} body{font-family:'Noto Sans TC',sans-serif;background:#eceff1;padding:18px 12px;} select{display:none;} h1{text-align:center;color:#2e7d32;font-size:1.4rem;font-weight:700;margin-bottom:12px;letter-spacing:3px;} .tbl-wrap{overflow-x:visible;}</style>
+<style>${cssText} body{font-family:'Noto Sans TC',sans-serif;background:#eceff1;padding:18px 12px;} select{display:none;} input[type="date"]{display:none;} .btn-save-to-history,.btn-del-week,.loc-cp-btn,.loc-clear-btn,.loc-qty-wrap{display:none;} h1{text-align:center;color:#2e7d32;font-size:1.4rem;font-weight:700;margin-bottom:12px;letter-spacing:3px;} .tbl-wrap{overflow-x:visible;}</style>
 </head><body>
 <h1>chiayumenu（${modeLabel}）</h1>
 <p style="text-align:center;color:#78909c;font-size:0.82rem;margin-bottom:18px;">匯出時間：${new Date().toLocaleString("zh-TW")}</p>
@@ -2391,7 +2391,7 @@ async function loadAll() {
         s1.value = c.v1;
         s1.dispatchEvent(new Event("change"));
         setTimeout(() => {
-          if (inp2 && c.v2) {
+          if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
             inp2.value = c.v2;
             inp2.dispatchEvent(new Event("input"));
           }
@@ -2427,7 +2427,7 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   const sel1 = document.createElement("select");
   sel1.className = "sel-l1";
   sel1.innerHTML = cats.map(c =>
-    `<option value="${c}" ${c==="-"?"selected":""}>${c}</option>`
+    `<option value="${c}" ${c==="-"?"selected":""}>${c === "-" ? "" : c}</option>`
   ).join("");
 
   // ── L2: 改為 input + datalist ──
