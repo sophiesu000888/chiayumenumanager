@@ -652,19 +652,20 @@ select.sel-l2:disabled {
   display: flex;
   flex-direction: column;
 }
-/* 手機：聊天抽屜高度跟隨視窗（鍵盤彈出時縮短） */
+/* 手機：聊天抽屜只佔右側 50% 寬度 */
 @media (max-width: 600px) {
   #drawer-chat {
-    height: 100dvh;
+    width: 50vw;
+    max-width: 50vw;
+    height: 100vh;
   }
   .chat-panel {
     flex-shrink: 0;
   }
 }
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px;
-}
+
+/* 抽屜內容區 */
+.drawer-body {
 
 /* ─ Quick-Add 快速新增區 ─ */
 .quick-add-box {
@@ -959,17 +960,19 @@ select.sel-l2:disabled {
 .chat-panel-body.cpb-collapsed { display: none; }
 
 .chat-panel-input-row {
-  display: flex; gap: 5px; padding: 6px 8px;
+  display: flex; gap: 5px;
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid #1c2a30; flex-shrink: 0;
   background: #1c2a30;
-  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  align-items: flex-end;
 }
 .chat-panel-input-row.cpir-collapsed { display: none; }
 .chat-panel-input {
   flex: 1; background: #263238; border: 1px solid #37474f;
   border-radius: 14px; padding: 5px 10px;
   color: #eceff1; font-family: inherit; font-size: 0.83rem;
-  outline: none; resize: none; max-height: 64px;
+  outline: none; resize: none; height: auto; max-height: 64px; min-height: 32px;
+  line-height: 1.4;
   transition: border-color 0.15s;
 }
 .chat-panel-input:focus { border-color: #66bb6a; }
@@ -3423,7 +3426,7 @@ function buildChatPanel(roomId, targetUser) {
     <div class="chat-panel-input-row" id="cpinput_${roomId}">
       <textarea class="chat-panel-input" id="cptxt_${roomId}" placeholder="輸入訊息…" rows="1"
         onkeydown="chatPanelKeyDown(event,'${roomId}')"
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,64)+'px'"></textarea>
+        oninput="this.style.height='32px';this.style.height=Math.min(this.scrollHeight,64)+'px'"></textarea>
       <button class="chat-panel-send" onclick="sendChatPanelMsg('${roomId}')" id="cpsend_${roomId}">➤</button>
     </div>
   `;
