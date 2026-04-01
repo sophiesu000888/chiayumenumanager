@@ -638,6 +638,11 @@ input.sel-l2-inp:disabled {
 
 /* 抽屜內容區 */
 .drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 20px;
+  -webkit-overflow-scrolling: touch;
+}
 
 /* ─ Quick-Add 快速新增區 ─ */
 .quick-add-box {
@@ -749,37 +754,32 @@ input.sel-l2-inp:disabled {
 .drawer-section.active { display: block; }
 
 /* ── 份數 badge ── */
-/* ── 份數 badge（修正版） ── */
 .loc-qty-wrap {
   display: flex;
   align-items: center;
-
-  gap: 6px;                 /* 原本太擠 → 放大 */
-  padding: 6px 10px;        /* 原本太扁 → 增加高度 */
-
+  gap: 2px;
   background: rgba(255,255,255,0.18);
-  border-radius: 12px;      /* 原本 20px 太像膠囊 */
+  border-radius: 20px;
+  padding: 2px 7px 2px 5px;
   margin-left: 2px;
   border: 1px solid rgba(255,255,255,0.3);
 }
-
-/* input 正常尺寸 */
-.loc-qty-wrap input {
-  height: 26px;
-  min-width: 40px;
+.loc-qty-star {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.loc-qty-inp {
+  width: 3ch;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
   text-align: center;
-  padding: 2px 6px;
-  box-sizing: border-box;
-}
-
-/* 按鈕不要被壓扁 */
-.loc-qty-wrap button {
-  height: 26px;
-  padding: 0 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  outline: none;
+  font-family: inherit;
+  -moz-appearance: textfield;
 }
 .loc-qty-inp::-webkit-outer-spin-button,
 .loc-qty-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -811,15 +811,25 @@ button {
   font-weight: 700;
   cursor: pointer;
   line-height: 1.4;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s;
   font-family: inherit;
   white-space: nowrap;
   letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.18);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 .loc-cp-btn:hover {
   background: rgba(255,255,255,0.28);
   border-color: rgba(255,255,255,0.55);
   color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.22);
+}
+.loc-cp-btn:active, .loc-clear-btn:active {
+  transform: scale(0.91);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: transform 0.08s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.08s;
 }
 .loc-cp-btn.copied {
   background: rgba(255,220,50,0.28);
@@ -830,11 +840,14 @@ button {
   background: rgba(239,154,154,0.15);
   border-color: rgba(239,154,154,0.35);
   color: rgba(239,154,154,0.85);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .loc-clear-btn:hover {
   background: rgba(239,83,80,0.28);
   border-color: rgba(239,83,80,0.55);
   color: #ffcdd2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(239,83,80,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 
