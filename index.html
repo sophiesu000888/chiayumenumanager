@@ -793,6 +793,24 @@ input.sel-l2-inp:disabled {
   white-space: nowrap;
 }
 
+/* ── 地點複製/貼上按鈕 ── */
+.loc-cp-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.loc-cp-btn:hover { background: rgba(255,255,255,0.32); color: #fff; }
+.loc-cp-btn.copied { background: rgba(255,220,0,0.35); border-color: rgba(255,220,0,0.6); color: #ffe57f; }
+
 
 
 .online-user-chip {
@@ -1242,6 +1260,10 @@ let saveTimer = null;
 let weekDataMap = {};
 let _isLoading = false;   // 載入中旗標，避免 dispatchEvent 觸發不必要的自動儲存
 
+// ===== 地點複製貼上 clipboard =====
+// { cells: [{row, v1, v2}] }  —— 登出時清除
+let _locClipboard = null;
+
 const STORAGE_KEY = "yupin_menu_v2";
 const HISTORY_KEY = "yupin_menu_history_v1";
 
@@ -1326,6 +1348,7 @@ function fbLogin() {
   }
 }
 async function fbLogout() {
+  _locClipboard = null;  // 清除地點複製記憶
   const { auth, signOut } = window._fb;
   await deleteMyChatMsgs();   // 刪除本次對話訊息
   closeAllChatWindows();       // 關閉所有聊天視窗
@@ -2481,7 +2504,79 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   return [td1, td2];
 }
 
-function makeLocTh(loc, type, onDelete, locIndex, initQty) {
+// ===== 地點欄複製 =====
+function copyLocColumn(block, colIdx, copyBtn) {
+  const cells = [];
+  block.querySelectorAll("table tr").forEach(tr => {
+    const catTd = tr.querySelector(".td-cat");
+    if (!catTd) return;
+    const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+    const s1 = sels1[colIdx];
+    const i2 = inps2[colIdx];
+    if (!s1) return;
+    cells.push({
+      row: catTd.textContent,
+      v1: s1.value || "-",
+      v2: i2 ? (i2.value || "") : ""
+    });
+  });
+  _locClipboard = { cells };
+
+  // 視覺回饋：複製按鈕變色
+  copyBtn.classList.add("copied");
+  copyBtn.textContent = "✓已複製";
+  setTimeout(() => {
+    copyBtn.classList.remove("copied");
+    copyBtn.textContent = "複製";
+  }, 2000);
+
+  // 顯示所有貼上按鈕
+  document.querySelectorAll("th._pasteBtn, th[data-paste-col]").forEach(el => {});
+  document.querySelectorAll(".week-block table tr:nth-child(2) th").forEach(th => {
+    if (th._pasteBtn) th._pasteBtn.style.display = "";
+  });
+
+  showSaveToast("📋 已複製此欄品項，可貼上到其他地點");
+}
+
+// ===== 地點欄貼上 =====
+function pasteLocColumn(block, colIdx) {
+  if (!_locClipboard) { showSaveToast("⚠️ 尚未複製任何欄位"); return; }
+
+  const rowMap = {};
+  block.querySelectorAll("table tr").forEach(tr => {
+    const catTd = tr.querySelector(".td-cat");
+    if (!catTd) return;
+    rowMap[catTd.textContent] = tr;
+  });
+
+  _locClipboard.cells.forEach(c => {
+    const tr = rowMap[c.row]; if (!tr) return;
+    const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+    const s1 = sels1[colIdx];
+    const i2 = inps2[colIdx];
+    if (!s1) return;
+
+    // 設定 L1
+    s1.value = c.v1;
+    s1.dispatchEvent(new Event("change"));
+
+    // 稍後設 L2（等 change event 處理完 datalist）
+    setTimeout(() => {
+      if (i2 && c.v2) {
+        i2.value = c.v2;
+        i2.dispatchEvent(new Event("input"));
+      }
+    }, 50);
+  });
+
+  scheduleAutoSave();
+  showSaveToast("✅ 已貼上品項到此欄");
+}
+
+function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste) {
   const th = document.createElement("th");
   const isDark = (locIndex % 2 === 0);
   if (type === "h") {
@@ -2564,7 +2659,29 @@ function makeLocTh(loc, type, onDelete, locIndex, initQty) {
   delBtn.addEventListener("mouseleave", () => { delBtn.style.color = "rgba(255,255,255,0.4)"; });
   delBtn.addEventListener("click", onDelete);
 
-  wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap); wrap.appendChild(delBtn);
+  // ── 複製按鈕 ──
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "loc-cp-btn";
+  copyBtn.title = "複製此欄品項";
+  copyBtn.textContent = "複製";
+  copyBtn.addEventListener("click", () => {
+    if (onCopy) onCopy(copyBtn);
+  });
+
+  // ── 貼上按鈕 ──
+  const pasteBtn = document.createElement("button");
+  pasteBtn.className = "loc-cp-btn";
+  pasteBtn.title = "貼上品項到此欄";
+  pasteBtn.textContent = "貼上";
+  pasteBtn.style.display = _locClipboard ? "" : "none";
+  pasteBtn.addEventListener("click", () => {
+    if (onPaste) onPaste();
+  });
+  // 每次顯示時根據 clipboard 狀態更新
+  th._pasteBtn = pasteBtn;
+
+  wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap);
+  wrap.appendChild(copyBtn); wrap.appendChild(pasteBtn); wrap.appendChild(delBtn);
   th.appendChild(wrap);
   return th;
 }
@@ -2643,20 +2760,32 @@ function buildWeek(weekNum, initHLocs, initWLocs, initHQtys, initWQtys) {
 
     const hr2 = tbl.insertRow();
     hLocs.forEach((loc, i) => {
+      const colIdx = i;  // 在整個表格中的欄位 index
       hr2.appendChild(makeLocTh(loc, "h", () => {
         readCurrentQtys();
         if (hLocs.length<=1) { alert("至少需保留一個健康餐地點"); return; }
         if (!confirm(`刪除「${loc}」欄位？`)) return;
         hLocs.splice(i,1); hQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
-      }, i, hQtys[i]));
+      }, i, hQtys[i],
+      // onCopy
+      (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
+      // onPaste
+      () => pasteLocColumn(block, colIdx)
+      ));
     });
     wLocs.forEach((loc, i) => {
+      const colIdx = hLocs.length + i;  // 風味餐欄位 index 接在健康餐後面
       hr2.appendChild(makeLocTh(loc, "w", () => {
         readCurrentQtys();
         if (wLocs.length<=1) { alert("至少需保留一個風味餐地點"); return; }
         if (!confirm(`刪除「${loc}」欄位？`)) return;
         wLocs.splice(i,1); wQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
-      }, i, wQtys[i]));
+      }, i, wQtys[i],
+      // onCopy
+      (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
+      // onPaste
+      () => pasteLocColumn(block, colIdx)
+      ));
     });
 
     const hr3 = tbl.insertRow();
