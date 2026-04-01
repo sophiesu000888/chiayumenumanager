@@ -1,15 +1,5 @@
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
+
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -27,26 +17,27 @@
   import { getDatabase, ref, set, get, onValue }
     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB_tAxuexFYMzQ8F2NKNVAVxh_k4H8oTzU",
-    authDomain: "chiayumenu.firebaseapp.com",
-    projectId: "chiayumenu",
-    storageBucket: "chiayumenu.firebasestorage.app",
-    messagingSenderId: "735229444243",
-    appId: "1:735229444243:web:c4d5fa2a3383323e444d66",
-    databaseURL: "https://chiayumenu-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
+const firebaseConfig = {
+apiKey: “AIzaSyB_tAxuexFYMzQ8F2NKNVAVxh_k4H8oTzU”,
+authDomain: “chiayumenu.firebaseapp.com”,
+projectId: “chiayumenu”,
+storageBucket: “chiayumenu.firebasestorage.app”,
+messagingSenderId: “735229444243”,
+appId: “1:735229444243:web:c4d5fa2a3383323e444d66”,
+databaseURL: “https://chiayumenu-default-rtdb.asia-southeast1.firebasedatabase.app”
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getDatabase(app);
-  const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const provider = new GoogleAuthProvider();
 
-  // 掛到 window 讓外部 JS 使用
-  window._fb = { auth, db, ref, set, get, onValue, provider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged };
-  window._fbReady = true;
-  window.dispatchEvent(new Event("fb-ready"));
+// 掛到 window 讓外部 JS 使用
+window._fb = { auth, db, ref, set, get, onValue, provider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged };
+window._fbReady = true;
+window.dispatchEvent(new Event(“fb-ready”));
 </script>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@700;900&display=swap');
 
@@ -967,10 +958,12 @@ button {
   .btn-hist-restore, .btn-hist-del, .btn-hist-export { padding: 4px 8px; font-size: 0.72rem; }
 }
 </style>
+
 </head>
 <body>
 
 <!-- 存取控制遮罩 -->
+
 <div id="accessOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(15,20,25,0.92);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
   <div style="background:#1c2a30;border-radius:16px;padding:36px 40px;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.6);border:1.5px solid #37474f;">
     <div style="font-size:3rem;margin-bottom:12px;" id="overlayIcon">🔒</div>
@@ -981,9 +974,11 @@ button {
 </div>
 
 <!-- 登入列 + 在線用戶（同一列） -->
+
 <div class="auth-bar" id="authBar" style="justify-content:space-between;">
 
   <!-- 左：登入狀態 -->
+
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <div id="authLoggedOut" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;">
       <span class="auth-hint">🔒 請登入以同步資料</span>
@@ -1007,6 +1002,7 @@ button {
   </div>
 
   <!-- 右：在線用戶 -->
+
   <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
     <span style="color:#546e7a;font-size:0.72rem;font-weight:600;white-space:nowrap;">👥 在線：</span>
     <span id="onlineUsersList" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
@@ -1030,6 +1026,7 @@ button {
 <div class="schedule-area" id="scheduleArea"></div>
 
 <!-- ===== 右側標籤群 ===== -->
+
 <div class="drawer-tabs-rail">
   <div class="side-tab" id="tab-mgmt" onclick="openDrawer('mgmt')" title="資料管理">
     <span class="st-icon">⚙️</span>
@@ -1054,11 +1051,11 @@ button {
 </div>
 
 <!-- 共用遮罩 -->
+
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-
-
 <!-- ① 資料管理抽屜 -->
+
 <div class="side-drawer" id="drawer-mgmt">
   <div class="drawer-header">
     <span>⚙️</span>
@@ -1085,59 +1082,63 @@ button {
       <div class="qa-preview" id="qa-preview"></div>
     </div>
 
-    <div class="drawer-tabs">
-      <button class="drawer-tab active" onclick="switchDrawerTab('items',this)">🥦 類別品項</button>
-      <button class="drawer-tab" onclick="switchDrawerTab('colors',this)">🎨 顏色分組</button>
-      <button class="drawer-tab" onclick="switchDrawerTab('rowcats',this)">📑 列類別設定</button>
-    </div>
+```
+<div class="drawer-tabs">
+  <button class="drawer-tab active" onclick="switchDrawerTab('items',this)">🥦 類別品項</button>
+  <button class="drawer-tab" onclick="switchDrawerTab('colors',this)">🎨 顏色分組</button>
+  <button class="drawer-tab" onclick="switchDrawerTab('rowcats',this)">📑 列類別設定</button>
+</div>
 
-    <div id="mgmt-items" class="drawer-section active">
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-cat-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtItems()"></select>
-        <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewCategory()">➕ 新增類別</button>
-        <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentCategory()">🗑️ 刪除此類別</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-        <input id="mgmt-item-input" type="text" placeholder="輸入新品項名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToCategory()">
-        <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToCategory()">➕ 新增品項</button>
-      </div>
-      <div id="mgmt-items-list" class="mgmt-items-list"></div>
-    </div>
+<div id="mgmt-items" class="drawer-section active">
+  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+    <select id="mgmt-cat-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtItems()"></select>
+    <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewCategory()">➕ 新增類別</button>
+    <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentCategory()">🗑️ 刪除此類別</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+    <input id="mgmt-item-input" type="text" placeholder="輸入新品項名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToCategory()">
+    <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToCategory()">➕ 新增品項</button>
+  </div>
+  <div id="mgmt-items-list" class="mgmt-items-list"></div>
+</div>
 
-    <div id="mgmt-colors" class="drawer-section">
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-color-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtColorItems()"></select>
-        <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewColorGroup()">➕ 新增顏色組</button>
-        <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentColorGroup()">🗑️ 刪除</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <input id="mgmt-color-item-input" type="text" placeholder="輸入食材名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToColorGroup()">
-        <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToColorGroup()">➕ 新增食材</button>
-      </div>
-      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;font-size:0.82rem;color:#546e7a;">
-        <label>背景色 <input type="color" id="mgmt-color-bg" value="#4cd964" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-        <label>文字色 <input type="color" id="mgmt-color-fg" value="#1a3a00" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-        <label>標題背景 <input type="color" id="mgmt-color-titlebg" value="#27ae60" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-        <button class="mgmt-action-btn" style="background:#546e7a;font-size:0.78rem;" onclick="applyColorGroupColors()">套用</button>
-      </div>
-      <div id="mgmt-color-items-list" class="mgmt-items-list"></div>
-    </div>
+<div id="mgmt-colors" class="drawer-section">
+  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+    <select id="mgmt-color-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtColorItems()"></select>
+    <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewColorGroup()">➕ 新增顏色組</button>
+    <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentColorGroup()">🗑️ 刪除</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+    <input id="mgmt-color-item-input" type="text" placeholder="輸入食材名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToColorGroup()">
+    <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToColorGroup()">➕ 新增食材</button>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;font-size:0.82rem;color:#546e7a;">
+    <label>背景色 <input type="color" id="mgmt-color-bg" value="#4cd964" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
+    <label>文字色 <input type="color" id="mgmt-color-fg" value="#1a3a00" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
+    <label>標題背景 <input type="color" id="mgmt-color-titlebg" value="#27ae60" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
+    <button class="mgmt-action-btn" style="background:#546e7a;font-size:0.78rem;" onclick="applyColorGroupColors()">套用</button>
+  </div>
+  <div id="mgmt-color-items-list" class="mgmt-items-list"></div>
+</div>
 
-    <div id="mgmt-rowcats" class="drawer-section">
-      <p style="font-size:0.78rem;color:#90a4ae;margin-bottom:10px;">設定每個列（主菜/副主菜/1/2…）可選用哪些類別。</p>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-row-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtRowCats()"></select>
-      </div>
-      <div id="mgmt-rowcats-list" class="mgmt-rowcats-list"></div>
-      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-rowcat-add-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;"></select>
-        <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addCatToRow()">➕ 加入此類別</button>
-      </div>
-    </div>
+<div id="mgmt-rowcats" class="drawer-section">
+  <p style="font-size:0.78rem;color:#90a4ae;margin-bottom:10px;">設定每個列（主菜/副主菜/1/2…）可選用哪些類別。</p>
+  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+    <select id="mgmt-row-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtRowCats()"></select>
+  </div>
+  <div id="mgmt-rowcats-list" class="mgmt-rowcats-list"></div>
+  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <select id="mgmt-rowcat-add-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;"></select>
+    <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addCatToRow()">➕ 加入此類別</button>
+  </div>
+</div>
+```
+
   </div>
 </div>
 
 <!-- ② 匯出抽屜 -->
+
 <div class="side-drawer" id="drawer-export">
   <div class="drawer-header">
     <span>📤</span>
@@ -1146,83 +1147,86 @@ button {
   </div>
   <div class="drawer-body">
 
-    <!-- 主畫面匯出區 -->
-    <div style="background:#e3f2fd;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #90caf9;">
-      <div style="font-size:0.82rem;font-weight:700;color:#1565c0;margin-bottom:10px;">🖼️ 主畫面匯出成圖片</div>
-      <!-- 日期區間選擇 -->
-      <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:10px;border:1px solid #bbdefb;">
-        <div style="font-size:0.74rem;color:#546e7a;font-weight:700;margin-bottom:7px;">📅 日期區間篩選（不選則匯出全部）</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">開始日期</label>
-            <input type="date" id="img-date-from" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
-          </div>
-          <div style="color:#90a4ae;font-size:0.8rem;align-self:flex-end;padding-bottom:6px;">～</div>
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">結束日期</label>
-            <input type="date" id="img-date-to" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
-          </div>
-          <button onclick="document.getElementById('img-date-from').value='';document.getElementById('img-date-to').value='';updateImgDateHint();" style="align-self:flex-end;background:#eceff1;border:1px solid #cfd8dc;border-radius:5px;padding:5px 10px;font-size:0.74rem;color:#607d8b;cursor:pointer;font-family:inherit;margin-bottom:1px;">清除</button>
-        </div>
-        <div id="img-date-hint" style="font-size:0.7rem;color:#42a5f5;margin-top:6px;min-height:14px;"></div>
+```
+<!-- 主畫面匯出區 -->
+<div style="background:#e3f2fd;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #90caf9;">
+  <div style="font-size:0.82rem;font-weight:700;color:#1565c0;margin-bottom:10px;">🖼️ 主畫面匯出成圖片</div>
+  <!-- 日期區間選擇 -->
+  <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:10px;border:1px solid #bbdefb;">
+    <div style="font-size:0.74rem;color:#546e7a;font-weight:700;margin-bottom:7px;">📅 日期區間篩選（不選則匯出全部）</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">開始日期</label>
+        <input type="date" id="img-date-from" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button onclick="exportAsImage(false);closeAllDrawers();" style="background:#42a5f5;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#1976d2'" onmouseout="this.style.background='#42a5f5'">
-          🖼️ 匯出成圖片（含類別）
-          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">顯示「類別」和「品項」兩欄，儲存為 PNG</div>
-        </button>
-        <button onclick="exportAsImage(true);closeAllDrawers();" style="background:#26a69a;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#00796b'" onmouseout="this.style.background='#26a69a'">
-          🖼️ 匯出成圖片（僅品項）
-          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">只顯示「品項」欄，精簡版，儲存為 PNG</div>
-        </button>
+      <div style="color:#90a4ae;font-size:0.8rem;align-self:flex-end;padding-bottom:6px;">～</div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">結束日期</label>
+        <input type="date" id="img-date-to" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
       </div>
+      <button onclick="document.getElementById('img-date-from').value='';document.getElementById('img-date-to').value='';updateImgDateHint();" style="align-self:flex-end;background:#eceff1;border:1px solid #cfd8dc;border-radius:5px;padding:5px 10px;font-size:0.74rem;color:#607d8b;cursor:pointer;font-family:inherit;margin-bottom:1px;">清除</button>
     </div>
+    <div id="img-date-hint" style="font-size:0.7rem;color:#42a5f5;margin-top:6px;min-height:14px;"></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <button onclick="exportAsImage(false);closeAllDrawers();" style="background:#42a5f5;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#1976d2'" onmouseout="this.style.background='#42a5f5'">
+      🖼️ 匯出成圖片（含類別）
+      <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">顯示「類別」和「品項」兩欄，儲存為 PNG</div>
+    </button>
+    <button onclick="exportAsImage(true);closeAllDrawers();" style="background:#26a69a;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#00796b'" onmouseout="this.style.background='#26a69a'">
+      🖼️ 匯出成圖片（僅品項）
+      <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">只顯示「品項」欄，精簡版，儲存為 PNG</div>
+    </button>
+  </div>
+</div>
 
-    <!-- 歷史資料匯出區 -->
-    <div style="background:#f3e5f5;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #ce93d8;">
-      <div style="font-size:0.82rem;font-weight:700;color:#6a1b9a;margin-bottom:10px;">📦 歷史資料匯出</div>
-      <!-- 日期區間選擇 -->
-      <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:10px;border:1px solid #e1bee7;">
-        <div style="font-size:0.74rem;color:#546e7a;font-weight:700;margin-bottom:7px;">📅 日期區間篩選（不選則匯出全部歷史）</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">開始日期</label>
-            <input type="date" id="hist-date-from" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateHistDateHint()">
-          </div>
-          <div style="color:#90a4ae;font-size:0.8rem;align-self:flex-end;padding-bottom:6px;">～</div>
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">結束日期</label>
-            <input type="date" id="hist-date-to" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateHistDateHint()">
-          </div>
-          <button onclick="document.getElementById('hist-date-from').value='';document.getElementById('hist-date-to').value='';updateHistDateHint();" style="align-self:flex-end;background:#eceff1;border:1px solid #cfd8dc;border-radius:5px;padding:5px 10px;font-size:0.74rem;color:#607d8b;cursor:pointer;font-family:inherit;margin-bottom:1px;">清除</button>
-        </div>
-        <div id="hist-date-hint" style="font-size:0.7rem;color:#7b1fa2;margin-top:6px;min-height:14px;"></div>
+<!-- 歷史資料匯出區 -->
+<div style="background:#f3e5f5;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #ce93d8;">
+  <div style="font-size:0.82rem;font-weight:700;color:#6a1b9a;margin-bottom:10px;">📦 歷史資料匯出</div>
+  <!-- 日期區間選擇 -->
+  <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:10px;border:1px solid #e1bee7;">
+    <div style="font-size:0.74rem;color:#546e7a;font-weight:700;margin-bottom:7px;">📅 日期區間篩選（不選則匯出全部歷史）</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">開始日期</label>
+        <input type="date" id="hist-date-from" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateHistDateHint()">
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button onclick="exportAllHistory();closeAllDrawers();" style="background:#7b1fa2;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#4a148c'" onmouseout="this.style.background='#7b1fa2'">
-          📄 匯出歷史 HTML（由新到舊）
-          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">依菜單日期由新到舊統整為一個 HTML 檔案</div>
-        </button>
-        <button onclick="exportAllHistoryExcel();closeAllDrawers();" style="background:#388e3c;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#388e3c'">
-          📊 匯出歷史 Excel 檔（由新到舊）
-          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">每筆日期一個工作表，依菜單日期由新到舊</div>
-        </button>
+      <div style="color:#90a4ae;font-size:0.8rem;align-self:flex-end;padding-bottom:6px;">～</div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">結束日期</label>
+        <input type="date" id="hist-date-to" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateHistDateHint()">
       </div>
+      <button onclick="document.getElementById('hist-date-from').value='';document.getElementById('hist-date-to').value='';updateHistDateHint();" style="align-self:flex-end;background:#eceff1;border:1px solid #cfd8dc;border-radius:5px;padding:5px 10px;font-size:0.74rem;color:#607d8b;cursor:pointer;font-family:inherit;margin-bottom:1px;">清除</button>
     </div>
+    <div id="hist-date-hint" style="font-size:0.7rem;color:#7b1fa2;margin-top:6px;min-height:14px;"></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <button onclick="exportAllHistory();closeAllDrawers();" style="background:#7b1fa2;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#4a148c'" onmouseout="this.style.background='#7b1fa2'">
+      📄 匯出歷史 HTML（由新到舊）
+      <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">依菜單日期由新到舊統整為一個 HTML 檔案</div>
+    </button>
+    <button onclick="exportAllHistoryExcel();closeAllDrawers();" style="background:#388e3c;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#388e3c'">
+      📊 匯出歷史 Excel 檔（由新到舊）
+      <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">每筆日期一個工作表，依菜單日期由新到舊</div>
+    </button>
+  </div>
+</div>
 
-    <!-- 類別匯出區 -->
-    <div style="background:#fbe9e7;border-radius:10px;padding:14px 14px 10px;border:1.5px solid #ffab91;">
-      <div style="font-size:0.82rem;font-weight:700;color:#bf360c;margin-bottom:10px;">🗂️ 資料庫匯出</div>
-      <button onclick="exportCategoryExcel();closeAllDrawers();" style="background:#e65100;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;width:100%;" onmouseover="this.style.background='#bf360c'" onmouseout="this.style.background='#e65100'">
-        🗂️ 匯出品項類別 Excel 檔
-        <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">將所有類別品項與顏色分組匯出為 Excel</div>
-      </button>
-    </div>
+<!-- 類別匯出區 -->
+<div style="background:#fbe9e7;border-radius:10px;padding:14px 14px 10px;border:1.5px solid #ffab91;">
+  <div style="font-size:0.82rem;font-weight:700;color:#bf360c;margin-bottom:10px;">🗂️ 資料庫匯出</div>
+  <button onclick="exportCategoryExcel();closeAllDrawers();" style="background:#e65100;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;width:100%;" onmouseover="this.style.background='#bf360c'" onmouseout="this.style.background='#e65100'">
+    🗂️ 匯出品項類別 Excel 檔
+    <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">將所有類別品項與顏色分組匯出為 Excel</div>
+  </button>
+</div>
+```
 
   </div>
 </div>
 
 <!-- ③ 歷史紀錄抽屜 -->
+
 <div class="side-drawer" id="drawer-hist">
   <div class="drawer-header">
     <span>📚</span>
@@ -1241,6 +1245,7 @@ button {
 </div>
 
 <!-- ③ 顏色分組抽屜（純一覽） -->
+
 <div class="side-drawer" id="drawer-colors">
   <div class="drawer-header">
     <span>🎨</span>
@@ -1254,6 +1259,7 @@ button {
 </div>
 
 <!-- ④ 類別分組抽屜 -->
+
 <div class="side-drawer" id="drawer-cats">
   <div class="drawer-header">
     <span>📋</span>
@@ -1265,8 +1271,6 @@ button {
     <div class="db-grid" id="catGrid"></div>
   </div>
 </div>
-
-
 
 <div class="save-toast" id="saveToast">✅ 已自動儲存</div>
 
@@ -1918,6 +1922,7 @@ select { display:none; }
   .week-block { page-break-inside:avoid; box-shadow:none; }
 }
 </style>
+
 </head>
 <body>
 <h1>chiayumenu 歷史紀錄</h1>
@@ -1932,55 +1937,48 @@ select { display:none; }
 </body>
 </html>`;
 
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `chiayumenu_history_${dateStr}.html`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+const blob = new Blob([html], { type: “text/html;charset=utf-8” });
+const a = document.createElement(“a”);
+a.href = URL.createObjectURL(blob);
+a.download = `chiayumenu_history_${dateStr}.html`;
+a.click();
+URL.revokeObjectURL(a.href);
 }
 
 // ===== 匯出全部歷史紀錄（由新到舊，依菜單日期） =====
 function exportAllHistory() {
-  if (historyList.length === 0) { alert("目前沒有歷史紀錄可匯出。"); return; }
+if (historyList.length === 0) { alert(“目前沒有歷史紀錄可匯出。”); return; }
 
-  const from = document.getElementById('hist-date-from')?.value || '';
-  const to   = document.getElementById('hist-date-to')?.value   || '';
+const from = document.getElementById(‘hist-date-from’)?.value || ‘’;
+const to   = document.getElementById(‘hist-date-to’)?.value   || ‘’;
 
-  let cssText = "";
-  for (const sheet of document.styleSheets) {
-    try {
-      for (const rule of sheet.cssRules) { cssText += rule.cssText + "\n"; }
-    } catch(e) {}
-  }
+let cssText = “”;
+for (const sheet of document.styleSheets) {
+try {
+for (const rule of sheet.cssRules) { cssText += rule.cssText + “\n”; }
+} catch(e) {}
+}
 
-  // 依菜單日期由新到舊排序，並套用日期區間篩選
-  const sorted = [...historyList]
-    .filter(e => {
-      if (from && e.date < from) return false;
-      if (to   && e.date > to)   return false;
-      return true;
-    })
-    .sort((a, b) => new Date(b.date || "2000-01-01") - new Date(a.date || "2000-01-01"));
+// 依菜單日期由新到舊排序，並套用日期區間篩選
+const sorted = […historyList]
+.filter(e => {
+if (from && e.date < from) return false;
+if (to   && e.date > to)   return false;
+return true;
+})
+.sort((a, b) => new Date(b.date || “2000-01-01”) - new Date(a.date || “2000-01-01”));
 
-  if (sorted.length === 0) { alert("篩選後沒有符合日期區間的歷史紀錄。"); return; }
+if (sorted.length === 0) { alert(“篩選後沒有符合日期區間的歷史紀錄。”); return; }
 
-  let tablesHTML = "";
-  sorted.forEach(entry => {
-    const tableHTML = buildHistoryTableHTML(entry);
-    tablesHTML += `
-      <div class="week-block" style="margin-bottom:28px;">
-        <div class="week-titlebar">
-          <span class="week-label">日期：${entry.date}</span>
-          <span class="week-day">${entry.day || ""}</span>
-          <span style="font-size:0.74rem;color:#b0bec5;margin-left:8px;">儲存於 ${entry.savedAt || ""}${entry.savedBy ? " ✍️ " + entry.savedBy : ""}</span>
-        </div>
-        <div class="tbl-wrap">${tableHTML}</div>
-      </div>`;
-  });
+let tablesHTML = “”;
+sorted.forEach(entry => {
+const tableHTML = buildHistoryTableHTML(entry);
+tablesHTML += ` <div class="week-block" style="margin-bottom:28px;"> <div class="week-titlebar"> <span class="week-label">日期：${entry.date}</span> <span class="week-day">${entry.day || ""}</span> <span style="font-size:0.74rem;color:#b0bec5;margin-left:8px;">儲存於 ${entry.savedAt || ""}${entry.savedBy ? " ✍️ " + entry.savedBy : ""}</span> </div> <div class="tbl-wrap">${tableHTML}</div> </div>`;
+});
 
-  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
-  const html = `<!DOCTYPE html>
+const dateStr = new Date().toLocaleDateString(“zh-TW”).replace(///g,”-”);
+const html = `<!DOCTYPE html>
+
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -2006,222 +2004,229 @@ ${tablesHTML}
 </body>
 </html>`;
 
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `chiayumenu_allhistory_${dateStr}.html`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+const blob = new Blob([html], { type: “text/html;charset=utf-8” });
+const a = document.createElement(“a”);
+a.href = URL.createObjectURL(blob);
+a.download = `chiayumenu_allhistory_${dateStr}.html`;
+a.click();
+URL.revokeObjectURL(a.href);
 }
 
 // ===== 全部存成歷史 =====
 async function saveAllToHistory() {
-  const blocks = document.querySelectorAll(".week-block");
-  if (blocks.length === 0) { alert("目前沒有任何日期菜單。"); return; }
+const blocks = document.querySelectorAll(”.week-block”);
+if (blocks.length === 0) { alert(“目前沒有任何日期菜單。”); return; }
 
-  // 先收集所有 block 的資料，並找出哪些有重複
-  const toSave = [];
-  for (const block of blocks) {
-    const data = extractWeekData(block);
-    if (!data.date) continue;
-    toSave.push(data);
-  }
-  if (toSave.length === 0) { alert("請先選擇日期再存入歷史紀錄。"); return; }
+// 先收集所有 block 的資料，並找出哪些有重複
+const toSave = [];
+for (const block of blocks) {
+const data = extractWeekData(block);
+if (!data.date) continue;
+toSave.push(data);
+}
+if (toSave.length === 0) { alert(“請先選擇日期再存入歷史紀錄。”); return; }
 
-  let savedCount = 0;
-  let skippedCount = 0;
+let savedCount = 0;
+let skippedCount = 0;
 
-  for (const data of toSave) {
-    const date = data.date;
-    const existIdx = historyList.findIndex(h => h.date === date);
+for (const data of toSave) {
+const date = data.date;
+const existIdx = historyList.findIndex(h => h.date === date);
 
-    if (existIdx >= 0) {
-      const existing = historyList[existIdx];
-      const savedAtInfo = existing.savedAt ? `\n（已存的紀錄儲存於：${existing.savedAt}${existing.savedBy ? "，存檔者：" + existing.savedBy : ""}）` : "";
-      const choice = confirm(`「${date}」已有歷史紀錄，是否覆蓋？${savedAtInfo}\n\n按「確定」覆蓋，按「取消」略過。`);
-      if (!choice) { skippedCount++; continue; }
-      historyList[existIdx] = {
-        ...data,
-        savedAt: new Date().toLocaleString("zh-TW"),
-        savedBy: currentUser ? (currentUser.displayName || currentUser.email) : "（未登入）"
-      };
-    } else {
-      historyList.unshift({
-        ...data,
-        savedAt: new Date().toLocaleString("zh-TW"),
-        savedBy: currentUser ? (currentUser.displayName || currentUser.email) : "（未登入）"
-      });
-    }
-    savedCount++;
-  }
+```
+if (existIdx >= 0) {
+  const existing = historyList[existIdx];
+  const savedAtInfo = existing.savedAt ? `\n（已存的紀錄儲存於：${existing.savedAt}${existing.savedBy ? "，存檔者：" + existing.savedBy : ""}）` : "";
+  const choice = confirm(`「${date}」已有歷史紀錄，是否覆蓋？${savedAtInfo}\n\n按「確定」覆蓋，按「取消」略過。`);
+  if (!choice) { skippedCount++; continue; }
+  historyList[existIdx] = {
+    ...data,
+    savedAt: new Date().toLocaleString("zh-TW"),
+    savedBy: currentUser ? (currentUser.displayName || currentUser.email) : "（未登入）"
+  };
+} else {
+  historyList.unshift({
+    ...data,
+    savedAt: new Date().toLocaleString("zh-TW"),
+    savedBy: currentUser ? (currentUser.displayName || currentUser.email) : "（未登入）"
+  });
+}
+savedCount++;
+```
 
-  if (savedCount > 0) {
-    await saveHistory();
-    renderHistoryPanel();
-    showSaveToast(`📌 已儲存 ${savedCount} 筆到歷史紀錄${skippedCount > 0 ? "，略過 " + skippedCount + " 筆" : ""}`);
-  } else {
-    showSaveToast(`⏭️ 全部略過，共 ${skippedCount} 筆`);
-  }
+}
+
+if (savedCount > 0) {
+await saveHistory();
+renderHistoryPanel();
+showSaveToast(`📌 已儲存 ${savedCount} 筆到歷史紀錄${skippedCount > 0 ? "，略過 " + skippedCount + " 筆" : ""}`);
+} else {
+showSaveToast(`⏭️ 全部略過，共 ${skippedCount} 筆`);
+}
 }
 
 // ===== 匯出抽屜日期篩選提示 =====
 function updateImgDateHint() {
-  const from = document.getElementById('img-date-from')?.value;
-  const to   = document.getElementById('img-date-to')?.value;
-  const hint = document.getElementById('img-date-hint');
-  if (!hint) return;
-  if (!from && !to) { hint.textContent = '未設定區間，將匯出主畫面全部日期'; return; }
-  const blocks = document.querySelectorAll(".week-block");
-  let count = 0;
-  blocks.forEach(b => {
-    const d = b.querySelector(".week-date")?.value || "";
-    if (!d) return;
-    if (from && d < from) return;
-    if (to   && d > to)   return;
-    count++;
-  });
-  hint.textContent = `符合區間：${count} 筆`;
+const from = document.getElementById(‘img-date-from’)?.value;
+const to   = document.getElementById(‘img-date-to’)?.value;
+const hint = document.getElementById(‘img-date-hint’);
+if (!hint) return;
+if (!from && !to) { hint.textContent = ‘未設定區間，將匯出主畫面全部日期’; return; }
+const blocks = document.querySelectorAll(”.week-block”);
+let count = 0;
+blocks.forEach(b => {
+const d = b.querySelector(”.week-date”)?.value || “”;
+if (!d) return;
+if (from && d < from) return;
+if (to   && d > to)   return;
+count++;
+});
+hint.textContent = `符合區間：${count} 筆`;
 }
 
 function updateHistDateHint() {
-  const from = document.getElementById('hist-date-from')?.value;
-  const to   = document.getElementById('hist-date-to')?.value;
-  const hint = document.getElementById('hist-date-hint');
-  if (!hint) return;
-  if (!from && !to) { hint.textContent = '未設定區間，將匯出全部歷史資料'; return; }
-  const count = historyList.filter(e => {
-    if (from && e.date < from) return false;
-    if (to   && e.date > to)   return false;
-    return true;
-  }).length;
-  hint.textContent = `符合區間：${count} 筆`;
+const from = document.getElementById(‘hist-date-from’)?.value;
+const to   = document.getElementById(‘hist-date-to’)?.value;
+const hint = document.getElementById(‘hist-date-hint’);
+if (!hint) return;
+if (!from && !to) { hint.textContent = ‘未設定區間，將匯出全部歷史資料’; return; }
+const count = historyList.filter(e => {
+if (from && e.date < from) return false;
+if (to   && e.date > to)   return false;
+return true;
+}).length;
+hint.textContent = `符合區間：${count} 筆`;
 }
 
 // ===== 匯出成圖片（使用 html2canvas） =====
 async function exportAsImage(itemOnlyMode) {
-  const from = document.getElementById('img-date-from')?.value || '';
-  const to   = document.getElementById('img-date-to')?.value   || '';
+const from = document.getElementById(‘img-date-from’)?.value || ‘’;
+const to   = document.getElementById(‘img-date-to’)?.value   || ‘’;
 
-  const allBlocks = [...document.querySelectorAll(".week-block")];
-  const blocks = allBlocks.filter(b => {
-    const d = b.querySelector(".week-date")?.value || "";
-    if (!d) return (!from && !to); // 沒日期：無篩選才包含
-    if (from && d < from) return false;
-    if (to   && d > to)   return false;
-    return true;
-  });
+const allBlocks = […document.querySelectorAll(”.week-block”)];
+const blocks = allBlocks.filter(b => {
+const d = b.querySelector(”.week-date”)?.value || “”;
+if (!d) return (!from && !to); // 沒日期：無篩選才包含
+if (from && d < from) return false;
+if (to   && d > to)   return false;
+return true;
+});
 
-  if (blocks.length === 0) {
-    alert("沒有符合條件的資料可匯出，請確認日期區間或主畫面是否有日期菜單。");
-    return;
-  }
+if (blocks.length === 0) {
+alert(“沒有符合條件的資料可匯出，請確認日期區間或主畫面是否有日期菜單。”);
+return;
+}
 
-  // 動態載入 html2canvas
-  if (!window.html2canvas) {
-    await new Promise((resolve, reject) => {
-      const s = document.createElement("script");
-      s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-      s.onload = resolve;
-      s.onerror = () => reject(new Error("html2canvas 載入失敗"));
-      document.head.appendChild(s);
-    });
-  }
+// 動態載入 html2canvas
+if (!window.html2canvas) {
+await new Promise((resolve, reject) => {
+const s = document.createElement(“script”);
+s.src = “https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js”;
+s.onload = resolve;
+s.onerror = () => reject(new Error(“html2canvas 載入失敗”));
+document.head.appendChild(s);
+});
+}
 
-  const modeLabel = itemOnlyMode ? "僅品項" : "含類別";
-  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
+const modeLabel = itemOnlyMode ? “僅品項” : “含類別”;
+const dateStr = new Date().toLocaleDateString(“zh-TW”).replace(///g,”-”);
 
-  // 建立一個隱藏容器來渲染
-  let cssText = "";
-  for (const sheet of document.styleSheets) {
-    try { for (const rule of sheet.cssRules) { cssText += rule.cssText + "\n"; } } catch(e) {}
-  }
+// 建立一個隱藏容器來渲染
+let cssText = “”;
+for (const sheet of document.styleSheets) {
+try { for (const rule of sheet.cssRules) { cssText += rule.cssText + “\n”; } } catch(e) {}
+}
 
-  let tablesHTML = "";
-  blocks.forEach((block) => {
-    const date = block.querySelector(".week-date")?.value || "";
-    const day  = block.querySelector(".week-day")?.textContent || "";
-    const wid  = block.id.replace("block_", "");
-    const info = weekDataMap[wid] || {};
-    const hLocsCount = (info.hLocs || DEFAULT_HEALTH_LOCS).length;
-    const wLocsCount = (info.wLocs || DEFAULT_WIND_LOCS).length;
-    const locSels = [...block.querySelectorAll(".loc-sel")];
-    const locInps = [...block.querySelectorAll(".loc-inp")];
-    const resolvedLocs = locSels.map((s, i) => getLocName(s, locInps[i]));
-    const hLocNames = resolvedLocs.slice(0, hLocsCount);
-    const wLocNames = resolvedLocs.slice(hLocsCount, hLocsCount + wLocsCount);
+let tablesHTML = “”;
+blocks.forEach((block) => {
+const date = block.querySelector(”.week-date”)?.value || “”;
+const day  = block.querySelector(”.week-day”)?.textContent || “”;
+const wid  = block.id.replace(“block_”, “”);
+const info = weekDataMap[wid] || {};
+const hLocsCount = (info.hLocs || DEFAULT_HEALTH_LOCS).length;
+const wLocsCount = (info.wLocs || DEFAULT_WIND_LOCS).length;
+const locSels = […block.querySelectorAll(”.loc-sel”)];
+const locInps = […block.querySelectorAll(”.loc-inp”)];
+const resolvedLocs = locSels.map((s, i) => getLocName(s, locInps[i]));
+const hLocNames = resolvedLocs.slice(0, hLocsCount);
+const wLocNames = resolvedLocs.slice(hLocsCount, hLocsCount + wLocsCount);
 
-    const hSpan = itemOnlyMode ? hLocNames.length : hLocNames.length * 2;
-    const wSpan = itemOnlyMode ? wLocNames.length : wLocNames.length * 2;
-    let hr1 = `<tr><th class="th-week" rowspan="3">類別</th><th class="th-health" colspan="${hSpan}">【健康餐】</th><th class="th-wind" colspan="${wSpan}">【風味餐】</th></tr>`;
-    let hr2 = "<tr>";
+```
+const hSpan = itemOnlyMode ? hLocNames.length : hLocNames.length * 2;
+const wSpan = itemOnlyMode ? wLocNames.length : wLocNames.length * 2;
+let hr1 = `<tr><th class="th-week" rowspan="3">類別</th><th class="th-health" colspan="${hSpan}">【健康餐】</th><th class="th-wind" colspan="${wSpan}">【風味餐】</th></tr>`;
+let hr2 = "<tr>";
 
-    // read qty values from DOM
-    const locQtyInps = [...block.querySelectorAll(".loc-qty-inp")];
-    const hQtyVals = hLocNames.map((_, i) => locQtyInps[i]?.value || "");
-    const wQtyVals = wLocNames.map((_, i) => locQtyInps[hLocNames.length + i]?.value || "");
+// read qty values from DOM
+const locQtyInps = [...block.querySelectorAll(".loc-qty-inp")];
+const hQtyVals = hLocNames.map((_, i) => locQtyInps[i]?.value || "");
+const wQtyVals = wLocNames.map((_, i) => locQtyInps[hLocNames.length + i]?.value || "");
 
-    hLocNames.forEach((loc, i) => {
-      const qty = hQtyVals[i];
-      const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
-      hr2 += `<th class="${i%2===0?"th-hloc":"th-hloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
-    });
-    wLocNames.forEach((loc, i) => {
-      const qty = wQtyVals[i];
-      const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
-      hr2 += `<th class="${i%2===0?"th-wloc":"th-wloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
-    });
-    hr2 += "</tr>";
-    let hr3 = "<tr>";
-    if (!itemOnlyMode) {
-      hLocNames.forEach((_, i) => ["類別","品項"].forEach(l => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-h":"th-sub-h-light"}">${l}</th>`; }));
-      wLocNames.forEach((_, i) => ["類別","品項"].forEach(l => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-w":"th-sub-w-light"}">${l}</th>`; }));
-    } else {
-      hLocNames.forEach((_, i) => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-h":"th-sub-h-light"}">品項</th>`; });
-      wLocNames.forEach((_, i) => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-w":"th-sub-w-light"}">品項</th>`; });
+hLocNames.forEach((loc, i) => {
+  const qty = hQtyVals[i];
+  const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
+  hr2 += `<th class="${i%2===0?"th-hloc":"th-hloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
+});
+wLocNames.forEach((loc, i) => {
+  const qty = wQtyVals[i];
+  const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;letter-spacing:0.5px;">✦${qty}份</span>` : "";
+  hr2 += `<th class="${i%2===0?"th-wloc":"th-wloc-light"}" colspan="${itemOnlyMode?1:2}" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
+});
+hr2 += "</tr>";
+let hr3 = "<tr>";
+if (!itemOnlyMode) {
+  hLocNames.forEach((_, i) => ["類別","品項"].forEach(l => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-h":"th-sub-h-light"}">${l}</th>`; }));
+  wLocNames.forEach((_, i) => ["類別","品項"].forEach(l => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-w":"th-sub-w-light"}">${l}</th>`; }));
+} else {
+  hLocNames.forEach((_, i) => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-h":"th-sub-h-light"}">品項</th>`; });
+  wLocNames.forEach((_, i) => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-w":"th-sub-w-light"}">品項</th>`; });
+}
+hr3 += "</tr>";
+
+let rowsHTML = "";
+block.querySelectorAll("table tr").forEach(tr => {
+  const catTd = tr.querySelector(".td-cat");
+  if (!catTd) return;
+  const rowName = catTd.textContent;
+  const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+  const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+  const [hS, hS2, wS, wS2] = getRowStyles(rowName);
+  rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
+  sels1.forEach((s1, i) => {
+    const isH = i < hLocNames.length;
+    const baseS = isH ? hS : wS;
+    const baseS2 = isH ? hS2 : wS2;
+    const v1 = s1.value && s1.value !== "-" ? s1.value : "";
+    const rawV2 = inps2[i]?.value || "";
+    const v2 = rawV2 && rawV2 !== "-" && rawV2 !== "-- 品項 --" ? rawV2 : "";
+    let itemBgStyle = "";
+    if (v2) {
+      const colors = getFoodColors(v2);
+      if (colors) itemBgStyle = `background:${colors.bg};color:${colors.fg};`;
     }
-    hr3 += "</tr>";
-
-    let rowsHTML = "";
-    block.querySelectorAll("table tr").forEach(tr => {
-      const catTd = tr.querySelector(".td-cat");
-      if (!catTd) return;
-      const rowName = catTd.textContent;
-      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
-      const [hS, hS2, wS, wS2] = getRowStyles(rowName);
-      rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
-      sels1.forEach((s1, i) => {
-        const isH = i < hLocNames.length;
-        const baseS = isH ? hS : wS;
-        const baseS2 = isH ? hS2 : wS2;
-        const v1 = s1.value && s1.value !== "-" ? s1.value : "";
-        const rawV2 = inps2[i]?.value || "";
-        const v2 = rawV2 && rawV2 !== "-" && rawV2 !== "-- 品項 --" ? rawV2 : "";
-        let itemBgStyle = "";
-        if (v2) {
-          const colors = getFoodColors(v2);
-          if (colors) itemBgStyle = `background:${colors.bg};color:${colors.fg};`;
-        }
-        if (!itemOnlyMode) {
-          rowsHTML += `<td class="td-l1 ${baseS}" style="padding:4px 6px;">${v1}</td>`;
-          rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
-        } else {
-          rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
-        }
-      });
-      rowsHTML += "</tr>";
-    });
-
-    tablesHTML += `<div class="week-block" style="margin-bottom:28px;"><div class="week-titlebar"><span class="week-label">日期：${date}</span>${(day && day !== "請選日期") ? `<span class="week-day">${day}</span>` : ""}</div><div class="tbl-wrap"><table>${hr1}${hr2}${hr3}${rowsHTML}</table></div></div>`;
+    if (!itemOnlyMode) {
+      rowsHTML += `<td class="td-l1 ${baseS}" style="padding:4px 6px;">${v1}</td>`;
+      rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
+    } else {
+      rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
+    }
   });
+  rowsHTML += "</tr>";
+});
 
-  // 建立離屏 iframe 來渲染
-  const iframe = document.createElement("iframe");
-  iframe.style.cssText = "position:fixed;left:-9999px;top:0;width:1200px;height:auto;border:none;visibility:hidden;";
-  document.body.appendChild(iframe);
-  const iDoc = iframe.contentDocument || iframe.contentWindow.document;
-  iDoc.open();
-  iDoc.write(`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
+tablesHTML += `<div class="week-block" style="margin-bottom:28px;"><div class="week-titlebar"><span class="week-label">日期：${date}</span>${(day && day !== "請選日期") ? `<span class="week-day">${day}</span>` : ""}</div><div class="tbl-wrap"><table>${hr1}${hr2}${hr3}${rowsHTML}</table></div></div>`;
+```
+
+});
+
+// 建立離屏 iframe 來渲染
+const iframe = document.createElement(“iframe”);
+iframe.style.cssText = “position:fixed;left:-9999px;top:0;width:1200px;height:auto;border:none;visibility:hidden;”;
+document.body.appendChild(iframe);
+const iDoc = iframe.contentDocument || iframe.contentWindow.document;
+iDoc.open();
+iDoc.write(`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
+
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>${cssText} body{font-family:'Noto Sans TC',sans-serif;background:#eceff1;padding:18px 12px;} select{display:none;} input[type="date"]{display:none;} .btn-save-to-history,.btn-del-week,.loc-cp-btn,.loc-clear-btn,.loc-qty-wrap{display:none;} h1{text-align:center;color:#2e7d32;font-size:1.4rem;font-weight:700;margin-bottom:12px;letter-spacing:3px;} .tbl-wrap{overflow-x:visible;}</style>
 </head><body>
@@ -2230,1042 +2235,1053 @@ async function exportAsImage(itemOnlyMode) {
 ${tablesHTML}</body></html>`);
   iDoc.close();
 
-  await new Promise(r => setTimeout(r, 800));
+await new Promise(r => setTimeout(r, 800));
 
-  const target = iDoc.body;
-  try {
-    const canvas = await html2canvas(target, {
-      useCORS: true, scale: 2, backgroundColor: "#eceff1",
-      windowWidth: 1200, width: 1200,
-      logging: false
-    });
-    const link = document.createElement("a");
-    link.download = `chiayumenu_${dateStr}_${modeLabel}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    showSaveToast("🖼️ 圖片已匯出");
-  } catch(e) {
-    alert("圖片匯出失敗：" + e.message);
-  } finally {
-    document.body.removeChild(iframe);
-  }
+const target = iDoc.body;
+try {
+const canvas = await html2canvas(target, {
+useCORS: true, scale: 2, backgroundColor: “#eceff1”,
+windowWidth: 1200, width: 1200,
+logging: false
+});
+const link = document.createElement(“a”);
+link.download = `chiayumenu_${dateStr}_${modeLabel}.png`;
+link.href = canvas.toDataURL(“image/png”);
+link.click();
+showSaveToast(“🖼️ 圖片已匯出”);
+} catch(e) {
+alert(“圖片匯出失敗：” + e.message);
+} finally {
+document.body.removeChild(iframe);
+}
 }
 
 // ===== 匯出所有歷史 Excel 檔（單張工作表，攤平格式） =====
 function exportAllHistoryExcel() {
-  if (historyList.length === 0) { alert("目前沒有歷史紀錄可匯出。"); return; }
+if (historyList.length === 0) { alert(“目前沒有歷史紀錄可匯出。”); return; }
 
-  const from = document.getElementById('hist-date-from')?.value || '';
-  const to   = document.getElementById('hist-date-to')?.value   || '';
+const from = document.getElementById(‘hist-date-from’)?.value || ‘’;
+const to   = document.getElementById(‘hist-date-to’)?.value   || ‘’;
 
-  const sorted = [...historyList]
-    .filter(e => {
-      if (from && e.date < from) return false;
-      if (to   && e.date > to)   return false;
-      return true;
-    })
-    .sort((a, b) => new Date(a.date || "2000-01-01") - new Date(b.date || "2000-01-01"));
+const sorted = […historyList]
+.filter(e => {
+if (from && e.date < from) return false;
+if (to   && e.date > to)   return false;
+return true;
+})
+.sort((a, b) => new Date(a.date || “2000-01-01”) - new Date(b.date || “2000-01-01”));
 
-  if (sorted.length === 0) { alert("篩選後沒有符合日期區間的歷史紀錄。"); return; }
+if (sorted.length === 0) { alert(“篩選後沒有符合日期區間的歷史紀錄。”); return; }
 
-  // 固定欄位順序：主菜、副主菜、米飯、1~7
-  const FIXED_ROWS = ["主菜", "副主菜", "米飯", "1", "2", "3", "4", "5", "6", "7"];
+// 固定欄位順序：主菜、副主菜、米飯、1~7
+const FIXED_ROWS = [“主菜”, “副主菜”, “米飯”, “1”, “2”, “3”, “4”, “5”, “6”, “7”];
 
-  // 第一列標頭
-  const header = ["日期", "類別", "主菜", "副主菜", "米飯", "1", "2", "3", "4", "5", "6", "7"];
-  const allRows = [header];
+// 第一列標頭
+const header = [“日期”, “類別”, “主菜”, “副主菜”, “米飯”, “1”, “2”, “3”, “4”, “5”, “6”, “7”];
+const allRows = [header];
 
-  sorted.forEach(entry => {
-    const hLocs = entry.hLocs || [];
-    const wLocs = entry.wLocs || [];
-    const allLocs = [...hLocs, ...wLocs];
+sorted.forEach(entry => {
+const hLocs = entry.hLocs || [];
+const wLocs = entry.wLocs || [];
+const allLocs = […hLocs, …wLocs];
 
-    // 為每個地點輸出一列（只輸出「品項」欄，對應各 row）
-    allLocs.forEach((loc, locIdx) => {
-      const isHealth = locIdx < hLocs.length;
-      const kind = isHealth ? "健康餐" : "風味餐";
-      const qty = isHealth
-        ? ((entry.hQtys || [])[locIdx] || "")
-        : ((entry.wQtys || [])[locIdx - hLocs.length] || "");
-      const qtyStr = qty ? `(${qty}份)` : "";
-      const label = `${kind}-${loc}${qtyStr}-品項`;
+```
+// 為每個地點輸出一列（只輸出「品項」欄，對應各 row）
+allLocs.forEach((loc, locIdx) => {
+  const isHealth = locIdx < hLocs.length;
+  const kind = isHealth ? "健康餐" : "風味餐";
+  const qty = isHealth
+    ? ((entry.hQtys || [])[locIdx] || "")
+    : ((entry.wQtys || [])[locIdx - hLocs.length] || "");
+  const qtyStr = qty ? `(${qty}份)` : "";
+  const label = `${kind}-${loc}${qtyStr}-品項`;
 
-      const dataRow = [entry.date, label];
+  const dataRow = [entry.date, label];
 
-      FIXED_ROWS.forEach(rowKey => {
-        const found = (entry.cells || []).find(c => c.row === rowKey && c.col === locIdx);
-        const v2 = (found?.v2 && found.v2 !== "-" && found.v2 !== "-- 品項 --") ? found.v2 : "";
-        dataRow.push(v2);
-      });
-
-      allRows.push(dataRow);
-    });
+  FIXED_ROWS.forEach(rowKey => {
+    const found = (entry.cells || []).find(c => c.row === rowKey && c.col === locIdx);
+    const v2 = (found?.v2 && found.v2 !== "-" && found.v2 !== "-- 品項 --") ? found.v2 : "";
+    dataRow.push(v2);
   });
 
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(allRows);
+  allRows.push(dataRow);
+});
+```
 
-  // 設定欄寬
-  ws['!cols'] = [
-    { wch: 12 }, // 日期
-    { wch: 20 }, // 類別
-    { wch: 14 }, // 主菜
-    { wch: 10 }, // 副主菜
-    { wch: 8  }, // 米飯
-    { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
-    { wch: 10 }, { wch: 10 }, { wch: 10 }
-  ];
+});
 
-  XLSX.utils.book_append_sheet(wb, ws, "歷史菜單");
+const wb = XLSX.utils.book_new();
+const ws = XLSX.utils.aoa_to_sheet(allRows);
 
-  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
-  XLSX.writeFile(wb, `chiayumenu_allhistory_${dateStr}.xlsx`);
-  showSaveToast("📊 歷史 Excel 已匯出");
+// 設定欄寬
+ws[’!cols’] = [
+{ wch: 12 }, // 日期
+{ wch: 20 }, // 類別
+{ wch: 14 }, // 主菜
+{ wch: 10 }, // 副主菜
+{ wch: 8  }, // 米飯
+{ wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+{ wch: 10 }, { wch: 10 }, { wch: 10 }
+];
+
+XLSX.utils.book_append_sheet(wb, ws, “歷史菜單”);
+
+const dateStr = new Date().toLocaleDateString(“zh-TW”).replace(///g,”-”);
+XLSX.writeFile(wb, `chiayumenu_allhistory_${dateStr}.xlsx`);
+showSaveToast(“📊 歷史 Excel 已匯出”);
 }
 
 // ===== 匯出品項類別 Excel 檔 =====
 function exportCategoryExcel() {
-  const wb = XLSX.utils.book_new();
+const wb = XLSX.utils.book_new();
 
-  // 工作表1：類別品項
-  const catRows = [["類別", "品項"]];
-  Object.entries(DB).forEach(([cat, items]) => {
-    items.filter(i => i !== "-").forEach(item => {
-      catRows.push([cat, item]);
-    });
-  });
-  const wsCat = XLSX.utils.aoa_to_sheet(catRows);
-  XLSX.utils.book_append_sheet(wb, wsCat, "類別品項");
+// 工作表1：類別品項
+const catRows = [[“類別”, “品項”]];
+Object.entries(DB).forEach(([cat, items]) => {
+items.filter(i => i !== “-”).forEach(item => {
+catRows.push([cat, item]);
+});
+});
+const wsCat = XLSX.utils.aoa_to_sheet(catRows);
+XLSX.utils.book_append_sheet(wb, wsCat, “類別品項”);
 
-  // 工作表2：顏色分組
-  const colorRows = [["顏色組", "顯示名稱", "品項"]];
-  Object.entries(COLOR_GROUPS).forEach(([key, g]) => {
-    g.items.forEach(item => {
-      colorRows.push([key, g.label, item]);
-    });
-  });
-  const wsColor = XLSX.utils.aoa_to_sheet(colorRows);
-  XLSX.utils.book_append_sheet(wb, wsColor, "顏色分組");
+// 工作表2：顏色分組
+const colorRows = [[“顏色組”, “顯示名稱”, “品項”]];
+Object.entries(COLOR_GROUPS).forEach(([key, g]) => {
+g.items.forEach(item => {
+colorRows.push([key, g.label, item]);
+});
+});
+const wsColor = XLSX.utils.aoa_to_sheet(colorRows);
+XLSX.utils.book_append_sheet(wb, wsColor, “顏色分組”);
 
-  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
-  XLSX.writeFile(wb, `chiayumenu_categories_${dateStr}.xlsx`);
-  showSaveToast("🗂️ 品項類別 Excel 已匯出");
+const dateStr = new Date().toLocaleDateString(“zh-TW”).replace(///g,”-”);
+XLSX.writeFile(wb, `chiayumenu_categories_${dateStr}.xlsx`);
+showSaveToast(“🗂️ 品項類別 Excel 已匯出”);
 }
 
 async function loadAll() {
-  let saved = null;
-  _isLoading = true;   // 開始載入，禁止自動儲存觸發
+let saved = null;
+_isLoading = true;   // 開始載入，禁止自動儲存觸發
 
-  if (window._fbReady && currentUser) {
-    try {
-      const { db, ref, get } = window._fb;
-      const snap = await get(ref(db, "menu"));
-      if (snap.exists()) saved = snap.val();
-    } catch(e) { saved = null; }
-  }
+if (window._fbReady && currentUser) {
+try {
+const { db, ref, get } = window._fb;
+const snap = await get(ref(db, “menu”));
+if (snap.exists()) saved = snap.val();
+} catch(e) { saved = null; }
+}
 
-  // fallback to localStorage
-  if (!saved) {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) saved = JSON.parse(raw);
-    } catch(e) {}
-  }
+// fallback to localStorage
+if (!saved) {
+try {
+const raw = localStorage.getItem(STORAGE_KEY);
+if (raw) saved = JSON.parse(raw);
+} catch(e) {}
+}
 
-  if (!saved || !saved.data) return false;
+if (!saved || !saved.data) return false;
 
-  // 顯示上次修改者
-  if (saved.savedBy) {
-    const info = document.getElementById("lastSaveInfo");
-    if (info) info.textContent = `上次儲存：${saved.savedBy.name} ${saved.savedBy.at}`;
-  }
+// 顯示上次修改者
+if (saved.savedBy) {
+const info = document.getElementById(“lastSaveInfo”);
+if (info) info.textContent = `上次儲存：${saved.savedBy.name} ${saved.savedBy.at}`;
+}
 
-  weekCount = 0;
-  document.getElementById("scheduleArea").innerHTML = "";
-  weekDataMap = {};
+weekCount = 0;
+document.getElementById(“scheduleArea”).innerHTML = “”;
+weekDataMap = {};
 
-  saved.data.forEach(item => {
-    weekCount++;
-    const wid = `w${weekCount}`;
-    const block = buildWeek(weekCount, item.hLocs, item.wLocs, item.hQtys, item.wQtys);
-    document.getElementById("scheduleArea").appendChild(block);
+saved.data.forEach(item => {
+weekCount++;
+const wid = `w${weekCount}`;
+const block = buildWeek(weekCount, item.hLocs, item.wLocs, item.hQtys, item.wQtys);
+document.getElementById(“scheduleArea”).appendChild(block);
 
-    const di = block.querySelector(".week-date");
-    if (di && item.date) {
-      di.value = item.date;
-      di.dispatchEvent(new Event("change"));
-    }
+```
+const di = block.querySelector(".week-date");
+if (di && item.date) {
+  di.value = item.date;
+  di.dispatchEvent(new Event("change"));
+}
 
-    const locSels = [...block.querySelectorAll(".loc-sel")];
-    const locInps = [...block.querySelectorAll(".loc-inp")];
-    const locQtys = [...block.querySelectorAll(".loc-qty-inp")];
-    const allLocs = [...(item.hLocs||[]), ...(item.wLocs||[])];
-    const allQtys = [...(item.hQtys||[]), ...(item.wQtys||[])];
-    allLocs.forEach((loc, i) => {
-      const s = locSels[i]; const inp = locInps[i];
-      if (!s) return;
-      s.style.display = "none";
-      if(inp) { inp.style.display="flex"; inp.value=loc; }
-      if(locQtys[i] && allQtys[i]) locQtys[i].value = allQtys[i];
-    });
+const locSels = [...block.querySelectorAll(".loc-sel")];
+const locInps = [...block.querySelectorAll(".loc-inp")];
+const locQtys = [...block.querySelectorAll(".loc-qty-inp")];
+const allLocs = [...(item.hLocs||[]), ...(item.wLocs||[])];
+const allQtys = [...(item.hQtys||[]), ...(item.wQtys||[])];
+allLocs.forEach((loc, i) => {
+  const s = locSels[i]; const inp = locInps[i];
+  if (!s) return;
+  s.style.display = "none";
+  if(inp) { inp.style.display="flex"; inp.value=loc; }
+  if(locQtys[i] && allQtys[i]) locQtys[i].value = allQtys[i];
+});
 
-    const rowMap = {};
-    block.querySelectorAll("table tr").forEach(tr => {
-      const catTd = tr.querySelector(".td-cat");
-      if (!catTd) return;
-      rowMap[catTd.textContent] = tr;
-    });
-    (item.cells || []).forEach(c => {
-      const tr = rowMap[c.row]; if (!tr) return;
-      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
-      const s1 = sels1[c.col]; const inp2 = inps2[c.col];
-      if (s1 && c.v1) {
-        s1.value = c.v1;
-        s1.dispatchEvent(new Event("change"));
-        setTimeout(() => {
-          if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
-            inp2.value = c.v2;
-            inp2.dispatchEvent(new Event("input"));
-          }
-        }, 50);
+const rowMap = {};
+block.querySelectorAll("table tr").forEach(tr => {
+  const catTd = tr.querySelector(".td-cat");
+  if (!catTd) return;
+  rowMap[catTd.textContent] = tr;
+});
+(item.cells || []).forEach(c => {
+  const tr = rowMap[c.row]; if (!tr) return;
+  const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+  const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+  const s1 = sels1[c.col]; const inp2 = inps2[c.col];
+  if (s1 && c.v1) {
+    s1.value = c.v1;
+    s1.dispatchEvent(new Event("change"));
+    setTimeout(() => {
+      if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
+        inp2.value = c.v2;
+        inp2.dispatchEvent(new Event("input"));
       }
-    });
-  });
-  // setTimeout 裡還有 dispatchEvent，等它們都跑完後才關旗標
-  setTimeout(() => {
-    _isLoading = false;
-    clearTimeout(saveTimer);  // 清除任何載入期間意外排進去的 save
-  }, 300);
-  return true;
+    }, 50);
+  }
+});
+```
+
+});
+// setTimeout 裡還有 dispatchEvent，等它們都跑完後才關旗標
+setTimeout(() => {
+_isLoading = false;
+clearTimeout(saveTimer);  // 清除任何載入期間意外排進去的 save
+}, 300);
+return true;
 }
 
 function getFoodColors(item) {
-  const key = FOOD_COLOR[item];
-  if (!key) return null;
-  return { bg: COLOR_GROUPS[key].bg, fg: COLOR_GROUPS[key].fg || "#333" };
+const key = FOOD_COLOR[item];
+if (!key) return null;
+return { bg: COLOR_GROUPS[key].bg, fg: COLOR_GROUPS[key].fg || “#333” };
 }
 
 function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
-  let cats = ROW_CATS[rowKey] || [];
+let cats = ROW_CATS[rowKey] || [];
 
-  if (rowKey === "主菜") {
-    if (side === "h") {
-      cats = cats.filter(c => c === "-" || c === "健康餐主菜");
-    } else if (side === "w") {
-      cats = cats.filter(c => c === "-" || c === "風味餐主菜");
+if (rowKey === “主菜”) {
+if (side === “h”) {
+cats = cats.filter(c => c === “-” || c === “健康餐主菜”);
+} else if (side === “w”) {
+cats = cats.filter(c => c === “-” || c === “風味餐主菜”);
+}
+}
+
+const sel1 = document.createElement(“select”);
+sel1.className = “sel-l1”;
+sel1.innerHTML = cats.map(c =>
+`<option value="${c}" ${c==="-"?"selected":""}>${c === "-" ? "" : c}</option>`
+).join(””);
+
+const td1 = document.createElement(“td”);
+td1.className = `td-l1 ${defaultStyle}`;
+const td2 = document.createElement(“td”);
+td2.className = `td-l2 ${defaultStyleL2}`;
+
+const inp2 = document.createElement(“input”);
+inp2.type = “text”;
+inp2.className = “sel-l2-inp”;
+inp2.placeholder = “品項”;
+inp2.autocomplete = “off”;
+
+function populateDatalistFromCat(cat) {
+const items = DB[cat] || [];
+_allItems = items.filter(i => i !== “-”);
+}
+
+function buildFullDatalist() {
+const allItems = new Set();
+cats.filter(c => c !== “-”).forEach(c => {
+(DB[c] || []).filter(i => i !== “-”).forEach(i => allItems.add(i));
+});
+_allItems = […allItems];
+}
+
+// ── 自訂 fuzzy dropdown ──
+let _allItems = [];
+let _activeIdx = -1;
+let _isSelecting = false;
+
+const dropdown = document.createElement(“div”);
+dropdown.className = “fuzzy-dropdown”;
+dropdown.style.display = “none”;
+document.body.appendChild(dropdown);
+
+function positionDropdown() {
+const rect = inp2.getBoundingClientRect();
+dropdown.style.left = (rect.left + window.scrollX) + “px”;
+dropdown.style.top  = (rect.bottom + window.scrollY + 2) + “px”;
+dropdown.style.width = Math.max(rect.width, 120) + “px”;
+}
+
+function showDropdown(keyword) {
+if (!keyword) { hideDropdown(); return; }
+const kw = keyword.toLowerCase();
+const matched = _allItems.filter(i => i.toLowerCase().includes(kw));
+if (!matched.length) { hideDropdown(); return; }
+_activeIdx = -1;
+dropdown.innerHTML = matched.map(item => {
+const idx = item.toLowerCase().indexOf(kw);
+const hi = item.slice(0, idx) +
+`<mark>${item.slice(idx, idx + keyword.length)}</mark>` +
+item.slice(idx + keyword.length);
+return `<div class="fuzzy-dropdown-item" data-val="${item}">${hi}</div>`;
+}).join(””);
+dropdown.querySelectorAll(”.fuzzy-dropdown-item”).forEach(el => {
+el.addEventListener(“mousedown”, e => {
+e.preventDefault();
+_isSelecting = true;
+selectItem(el.dataset.val);
+_isSelecting = false;
+});
+});
+positionDropdown();
+dropdown.style.display = “block”;
+}
+
+function hideDropdown() {
+dropdown.style.display = “none”;
+_activeIdx = -1;
+}
+
+function selectItem(val) {
+inp2.value = val;
+hideDropdown();
+inp2.dispatchEvent(new Event(“input”));
+// auto-fill L1
+if (sel1.value === “-”) {
+for (const cat of cats) {
+if (cat === “-”) continue;
+if ((DB[cat] || []).includes(val)) {
+sel1.value = cat;
+populateDatalistFromCat(cat);
+break;
+}
+}
+}
+applyItemColor(val);
+scheduleAutoSave();
+}
+
+// 鍵盤導航
+inp2.addEventListener(“keydown”, e => {
+if (dropdown.style.display === “none”) return;
+const items = dropdown.querySelectorAll(”.fuzzy-dropdown-item”);
+if (e.key === “ArrowDown”) {
+e.preventDefault();
+_activeIdx = Math.min(_activeIdx + 1, items.length - 1);
+items.forEach((el, i) => el.classList.toggle(“active”, i === _activeIdx));
+if (items[_activeIdx]) items[_activeIdx].scrollIntoView({ block: “nearest” });
+} else if (e.key === “ArrowUp”) {
+e.preventDefault();
+_activeIdx = Math.max(_activeIdx - 1, 0);
+items.forEach((el, i) => el.classList.toggle(“active”, i === _activeIdx));
+if (items[_activeIdx]) items[_activeIdx].scrollIntoView({ block: “nearest” });
+} else if (e.key === “Enter”) {
+if (_activeIdx >= 0 && items[_activeIdx]) {
+e.preventDefault();
+selectItem(items[_activeIdx].dataset.val);
+}
+} else if (e.key === “Escape”) {
+hideDropdown();
+}
+});
+
+// 視窗 resize/scroll 時重新定位
+window.addEventListener(“scroll”, () => { if (dropdown.style.display !== “none”) positionDropdown(); }, true);
+window.addEventListener(“resize”, () => { if (dropdown.style.display !== “none”) positionDropdown(); });
+
+function applyClosedState() {
+buildFullDatalist();  // 讓 L1=”-” 時也能從品項欄直接選
+inp2.value = “”;
+inp2.disabled = false;
+inp2.style.background = “”;
+inp2.style.color = “”;
+inp2.style.fontWeight = “”;
+inp2.style.borderColor = “”;
+td2.style.background = “”;
+td2.style.color = “”;
+td2.className = `td-l2 ${defaultStyleL2}`;
+}
+applyClosedState();
+
+function applyItemColor(item) {
+if (!item || item === “-” || item === “– 品項 –”) {
+td2.style.background = “”; td2.style.color = “”;
+inp2.style.background = “”; inp2.style.color = “”;
+inp2.style.fontWeight = “”; inp2.style.borderColor = “”;
+td2.className = `td-l2 ${defaultStyleL2}`;
+} else {
+const colors = getFoodColors(item);
+if (colors) {
+td2.style.background = colors.bg; td2.style.color = colors.fg;
+inp2.style.background = colors.bg; inp2.style.color = colors.fg;
+inp2.style.fontWeight = “600”; inp2.style.borderColor = “transparent”;
+} else {
+td2.style.background = “”; td2.style.color = “”;
+inp2.style.background = “”; inp2.style.color = “”;
+inp2.style.fontWeight = “600”; inp2.style.borderColor = “transparent”;
+td2.className = `td-l2 ${defaultStyleL2}`;
+}
+}
+}
+
+sel1.addEventListener(“change”, () => {
+const cat = sel1.value;
+td2.className = `td-l2 ${defaultStyleL2}`;
+td2.style.background = “”; td2.style.color = “”;
+inp2.style.color = “”; inp2.style.fontWeight = “”; inp2.style.borderColor = “”;
+hideDropdown();
+if (!cat || cat === “-”) { applyClosedState(); scheduleAutoSave(); return; }
+populateDatalistFromCat(cat);
+inp2.value = “”;
+inp2.disabled = false;
+inp2.style.background = “”; inp2.style.color = “”;
+scheduleAutoSave();
+});
+
+// 取得目前合法選項
+function getValidItems() {
+return _allItems;
+}
+
+inp2.addEventListener(“input”, () => {
+const item = inp2.value.trim();
+applyItemColor(item);
+showDropdown(item);
+
+```
+// Auto-fill L1 category if item typed directly and matches a known item
+if (item && sel1.value === "-") {
+  for (const cat of cats) {
+    if (cat === "-") continue;
+    if ((DB[cat] || []).includes(item)) {
+      sel1.value = cat;
+      populateDatalistFromCat(cat);
+      break;
     }
   }
+}
+scheduleAutoSave();
+```
 
-  const sel1 = document.createElement("select");
-  sel1.className = "sel-l1";
-  sel1.innerHTML = cats.map(c =>
-    `<option value="${c}" ${c==="-"?"selected":""}>${c === "-" ? "" : c}</option>`
-  ).join("");
+});
 
-  const td1 = document.createElement("td");
-  td1.className = `td-l1 ${defaultStyle}`;
-  const td2 = document.createElement("td");
-  td2.className = `td-l2 ${defaultStyleL2}`;
+// 離開欄位時驗證：若不在合法品項內則清空
+inp2.addEventListener(“blur”, () => {
+if (_isSelecting) return;
+setTimeout(() => {
+hideDropdown();
+const item = inp2.value.trim();
+if (!item) return;
+const valid = getValidItems();
+if (valid.length > 0 && !valid.includes(item)) {
+inp2.value = “”;
+applyItemColor(””);
+scheduleAutoSave();
+}
+}, 150);
+});
 
-  const inp2 = document.createElement("input");
-  inp2.type = "text";
-  inp2.className = "sel-l2 sel-l2-inp";
-  inp2.placeholder = "品項";
-  inp2.autocomplete = "off";
+// Allow typing even when cat not selected (auto mode)
+inp2.addEventListener(“focus”, () => {
+if (inp2.disabled) return;
+if (sel1.value === “-”) {
+buildFullDatalist();
+}
+});
 
-  function populateDatalistFromCat(cat) {
-    const items = DB[cat] || [];
-    _allItems = items.filter(i => i !== "-");
-  }
-
-  function buildFullDatalist() {
-    const allItems = new Set();
-    cats.filter(c => c !== "-").forEach(c => {
-      (DB[c] || []).filter(i => i !== "-").forEach(i => allItems.add(i));
-    });
-    _allItems = [...allItems];
-  }
-
-  // ── 自訂 fuzzy dropdown ──
-  let _allItems = [];
-  let _activeIdx = -1;
-  let _isSelecting = false;
-
-  const dropdown = document.createElement("div");
-  dropdown.className = "fuzzy-dropdown";
-  dropdown.style.display = "none";
-  document.body.appendChild(dropdown);
-
-  function positionDropdown() {
-    const rect = inp2.getBoundingClientRect();
-    dropdown.style.left = (rect.left + window.scrollX) + "px";
-    dropdown.style.top  = (rect.bottom + window.scrollY + 2) + "px";
-    dropdown.style.width = Math.max(rect.width, 120) + "px";
-  }
-
-  function showDropdown(keyword) {
-    if (!keyword) { hideDropdown(); return; }
-    const kw = keyword.toLowerCase();
-    const matched = _allItems.filter(i => i.toLowerCase().includes(kw));
-    if (!matched.length) { hideDropdown(); return; }
-    _activeIdx = -1;
-    dropdown.innerHTML = matched.map(item => {
-      const idx = item.toLowerCase().indexOf(kw);
-      const hi = item.slice(0, idx) +
-        `<mark>${item.slice(idx, idx + keyword.length)}</mark>` +
-        item.slice(idx + keyword.length);
-      return `<div class="fuzzy-dropdown-item" data-val="${item}">${hi}</div>`;
-    }).join("");
-    dropdown.querySelectorAll(".fuzzy-dropdown-item").forEach(el => {
-      el.addEventListener("mousedown", e => {
-        e.preventDefault();
-        _isSelecting = true;
-        selectItem(el.dataset.val);
-        _isSelecting = false;
-      });
-    });
-    positionDropdown();
-    dropdown.style.display = "block";
-  }
-
-  function hideDropdown() {
-    dropdown.style.display = "none";
-    _activeIdx = -1;
-  }
-
-  function selectItem(val) {
-    inp2.value = val;
-    hideDropdown();
-    inp2.dispatchEvent(new Event("input"));
-    // auto-fill L1
-    if (sel1.value === "-") {
-      for (const cat of cats) {
-        if (cat === "-") continue;
-        if ((DB[cat] || []).includes(val)) {
-          sel1.value = cat;
-          populateDatalistFromCat(cat);
-          break;
-        }
-      }
-    }
-    applyItemColor(val);
-    scheduleAutoSave();
-  }
-
-  // 鍵盤導航
-  inp2.addEventListener("keydown", e => {
-    if (dropdown.style.display === "none") return;
-    const items = dropdown.querySelectorAll(".fuzzy-dropdown-item");
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      _activeIdx = Math.min(_activeIdx + 1, items.length - 1);
-      items.forEach((el, i) => el.classList.toggle("active", i === _activeIdx));
-      if (items[_activeIdx]) items[_activeIdx].scrollIntoView({ block: "nearest" });
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      _activeIdx = Math.max(_activeIdx - 1, 0);
-      items.forEach((el, i) => el.classList.toggle("active", i === _activeIdx));
-      if (items[_activeIdx]) items[_activeIdx].scrollIntoView({ block: "nearest" });
-    } else if (e.key === "Enter") {
-      if (_activeIdx >= 0 && items[_activeIdx]) {
-        e.preventDefault();
-        selectItem(items[_activeIdx].dataset.val);
-      }
-    } else if (e.key === "Escape") {
-      hideDropdown();
-    }
-  });
-
-  // 視窗 resize/scroll 時重新定位
-  window.addEventListener("scroll", () => { if (dropdown.style.display !== "none") positionDropdown(); }, true);
-  window.addEventListener("resize", () => { if (dropdown.style.display !== "none") positionDropdown(); });
-
-  function applyClosedState() {
-    buildFullDatalist();  // 讓 L1="-" 時也能從品項欄直接選
-    inp2.value = "";
-    inp2.disabled = false;
-    inp2.style.background = "";
-    inp2.style.color = "";
-    inp2.style.fontWeight = "";
-    inp2.style.borderColor = "";
-    td2.style.background = "";
-    td2.style.color = "";
-    td2.className = `td-l2 ${defaultStyleL2}`;
-  }
-  applyClosedState();
-
-  function applyItemColor(item) {
-    if (!item || item === "-" || item === "-- 品項 --") {
-      td2.style.background = ""; td2.style.color = "";
-      inp2.style.background = ""; inp2.style.color = "";
-      inp2.style.fontWeight = ""; inp2.style.borderColor = "";
-      td2.className = `td-l2 ${defaultStyleL2}`;
-    } else {
-      const colors = getFoodColors(item);
-      if (colors) {
-        td2.style.background = colors.bg; td2.style.color = colors.fg;
-        inp2.style.background = colors.bg; inp2.style.color = colors.fg;
-        inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
-      } else {
-        td2.style.background = ""; td2.style.color = "";
-        inp2.style.background = ""; inp2.style.color = "";
-        inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
-        td2.className = `td-l2 ${defaultStyleL2}`;
-      }
-    }
-  }
-
-  sel1.addEventListener("change", () => {
-    const cat = sel1.value;
-    td2.className = `td-l2 ${defaultStyleL2}`;
-    td2.style.background = ""; td2.style.color = "";
-    inp2.style.color = ""; inp2.style.fontWeight = ""; inp2.style.borderColor = "";
-    hideDropdown();
-    if (!cat || cat === "-") { applyClosedState(); scheduleAutoSave(); return; }
-    populateDatalistFromCat(cat);
-    inp2.value = "";
-    inp2.disabled = false;
-    inp2.style.background = ""; inp2.style.color = "";
-    scheduleAutoSave();
-  });
-
-  // 取得目前合法選項
-  function getValidItems() {
-    return _allItems;
-  }
-
-  inp2.addEventListener("input", () => {
-    const item = inp2.value.trim();
-    applyItemColor(item);
-    showDropdown(item);
-
-    // Auto-fill L1 category if item typed directly and matches a known item
-    if (item && sel1.value === "-") {
-      for (const cat of cats) {
-        if (cat === "-") continue;
-        if ((DB[cat] || []).includes(item)) {
-          sel1.value = cat;
-          populateDatalistFromCat(cat);
-          break;
-        }
-      }
-    }
-    scheduleAutoSave();
-  });
-
-  // 離開欄位時驗證：若不在合法品項內則清空
-  inp2.addEventListener("blur", () => {
-    if (_isSelecting) return;
-    setTimeout(() => {
-      hideDropdown();
-      const item = inp2.value.trim();
-      if (!item) return;
-      const valid = getValidItems();
-      if (valid.length > 0 && !valid.includes(item)) {
-        inp2.value = "";
-        applyItemColor("");
-        scheduleAutoSave();
-      }
-    }, 150);
-  });
-
-  // Allow typing even when cat not selected (auto mode)
-  inp2.addEventListener("focus", () => {
-    if (inp2.disabled) return;
-    if (sel1.value === "-") {
-      buildFullDatalist();
-    }
-  });
-
-  td1.appendChild(sel1);
-  td2.appendChild(inp2);
-  return [td1, td2];
+td1.appendChild(sel1);
+td2.appendChild(inp2);
+return [td1, td2];
 }
 
 // ===== 地點欄複製 =====
 function copyLocColumn(block, colIdx, copyBtn) {
-  const cells = [];
-  block.querySelectorAll("table tr").forEach(tr => {
-    const catTd = tr.querySelector(".td-cat");
-    if (!catTd) return;
-    const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
-    const s1 = sels1[colIdx];
-    const i2 = inps2[colIdx];
-    if (!s1) return;
-    cells.push({
-      row: catTd.textContent,
-      v1: s1.value || "-",
-      v2: i2 ? (i2.value || "") : ""
-    });
-  });
-  _locClipboard = { cells };
+const cells = [];
+block.querySelectorAll(“table tr”).forEach(tr => {
+const catTd = tr.querySelector(”.td-cat”);
+if (!catTd) return;
+const sels1 = […tr.querySelectorAll(“td.td-l1 select”)];
+const inps2 = […tr.querySelectorAll(“td.td-l2 input.sel-l2-inp”)];
+const s1 = sels1[colIdx];
+const i2 = inps2[colIdx];
+if (!s1) return;
+cells.push({
+row: catTd.textContent,
+v1: s1.value || “-”,
+v2: i2 ? (i2.value || “”) : “”
+});
+});
+_locClipboard = { cells };
 
-  // 視覺回饋：複製按鈕變色
-  copyBtn.classList.add("copied");
-  copyBtn.textContent = "✓已複製";
-  setTimeout(() => {
-    copyBtn.classList.remove("copied");
-    copyBtn.textContent = "複製";
-  }, 2000);
+// 視覺回饋：複製按鈕變色
+copyBtn.classList.add(“copied”);
+copyBtn.textContent = “✓已複製”;
+setTimeout(() => {
+copyBtn.classList.remove(“copied”);
+copyBtn.textContent = “複製”;
+}, 2000);
 
-  // 顯示所有貼上按鈕
-  document.querySelectorAll("th._pasteBtn, th[data-paste-col]").forEach(el => {});
-  document.querySelectorAll(".week-block table tr:nth-child(2) th").forEach(th => {
-    if (th._pasteBtn) th._pasteBtn.style.display = "";
-  });
+// 顯示所有貼上按鈕
+document.querySelectorAll(“th._pasteBtn, th[data-paste-col]”).forEach(el => {});
+document.querySelectorAll(”.week-block table tr:nth-child(2) th”).forEach(th => {
+if (th._pasteBtn) th._pasteBtn.style.display = “”;
+});
 
-  showSaveToast("📋 已複製此欄品項，可貼上到其他地點");
+showSaveToast(“📋 已複製此欄品項，可貼上到其他地點”);
 }
 
 // ===== 地點欄貼上 =====
 function pasteLocColumn(block, colIdx) {
-  if (!_locClipboard) { showSaveToast("⚠️ 尚未複製任何欄位"); return; }
+if (!_locClipboard) { showSaveToast(“⚠️ 尚未複製任何欄位”); return; }
 
-  const rowMap = {};
-  block.querySelectorAll("table tr").forEach(tr => {
-    const catTd = tr.querySelector(".td-cat");
-    if (!catTd) return;
-    rowMap[catTd.textContent] = tr;
-  });
+const rowMap = {};
+block.querySelectorAll(“table tr”).forEach(tr => {
+const catTd = tr.querySelector(”.td-cat”);
+if (!catTd) return;
+rowMap[catTd.textContent] = tr;
+});
 
-  _locClipboard.cells.forEach(c => {
-    const tr = rowMap[c.row]; if (!tr) return;
-    const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
-    const s1 = sels1[colIdx];
-    const i2 = inps2[colIdx];
-    if (!s1) return;
+_locClipboard.cells.forEach(c => {
+const tr = rowMap[c.row]; if (!tr) return;
+const sels1 = […tr.querySelectorAll(“td.td-l1 select”)];
+const inps2 = […tr.querySelectorAll(“td.td-l2 input.sel-l2-inp”)];
+const s1 = sels1[colIdx];
+const i2 = inps2[colIdx];
+if (!s1) return;
 
-    // 設定 L1
-    s1.value = c.v1;
-    s1.dispatchEvent(new Event("change"));
+```
+// 設定 L1
+s1.value = c.v1;
+s1.dispatchEvent(new Event("change"));
 
-    // 稍後設 L2（等 change event 處理完 datalist）
-    setTimeout(() => {
-      if (i2 && c.v2) {
-        i2.value = c.v2;
-        i2.dispatchEvent(new Event("input"));
-      }
-    }, 50);
-  });
+// 稍後設 L2（等 change event 處理完 datalist）
+setTimeout(() => {
+  if (i2 && c.v2) {
+    i2.value = c.v2;
+    i2.dispatchEvent(new Event("input"));
+  }
+}, 50);
+```
 
-  scheduleAutoSave();
-  showSaveToast("✅ 已貼上品項到此欄");
+});
+
+scheduleAutoSave();
+showSaveToast(“✅ 已貼上品項到此欄”);
 }
 
 // ===== 地點欄清除 =====
 function clearLocColumn(block, colIdx) {
-  if (!confirm("確定清空此地點的所有菜單內容？")) return;
+if (!confirm(“確定清空此地點的所有菜單內容？”)) return;
 
-  const rowMap = {};
-  block.querySelectorAll("table tr").forEach(tr => {
-    const catTd = tr.querySelector(".td-cat");
-    if (!catTd) return;
-    rowMap[catTd.textContent] = tr;
-  });
+const rowMap = {};
+block.querySelectorAll(“table tr”).forEach(tr => {
+const catTd = tr.querySelector(”.td-cat”);
+if (!catTd) return;
+rowMap[catTd.textContent] = tr;
+});
 
-  Object.values(rowMap).forEach(tr => {
-    const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
-    const s1 = sels1[colIdx];
-    const i2 = inps2[colIdx];
-    if (s1) {
-      s1.value = "-";
-      s1.dispatchEvent(new Event("change"));
-    }
-    if (i2) {
-      i2.value = "";
-      i2.dispatchEvent(new Event("input"));
-    }
-  });
+Object.values(rowMap).forEach(tr => {
+const sels1 = […tr.querySelectorAll(“td.td-l1 select”)];
+const inps2 = […tr.querySelectorAll(“td.td-l2 input.sel-l2-inp”)];
+const s1 = sels1[colIdx];
+const i2 = inps2[colIdx];
+if (s1) {
+s1.value = “-”;
+s1.dispatchEvent(new Event(“change”));
+}
+if (i2) {
+i2.value = “”;
+i2.dispatchEvent(new Event(“input”));
+}
+});
 
-  scheduleAutoSave();
-  showSaveToast("🗑️ 已清空此欄品項");
+scheduleAutoSave();
+showSaveToast(“🗑️ 已清空此欄品項”);
 }
 
 function makeLocTh(loc, type, onDelete, locIndex, initQty, onCopy, onPaste, onClear) {
-  const th = document.createElement("th");
-  const isDark = (locIndex % 2 === 0);
-  if (type === "h") {
-    th.className = isDark ? "th-hloc" : "th-hloc-light";
-  } else {
-    th.className = isDark ? "th-wloc" : "th-wloc-light";
-  }
-  th.colSpan = 2;
-  th.style.borderLeft = "none";
-  th.style.borderRight = "none";
+const th = document.createElement(“th”);
+const isDark = (locIndex % 2 === 0);
+if (type === “h”) {
+th.className = isDark ? “th-hloc” : “th-hloc-light”;
+} else {
+th.className = isDark ? “th-wloc” : “th-wloc-light”;
+}
+th.colSpan = 2;
+th.style.borderLeft = “none”;
+th.style.borderRight = “none”;
 
-  const wrap = document.createElement("div");
-  wrap.style.cssText = "display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;row-gap:3px;padding:2px 0;";
+const wrap = document.createElement(“div”);
+wrap.style.cssText = “display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;row-gap:3px;padding:2px 0;”;
 
-  const SHARED_LOC_STYLE = "background:transparent;border:none;outline:none;color:#fff;font-size:0.92rem;font-weight:700;letter-spacing:2px;text-align:center;max-width:100px;cursor:pointer;font-family:inherit;";
+const SHARED_LOC_STYLE = “background:transparent;border:none;outline:none;color:#fff;font-size:0.92rem;font-weight:700;letter-spacing:2px;text-align:center;max-width:100px;cursor:pointer;font-family:inherit;”;
 
-  const sel = document.createElement("select");
-  sel.className = "loc-sel";
-  sel.style.cssText = SHARED_LOC_STYLE + "display:none;";
-  sel.innerHTML = PRESET_LOCS.map(p=>`<option value="${p}" ${p===loc?"selected":""}>${p}</option>`).join("") +
-    `<option value="__custom__">自訂</option>`;
+const sel = document.createElement(“select”);
+sel.className = “loc-sel”;
+sel.style.cssText = SHARED_LOC_STYLE + “display:none;”;
+sel.innerHTML = PRESET_LOCS.map(p=>`<option value="${p}" ${p===loc?"selected":""}>${p}</option>`).join(””) +
+`<option value="__custom__">自訂</option>`;
 
-  const inp = document.createElement("input");
-  inp.type = "text";
-  inp.className = "loc-inp";
-  inp.value = loc;
-  inp.placeholder = "輸入名稱";
-  inp.style.cssText = `display:flex;width:80px;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.5);color:#fff;font-size:0.92rem;font-weight:700;letter-spacing:2px;text-align:center;font-family:inherit;outline:none;`;
+const inp = document.createElement(“input”);
+inp.type = “text”;
+inp.className = “loc-inp”;
+inp.value = loc;
+inp.placeholder = “輸入名稱”;
+inp.style.cssText = `display:flex;width:80px;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.5);color:#fff;font-size:0.92rem;font-weight:700;letter-spacing:2px;text-align:center;font-family:inherit;outline:none;`;
 
-  inp.addEventListener("dblclick", () => {
-    inp.style.display = "none";
-    sel.style.display = "";
-    sel.value = PRESET_LOCS[0];
-    scheduleAutoSave();
-  });
+inp.addEventListener(“dblclick”, () => {
+inp.style.display = “none”;
+sel.style.display = “”;
+sel.value = PRESET_LOCS[0];
+scheduleAutoSave();
+});
 
-  sel.addEventListener("change", () => {
-    if (sel.value==="__custom__") {
-      sel.style.display = "none";
-      inp.style.display = "flex";
-      inp.value = "";
-      inp.focus();
-    } else {
-      inp.style.display = "none";
-      inp.value = sel.value;
-    }
-    scheduleAutoSave();
-  });
-  inp.addEventListener("input", scheduleAutoSave);
+sel.addEventListener(“change”, () => {
+if (sel.value===”**custom**”) {
+sel.style.display = “none”;
+inp.style.display = “flex”;
+inp.value = “”;
+inp.focus();
+} else {
+inp.style.display = “none”;
+inp.value = sel.value;
+}
+scheduleAutoSave();
+});
+inp.addEventListener(“input”, scheduleAutoSave);
 
-  // ── 份數 badge ──
-  const qtyWrap = document.createElement("div");
-  qtyWrap.className = "loc-qty-wrap";
+// ── 份數 badge ──
+const qtyWrap = document.createElement(“div”);
+qtyWrap.className = “loc-qty-wrap”;
 
-  const qtyStar = document.createElement("span");
-  qtyStar.className = "loc-qty-star";
-  qtyStar.textContent = "✦";
+const qtyStar = document.createElement(“span”);
+qtyStar.className = “loc-qty-star”;
+qtyStar.textContent = “✦”;
 
-  const qtyInp = document.createElement("input");
-  qtyInp.type = "text";
-  qtyInp.inputMode = "numeric";
-  qtyInp.className = "loc-qty-inp";
-  qtyInp.placeholder = "份數";
-  if (initQty) qtyInp.value = initQty;
-  qtyInp.addEventListener("input", () => {
-    qtyInp.value = qtyInp.value.replace(/[^0-9]/g, "");
-    scheduleAutoSave();
-  });
+const qtyInp = document.createElement(“input”);
+qtyInp.type = “text”;
+qtyInp.inputMode = “numeric”;
+qtyInp.className = “loc-qty-inp”;
+qtyInp.placeholder = “份數”;
+if (initQty) qtyInp.value = initQty;
+qtyInp.addEventListener(“input”, () => {
+qtyInp.value = qtyInp.value.replace(/[^0-9]/g, “”);
+scheduleAutoSave();
+});
 
-  const qtyUnit = document.createElement("span");
-  qtyUnit.className = "loc-qty-unit";
-  qtyUnit.textContent = "份";
+const qtyUnit = document.createElement(“span”);
+qtyUnit.className = “loc-qty-unit”;
+qtyUnit.textContent = “份”;
 
-  qtyWrap.appendChild(qtyStar);
-  qtyWrap.appendChild(qtyInp);
-  qtyWrap.appendChild(qtyUnit);
+qtyWrap.appendChild(qtyStar);
+qtyWrap.appendChild(qtyInp);
+qtyWrap.appendChild(qtyUnit);
 
-  const delBtn = document.createElement("button");
-  delBtn.textContent = "✕";
-  delBtn.title = "刪除此欄";
-  delBtn.style.cssText = "background:transparent;border:none;color:rgba(255,255,255,0.4);font-size:0.65rem;padding:2px 4px;cursor:pointer;line-height:1;transition:color 0.15s;";
-  delBtn.addEventListener("mouseenter", () => { delBtn.style.color = "rgba(255,255,255,0.85)"; });
-  delBtn.addEventListener("mouseleave", () => { delBtn.style.color = "rgba(255,255,255,0.4)"; });
-  delBtn.addEventListener("click", onDelete);
+const delBtn = document.createElement(“button”);
+delBtn.textContent = “✕”;
+delBtn.title = “刪除此欄”;
+delBtn.style.cssText = “background:transparent;border:none;color:rgba(255,255,255,0.4);font-size:0.65rem;padding:2px 4px;cursor:pointer;line-height:1;transition:color 0.15s;”;
+delBtn.addEventListener(“mouseenter”, () => { delBtn.style.color = “rgba(255,255,255,0.85)”; });
+delBtn.addEventListener(“mouseleave”, () => { delBtn.style.color = “rgba(255,255,255,0.4)”; });
+delBtn.addEventListener(“click”, onDelete);
 
-  // ── 複製按鈕 ──
-  const copyBtn = document.createElement("button");
-  copyBtn.className = "loc-cp-btn";
-  copyBtn.title = "複製此欄品項";
-  copyBtn.textContent = "複製";
-  copyBtn.addEventListener("click", () => {
-    if (onCopy) onCopy(copyBtn);
-  });
+// ── 複製按鈕 ──
+const copyBtn = document.createElement(“button”);
+copyBtn.className = “loc-cp-btn”;
+copyBtn.title = “複製此欄品項”;
+copyBtn.textContent = “複製”;
+copyBtn.addEventListener(“click”, () => {
+if (onCopy) onCopy(copyBtn);
+});
 
-  // ── 貼上按鈕 ──
-  const pasteBtn = document.createElement("button");
-  pasteBtn.className = "loc-cp-btn";
-  pasteBtn.title = "貼上品項到此欄";
-  pasteBtn.textContent = "貼上";
-  pasteBtn.style.display = _locClipboard ? "" : "none";
-  pasteBtn.addEventListener("click", () => {
-    if (onPaste) onPaste();
-  });
-  // 每次顯示時根據 clipboard 狀態更新
-  th._pasteBtn = pasteBtn;
+// ── 貼上按鈕 ──
+const pasteBtn = document.createElement(“button”);
+pasteBtn.className = “loc-cp-btn”;
+pasteBtn.title = “貼上品項到此欄”;
+pasteBtn.textContent = “貼上”;
+pasteBtn.style.display = _locClipboard ? “” : “none”;
+pasteBtn.addEventListener(“click”, () => {
+if (onPaste) onPaste();
+});
+// 每次顯示時根據 clipboard 狀態更新
+th._pasteBtn = pasteBtn;
 
-  // ── 清除按鈕 ──
-  const clearBtn = document.createElement("button");
-  clearBtn.className = "loc-clear-btn";
-  clearBtn.title = "清空此欄所有品項";
-  clearBtn.textContent = "清除";
-  clearBtn.addEventListener("click", () => {
-    if (onClear) onClear();
-  });
+// ── 清除按鈕 ──
+const clearBtn = document.createElement(“button”);
+clearBtn.className = “loc-clear-btn”;
+clearBtn.title = “清空此欄所有品項”;
+clearBtn.textContent = “清除”;
+clearBtn.addEventListener(“click”, () => {
+if (onClear) onClear();
+});
 
-  wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap); wrap.appendChild(delBtn);
+wrap.appendChild(sel); wrap.appendChild(inp); wrap.appendChild(qtyWrap); wrap.appendChild(delBtn);
 
-  // ── 第二行：複製／貼上／清除 ──
-  const btnRow = document.createElement("div");
-  btnRow.style.cssText = "display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin-top:1px;";
-  btnRow.appendChild(copyBtn); btnRow.appendChild(pasteBtn); btnRow.appendChild(clearBtn);
-  wrap.appendChild(btnRow);
+// ── 第二行：複製／貼上／清除 ──
+const btnRow = document.createElement(“div”);
+btnRow.style.cssText = “display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin-top:1px;”;
+btnRow.appendChild(copyBtn); btnRow.appendChild(pasteBtn); btnRow.appendChild(clearBtn);
+wrap.appendChild(btnRow);
 
-  th.appendChild(wrap);
-  return th;
+th.appendChild(wrap);
+return th;
 }
 
 function buildWeek(weekNum, initHLocs, initWLocs, initHQtys, initWQtys) {
-  const wid = `w${weekNum}`;
-  let hLocs = initHLocs ? [...initHLocs] : [...DEFAULT_HEALTH_LOCS];
-  let wLocs = initWLocs ? [...initWLocs] : [...DEFAULT_WIND_LOCS];
-  // qty arrays parallel to hLocs/wLocs
-  let hQtys = initHQtys ? [...initHQtys] : hLocs.map(()=>"");
-  let wQtys = initWQtys ? [...initWQtys] : wLocs.map(()=>"");
+const wid = `w${weekNum}`;
+let hLocs = initHLocs ? […initHLocs] : […DEFAULT_HEALTH_LOCS];
+let wLocs = initWLocs ? […initWLocs] : […DEFAULT_WIND_LOCS];
+// qty arrays parallel to hLocs/wLocs
+let hQtys = initHQtys ? […initHQtys] : hLocs.map(()=>””);
+let wQtys = initWQtys ? […initWQtys] : wLocs.map(()=>””);
 
-  weekDataMap[wid] = { hLocs, wLocs };
+weekDataMap[wid] = { hLocs, wLocs };
 
-  const block = document.createElement("div");
-  block.className = "week-block";
-  block.id = `block_${wid}`;
+const block = document.createElement(“div”);
+block.className = “week-block”;
+block.id = `block_${wid}`;
 
-  const weekDays = ["（日）","（一）","（二）","（三）","（四）","（五）","（六）"];
+const weekDays = [”（日）”,”（一）”,”（二）”,”（三）”,”（四）”,”（五）”,”（六）”];
 
-  block.innerHTML = `
-    <div class="week-titlebar">
-      <span class="week-label">第 ${weekNum} 筆</span>
-      <input class="week-date" type="date" id="date_${wid}">
-      <span class="week-day" id="day_${wid}">請選日期</span>
-      <button class="btn-save-to-history" onclick="saveWeekToHistory('${wid}')">📌 存入歷史</button>
-      <button class="btn-del-week" onclick="removeWeek('${wid}')">刪除</button>
-    </div>
-  `;
+block.innerHTML = `<div class="week-titlebar"> <span class="week-label">第 ${weekNum} 筆</span> <input class="week-date" type="date" id="date_${wid}"> <span class="week-day" id="day_${wid}">請選日期</span> <button class="btn-save-to-history" onclick="saveWeekToHistory('${wid}')">📌 存入歷史</button> <button class="btn-del-week" onclick="removeWeek('${wid}')">刪除</button> </div>`;
 
-  setTimeout(() => {
-    const di = document.getElementById(`date_${wid}`);
-    const ds = document.getElementById(`day_${wid}`);
-    if (di) di.addEventListener("change", () => {
-      if (di.value) {
-        const d = new Date(di.value+"T00:00:00");
-        ds.textContent = weekDays[d.getDay()];
-        ds.style.color = (d.getDay()===0||d.getDay()===6)?"#ff6b6b":"#fff";
-      } else { ds.textContent="請選日期"; ds.style.color="#b0bec5"; }
-      scheduleAutoSave();
-    });
-  }, 0);
+setTimeout(() => {
+const di = document.getElementById(`date_${wid}`);
+const ds = document.getElementById(`day_${wid}`);
+if (di) di.addEventListener(“change”, () => {
+if (di.value) {
+const d = new Date(di.value+“T00:00:00”);
+ds.textContent = weekDays[d.getDay()];
+ds.style.color = (d.getDay()===0||d.getDay()===6)?”#ff6b6b”:”#fff”;
+} else { ds.textContent=“請選日期”; ds.style.color=”#b0bec5”; }
+scheduleAutoSave();
+});
+}, 0);
 
-  function readCurrentQtys() {
-    // Read current qty values from DOM before rebuild
-    const qtyInps = [...block.querySelectorAll(".loc-qty-inp")];
-    const allQtys = qtyInps.map(q => q.value || "");
-    hQtys = allQtys.slice(0, hLocs.length);
-    wQtys = allQtys.slice(hLocs.length, hLocs.length + wLocs.length);
-  }
+function readCurrentQtys() {
+// Read current qty values from DOM before rebuild
+const qtyInps = […block.querySelectorAll(”.loc-qty-inp”)];
+const allQtys = qtyInps.map(q => q.value || “”);
+hQtys = allQtys.slice(0, hLocs.length);
+wQtys = allQtys.slice(hLocs.length, hLocs.length + wLocs.length);
+}
 
-  function rebuildTable() {
-    weekDataMap[wid].hLocs = hLocs;
-    weekDataMap[wid].wLocs = wLocs;
+function rebuildTable() {
+weekDataMap[wid].hLocs = hLocs;
+weekDataMap[wid].wLocs = wLocs;
 
-    const old = block.querySelector(".tbl-wrap");
-    if (old) old.remove();
+```
+const old = block.querySelector(".tbl-wrap");
+if (old) old.remove();
 
-    const wrap = document.createElement("div");
-    wrap.className = "tbl-wrap";
+const wrap = document.createElement("div");
+wrap.className = "tbl-wrap";
 
-    const tbl = document.createElement("table");
+const tbl = document.createElement("table");
 
-    const hr1 = tbl.insertRow();
-    const thCat = document.createElement("th");
-    thCat.className="th-week"; thCat.rowSpan=3; thCat.textContent="類別";
-    hr1.appendChild(thCat);
+const hr1 = tbl.insertRow();
+const thCat = document.createElement("th");
+thCat.className="th-week"; thCat.rowSpan=3; thCat.textContent="類別";
+hr1.appendChild(thCat);
 
-    const thH = document.createElement("th");
-    thH.className="th-health"; thH.colSpan=hLocs.length*2;
-    thH.textContent="【健康餐】"; hr1.appendChild(thH);
+const thH = document.createElement("th");
+thH.className="th-health"; thH.colSpan=hLocs.length*2;
+thH.textContent="【健康餐】"; hr1.appendChild(thH);
 
-    const thW = document.createElement("th");
-    thW.className="th-wind"; thW.colSpan=wLocs.length*2;
-    thW.textContent="【風味餐】"; hr1.appendChild(thW);
+const thW = document.createElement("th");
+thW.className="th-wind"; thW.colSpan=wLocs.length*2;
+thW.textContent="【風味餐】"; hr1.appendChild(thW);
 
-    const hr2 = tbl.insertRow();
-    hLocs.forEach((loc, i) => {
-      const colIdx = i;
-      hr2.appendChild(makeLocTh(loc, "h", () => {
-        readCurrentQtys();
-        if (hLocs.length<=1) { alert("至少需保留一個健康餐地點"); return; }
-        if (!confirm(`刪除「${loc}」欄位？`)) return;
-        hLocs.splice(i,1); hQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
-      }, i, hQtys[i],
-      (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
-      () => pasteLocColumn(block, colIdx),
-      () => clearLocColumn(block, colIdx)
-      ));
-    });
-    wLocs.forEach((loc, i) => {
-      const colIdx = hLocs.length + i;
-      hr2.appendChild(makeLocTh(loc, "w", () => {
-        readCurrentQtys();
-        if (wLocs.length<=1) { alert("至少需保留一個風味餐地點"); return; }
-        if (!confirm(`刪除「${loc}」欄位？`)) return;
-        wLocs.splice(i,1); wQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
-      }, i, wQtys[i],
-      (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
-      () => pasteLocColumn(block, colIdx),
-      () => clearLocColumn(block, colIdx)
-      ));
-    });
+const hr2 = tbl.insertRow();
+hLocs.forEach((loc, i) => {
+  const colIdx = i;
+  hr2.appendChild(makeLocTh(loc, "h", () => {
+    readCurrentQtys();
+    if (hLocs.length<=1) { alert("至少需保留一個健康餐地點"); return; }
+    if (!confirm(`刪除「${loc}」欄位？`)) return;
+    hLocs.splice(i,1); hQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
+  }, i, hQtys[i],
+  (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
+  () => pasteLocColumn(block, colIdx),
+  () => clearLocColumn(block, colIdx)
+  ));
+});
+wLocs.forEach((loc, i) => {
+  const colIdx = hLocs.length + i;
+  hr2.appendChild(makeLocTh(loc, "w", () => {
+    readCurrentQtys();
+    if (wLocs.length<=1) { alert("至少需保留一個風味餐地點"); return; }
+    if (!confirm(`刪除「${loc}」欄位？`)) return;
+    wLocs.splice(i,1); wQtys.splice(i,1); rebuildTable(); scheduleAutoSave();
+  }, i, wQtys[i],
+  (copyBtn) => copyLocColumn(block, colIdx, copyBtn),
+  () => pasteLocColumn(block, colIdx),
+  () => clearLocColumn(block, colIdx)
+  ));
+});
 
-    const hr3 = tbl.insertRow();
-    hLocs.forEach((_, i) => ["類別","品項"].forEach(l => {
-      const th=document.createElement("th");
-      th.className = "th-sub " + (i % 2 === 0 ? "th-sub-h" : "th-sub-h-light");
-      th.textContent=l; hr3.appendChild(th);
-    }));
-    wLocs.forEach((_, i) => ["類別","品項"].forEach(l => {
-      const th=document.createElement("th");
-      th.className = "th-sub " + (i % 2 === 0 ? "th-sub-w" : "th-sub-w-light");
-      th.textContent=l; hr3.appendChild(th);
-    }));
+const hr3 = tbl.insertRow();
+hLocs.forEach((_, i) => ["類別","品項"].forEach(l => {
+  const th=document.createElement("th");
+  th.className = "th-sub " + (i % 2 === 0 ? "th-sub-h" : "th-sub-h-light");
+  th.textContent=l; hr3.appendChild(th);
+}));
+wLocs.forEach((_, i) => ["類別","品項"].forEach(l => {
+  const th=document.createElement("th");
+  th.className = "th-sub " + (i % 2 === 0 ? "th-sub-w" : "th-sub-w-light");
+  th.textContent=l; hr3.appendChild(th);
+}));
 
-    ROWS.forEach(row => {
-      const tr = tbl.insertRow();
-      const tdCat = document.createElement("td");
-      tdCat.className = "td-cat";
-      tdCat.textContent = row;
-      const len = row.length;
-      if (len >= 5) tdCat.style.fontSize = "0.6rem";
-      else if (len === 4) tdCat.style.fontSize = "0.7rem";
-      else if (len === 3) tdCat.style.fontSize = "0.76rem";
-      tr.appendChild(tdCat);
-      const [hS, hS2, wS, wS2] = getRowStyles(row);
-      hLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,hS,hS2,"h"); tr.appendChild(t1); tr.appendChild(t2); });
-      wLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,wS,wS2,"w"); tr.appendChild(t1); tr.appendChild(t2); });
-    });
+ROWS.forEach(row => {
+  const tr = tbl.insertRow();
+  const tdCat = document.createElement("td");
+  tdCat.className = "td-cat";
+  tdCat.textContent = row;
+  const len = row.length;
+  if (len >= 5) tdCat.style.fontSize = "0.6rem";
+  else if (len === 4) tdCat.style.fontSize = "0.7rem";
+  else if (len === 3) tdCat.style.fontSize = "0.76rem";
+  tr.appendChild(tdCat);
+  const [hS, hS2, wS, wS2] = getRowStyles(row);
+  hLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,hS,hS2,"h"); tr.appendChild(t1); tr.appendChild(t2); });
+  wLocs.forEach(()=>{ const [t1,t2]=makeColPair(row,wS,wS2,"w"); tr.appendChild(t1); tr.appendChild(t2); });
+});
 
-    wrap.appendChild(tbl);
-    block.appendChild(wrap);
-  }
+wrap.appendChild(tbl);
+block.appendChild(wrap);
+```
 
-  rebuildTable();
-  block._rebuildTable = rebuildTable;
-  block._hQtysRef = hQtys;
-  block._wQtysRef = wQtys;
-  return block;
+}
+
+rebuildTable();
+block._rebuildTable = rebuildTable;
+block._hQtysRef = hQtys;
+block._wQtysRef = wQtys;
+return block;
 }
 
 function addWeek() {
-  weekCount++;
+weekCount++;
 
-  // 以最新日期（最後一筆）的地點設定為預設值
-  const blocks = document.querySelectorAll(".week-block");
-  let initHLocs, initWLocs;
-  if (blocks.length > 0) {
-    const lastBlock = blocks[blocks.length - 1];
-    const lastWid = lastBlock.id.replace("block_", "");
-    const lastInfo = weekDataMap[lastWid];
-    if (lastInfo) {
-      // 讀取最新日期目前實際的地點名稱（從 DOM）
-      const locSels = [...lastBlock.querySelectorAll(".loc-sel")];
-      const locInps = [...lastBlock.querySelectorAll(".loc-inp")];
-      const allNames = locSels.map((s, i) => {
-        if (s.style.display === "none") return locInps[i]?.value || "";
-        return s.value === "__custom__" ? (locInps[i]?.value || "") : s.value;
-      });
-      initHLocs = allNames.slice(0, lastInfo.hLocs.length);
-      initWLocs = allNames.slice(lastInfo.hLocs.length, lastInfo.hLocs.length + lastInfo.wLocs.length);
-    }
-  }
+// 以最新日期（最後一筆）的地點設定為預設值
+const blocks = document.querySelectorAll(”.week-block”);
+let initHLocs, initWLocs;
+if (blocks.length > 0) {
+const lastBlock = blocks[blocks.length - 1];
+const lastWid = lastBlock.id.replace(“block_”, “”);
+const lastInfo = weekDataMap[lastWid];
+if (lastInfo) {
+// 讀取最新日期目前實際的地點名稱（從 DOM）
+const locSels = […lastBlock.querySelectorAll(”.loc-sel”)];
+const locInps = […lastBlock.querySelectorAll(”.loc-inp”)];
+const allNames = locSels.map((s, i) => {
+if (s.style.display === “none”) return locInps[i]?.value || “”;
+return s.value === “**custom**” ? (locInps[i]?.value || “”) : s.value;
+});
+initHLocs = allNames.slice(0, lastInfo.hLocs.length);
+initWLocs = allNames.slice(lastInfo.hLocs.length, lastInfo.hLocs.length + lastInfo.wLocs.length);
+}
+}
 
-  const block = buildWeek(weekCount, initHLocs, initWLocs);
-  document.getElementById("scheduleArea").appendChild(block);
-  scheduleAutoSave();
+const block = buildWeek(weekCount, initHLocs, initWLocs);
+document.getElementById(“scheduleArea”).appendChild(block);
+scheduleAutoSave();
 }
 
 // 對所有現有日期新增健康餐地點
 function addGlobalHLoc() {
-  const blocks = document.querySelectorAll(".week-block");
-  if (blocks.length === 0) { alert("請先新增日期。"); return; }
-  blocks.forEach(block => {
-    const wid = block.id.replace("block_", "");
-    const info = weekDataMap[wid];
-    if (!info) return;
-    // 讀取目前 qty 值後再 push
-    const qtyInps = [...block.querySelectorAll(".loc-qty-inp")];
-    const allQtys = qtyInps.map(q => q.value || "");
-    info.hLocs.push("新地點");
-    // 把新 qty 空值插到 h 範圍末尾
-    if (block._hQtysRef) block._hQtysRef.push("");
-    block._rebuildTable && block._rebuildTable();
-  });
-  scheduleAutoSave();
+const blocks = document.querySelectorAll(”.week-block”);
+if (blocks.length === 0) { alert(“請先新增日期。”); return; }
+blocks.forEach(block => {
+const wid = block.id.replace(“block_”, “”);
+const info = weekDataMap[wid];
+if (!info) return;
+// 讀取目前 qty 值後再 push
+const qtyInps = […block.querySelectorAll(”.loc-qty-inp”)];
+const allQtys = qtyInps.map(q => q.value || “”);
+info.hLocs.push(“新地點”);
+// 把新 qty 空值插到 h 範圍末尾
+if (block._hQtysRef) block._hQtysRef.push(””);
+block._rebuildTable && block._rebuildTable();
+});
+scheduleAutoSave();
 }
 
 // 對所有現有日期新增風味餐地點
 function addGlobalWLoc() {
-  const blocks = document.querySelectorAll(".week-block");
-  if (blocks.length === 0) { alert("請先新增日期。"); return; }
-  blocks.forEach(block => {
-    const wid = block.id.replace("block_", "");
-    const info = weekDataMap[wid];
-    if (!info) return;
-    info.wLocs.push("新地點");
-    if (block._wQtysRef) block._wQtysRef.push("");
-    block._rebuildTable && block._rebuildTable();
-  });
-  scheduleAutoSave();
+const blocks = document.querySelectorAll(”.week-block”);
+if (blocks.length === 0) { alert(“請先新增日期。”); return; }
+blocks.forEach(block => {
+const wid = block.id.replace(“block_”, “”);
+const info = weekDataMap[wid];
+if (!info) return;
+info.wLocs.push(“新地點”);
+if (block._wQtysRef) block._wQtysRef.push(””);
+block._rebuildTable && block._rebuildTable();
+});
+scheduleAutoSave();
 }
 
 function removeWeek(wid) {
-  if (!confirm("確定刪除此筆？")) return;
-  document.getElementById(`block_${wid}`)?.remove();
-  delete weekDataMap[wid];
-  scheduleAutoSave();
+if (!confirm(“確定刪除此筆？”)) return;
+document.getElementById(`block_${wid}`)?.remove();
+delete weekDataMap[wid];
+scheduleAutoSave();
 }
 
 function clearAll() {
-  if (!confirm("確定清除全部？這將同時清除儲存的資料。")) return;
-  document.getElementById("scheduleArea").innerHTML="";
-  weekCount=0; weekDataMap={};
-  localStorage.removeItem(STORAGE_KEY);
-  document.getElementById("saveStatus").textContent = "💾 自動儲存中…";
+if (!confirm(“確定清除全部？這將同時清除儲存的資料。”)) return;
+document.getElementById(“scheduleArea”).innerHTML=””;
+weekCount=0; weekDataMap={};
+localStorage.removeItem(STORAGE_KEY);
+document.getElementById(“saveStatus”).textContent = “💾 自動儲存中…”;
 }
 
 function getLocName(sel, inp) {
-  if (!sel) return "";
-  return sel.value === "__custom__" ? (inp?.value || "") : sel.value;
+if (!sel) return “”;
+return sel.value === “**custom**” ? (inp?.value || “”) : sel.value;
 }
 
 function exportHTML(itemOnlyMode) {
-  const blocks = document.querySelectorAll(".week-block");
-  if (blocks.length === 0) {
-    alert("沒有可匯出的資料，請先新增日期並填寫菜單。");
-    return;
-  }
+const blocks = document.querySelectorAll(”.week-block”);
+if (blocks.length === 0) {
+alert(“沒有可匯出的資料，請先新增日期並填寫菜單。”);
+return;
+}
 
-  let cssText = "";
-  for (const sheet of document.styleSheets) {
-    try {
-      for (const rule of sheet.cssRules) { cssText += rule.cssText + "\n"; }
-    } catch(e) {}
-  }
+let cssText = “”;
+for (const sheet of document.styleSheets) {
+try {
+for (const rule of sheet.cssRules) { cssText += rule.cssText + “\n”; }
+} catch(e) {}
+}
 
-  let tablesHTML = "";
+let tablesHTML = “”;
 
-  blocks.forEach((block) => {
-    const date = block.querySelector(".week-date")?.value || "";
-    const day  = block.querySelector(".week-day")?.textContent || "";
-    const wid  = block.id.replace("block_", "");
-    const info = weekDataMap[wid] || {};
-    const hLocsCount = (info.hLocs || DEFAULT_HEALTH_LOCS).length;
-    const wLocsCount = (info.wLocs || DEFAULT_WIND_LOCS).length;
+blocks.forEach((block) => {
+const date = block.querySelector(”.week-date”)?.value || “”;
+const day  = block.querySelector(”.week-day”)?.textContent || “”;
+const wid  = block.id.replace(“block_”, “”);
+const info = weekDataMap[wid] || {};
+const hLocsCount = (info.hLocs || DEFAULT_HEALTH_LOCS).length;
+const wLocsCount = (info.wLocs || DEFAULT_WIND_LOCS).length;
 
-    const locSels = [...block.querySelectorAll(".loc-sel")];
-    const locInps = [...block.querySelectorAll(".loc-inp")];
-    const resolvedLocs = locSels.map((s, i) => getLocName(s, locInps[i]));
-    const hLocNames = resolvedLocs.slice(0, hLocsCount);
-    const wLocNames = resolvedLocs.slice(hLocsCount, hLocsCount + wLocsCount);
+```
+const locSels = [...block.querySelectorAll(".loc-sel")];
+const locInps = [...block.querySelectorAll(".loc-inp")];
+const resolvedLocs = locSels.map((s, i) => getLocName(s, locInps[i]));
+const hLocNames = resolvedLocs.slice(0, hLocsCount);
+const wLocNames = resolvedLocs.slice(hLocsCount, hLocsCount + wLocsCount);
 
-    const hSpan = itemOnlyMode ? hLocNames.length : hLocNames.length * 2;
-    const wSpan = itemOnlyMode ? wLocNames.length : wLocNames.length * 2;
-    let hr1 = `<tr>
-      <th class="th-week" rowspan="3">類別</th>
-      <th class="th-health" colspan="${hSpan}">【健康餐】</th>
-      <th class="th-wind" colspan="${wSpan}">【風味餐】</th>
-    </tr>`;
+const hSpan = itemOnlyMode ? hLocNames.length : hLocNames.length * 2;
+const wSpan = itemOnlyMode ? wLocNames.length : wLocNames.length * 2;
+let hr1 = `<tr>
+  <th class="th-week" rowspan="3">類別</th>
+  <th class="th-health" colspan="${hSpan}">【健康餐】</th>
+  <th class="th-wind" colspan="${wSpan}">【風味餐】</th>
+</tr>`;
 
-    let hr2 = "<tr>";
-    hLocNames.forEach((loc, i) => {
-      const cls = i%2===0 ? "th-hloc" : "th-hloc-light";
-      const cs = itemOnlyMode ? 1 : 2;
-      hr2 += `<th class="${cls}" colspan="${cs}" style="border-left:none;border-right:none;">${loc}</th>`;
+let hr2 = "<tr>";
+hLocNames.forEach((loc, i) => {
+  const cls = i%2===0 ? "th-hloc" : "th-hloc-light";
+  const cs = itemOnlyMode ? 1 : 2;
+  hr2 += `<th class="${cls}" colspan="${cs}" style="border-left:none;border-right:none;">${loc}</th>`;
+});
+wLocNames.forEach((loc, i) => {
+  const cls = i%2===0 ? "th-wloc" : "th-wloc-light";
+  const cs = itemOnlyMode ? 1 : 2;
+  hr2 += `<th class="${cls}" colspan="${cs}" style="border-left:none;border-right:none;">${loc}</th>`;
+});
+hr2 += "</tr>";
+
+let hr3 = "<tr>";
+if (!itemOnlyMode) {
+  hLocNames.forEach((_, i) => {
+    ["類別","品項"].forEach(l => {
+      const cls = i%2===0 ? "th-sub th-sub-h" : "th-sub th-sub-h-light";
+      hr3 += `<th class="${cls}">${l}</th>`;
     });
-    wLocNames.forEach((loc, i) => {
-      const cls = i%2===0 ? "th-wloc" : "th-wloc-light";
-      const cs = itemOnlyMode ? 1 : 2;
-      hr2 += `<th class="${cls}" colspan="${cs}" style="border-left:none;border-right:none;">${loc}</th>`;
+  });
+  wLocNames.forEach((_, i) => {
+    ["類別","品項"].forEach(l => {
+      const cls = i%2===0 ? "th-sub th-sub-w" : "th-sub th-sub-w-light";
+      hr3 += `<th class="${cls}">${l}</th>`;
     });
-    hr2 += "</tr>";
+  });
+} else {
+  hLocNames.forEach((_, i) => {
+    const cls = i%2===0 ? "th-sub th-sub-h" : "th-sub th-sub-h-light";
+    hr3 += `<th class="${cls}">品項</th>`;
+  });
+  wLocNames.forEach((_, i) => {
+    const cls = i%2===0 ? "th-sub th-sub-w" : "th-sub th-sub-w-light";
+    hr3 += `<th class="${cls}">品項</th>`;
+  });
+}
+hr3 += "</tr>";
 
-    let hr3 = "<tr>";
-    if (!itemOnlyMode) {
-      hLocNames.forEach((_, i) => {
-        ["類別","品項"].forEach(l => {
-          const cls = i%2===0 ? "th-sub th-sub-h" : "th-sub th-sub-h-light";
-          hr3 += `<th class="${cls}">${l}</th>`;
-        });
-      });
-      wLocNames.forEach((_, i) => {
-        ["類別","品項"].forEach(l => {
-          const cls = i%2===0 ? "th-sub th-sub-w" : "th-sub th-sub-w-light";
-          hr3 += `<th class="${cls}">${l}</th>`;
-        });
-      });
-    } else {
-      hLocNames.forEach((_, i) => {
-        const cls = i%2===0 ? "th-sub th-sub-h" : "th-sub th-sub-h-light";
-        hr3 += `<th class="${cls}">品項</th>`;
-      });
-      wLocNames.forEach((_, i) => {
-        const cls = i%2===0 ? "th-sub th-sub-w" : "th-sub th-sub-w-light";
-        hr3 += `<th class="${cls}">品項</th>`;
-      });
+let rowsHTML = "";
+block.querySelectorAll("table tr").forEach(tr => {
+  const catTd = tr.querySelector(".td-cat");
+  if (!catTd) return;
+  const rowName = catTd.textContent;
+  const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+  const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+
+  const [hS, hS2, wS, wS2] = getRowStyles(rowName);
+
+  rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
+
+  sels1.forEach((s1, i) => {
+    const isH = i < hLocNames.length;
+    const baseS  = isH ? hS  : wS;
+    const baseS2 = isH ? hS2 : wS2;
+    const col    = i % (isH ? hLocNames.length : wLocNames.length);
+
+    const v1 = s1.value && s1.value !== "-" ? s1.value : "";
+    const rawV2 = inps2[i]?.value || "";
+    const v2 = rawV2 && rawV2 !== "-" && rawV2 !== "-- 品項 --" ? rawV2 : "";
+
+    let itemBgStyle = "";
+    if (v2) {
+      const colors = getFoodColors(v2);
+      if (colors) {
+        itemBgStyle = `background:${colors.bg};color:${colors.fg};`;
+      }
     }
-    hr3 += "</tr>";
 
-    let rowsHTML = "";
-    block.querySelectorAll("table tr").forEach(tr => {
-      const catTd = tr.querySelector(".td-cat");
-      if (!catTd) return;
-      const rowName = catTd.textContent;
-      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
-
-      const [hS, hS2, wS, wS2] = getRowStyles(rowName);
-
-      rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
-
-      sels1.forEach((s1, i) => {
-        const isH = i < hLocNames.length;
-        const baseS  = isH ? hS  : wS;
-        const baseS2 = isH ? hS2 : wS2;
-        const col    = i % (isH ? hLocNames.length : wLocNames.length);
-
-        const v1 = s1.value && s1.value !== "-" ? s1.value : "";
-        const rawV2 = inps2[i]?.value || "";
-        const v2 = rawV2 && rawV2 !== "-" && rawV2 !== "-- 品項 --" ? rawV2 : "";
-
-        let itemBgStyle = "";
-        if (v2) {
-          const colors = getFoodColors(v2);
-          if (colors) {
-            itemBgStyle = `background:${colors.bg};color:${colors.fg};`;
-          }
-        }
-
-        if (!itemOnlyMode) {
-          rowsHTML += `<td class="td-l1 ${baseS}" style="padding:4px 6px;">${v1}</td>`;
-          rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
-        } else {
-          rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
-        }
-      });
-
-      rowsHTML += "</tr>";
-    });
-
-    tablesHTML += `
-      <div class="week-block" style="margin-bottom:28px;">
-        <div class="week-titlebar">
-          <span class="week-label">日期：${date}</span>
-          <span class="week-day">${day}</span>
-        </div>
-        <div class="tbl-wrap">
-          <table>${hr1}${hr2}${hr3}${rowsHTML}</table>
-        </div>
-      </div>`;
+    if (!itemOnlyMode) {
+      rowsHTML += `<td class="td-l1 ${baseS}" style="padding:4px 6px;">${v1}</td>`;
+      rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
+    } else {
+      rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
+    }
   });
 
-  const modeLabel = itemOnlyMode ? "僅品項" : "含類別";
-  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
-  const html = `<!DOCTYPE html>
+  rowsHTML += "</tr>";
+});
+
+tablesHTML += `
+  <div class="week-block" style="margin-bottom:28px;">
+    <div class="week-titlebar">
+      <span class="week-label">日期：${date}</span>
+      <span class="week-day">${day}</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>${hr1}${hr2}${hr3}${rowsHTML}</table>
+    </div>
+  </div>`;
+```
+
+});
+
+const modeLabel = itemOnlyMode ? “僅品項” : “含類別”;
+const dateStr = new Date().toLocaleDateString(“zh-TW”).replace(///g,”-”);
+const html = `<!DOCTYPE html>
+
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -3291,359 +3307,355 @@ ${tablesHTML}
 </body>
 </html>`;
 
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `chiayumenu_${dateStr}_${modeLabel}.html`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+const blob = new Blob([html], { type: “text/html;charset=utf-8” });
+const a = document.createElement(“a”);
+a.href = URL.createObjectURL(blob);
+a.download = `chiayumenu_${dateStr}_${modeLabel}.html`;
+a.click();
+URL.revokeObjectURL(a.href);
 }
 
-
 function renderDB() {
-  const grid=document.getElementById("dbGrid");
-  Object.entries(COLOR_GROUPS).forEach(([key,g])=>{
-    const div=document.createElement("div"); div.className="db-cat";
-    div.innerHTML=`<div class="db-cat-title" style="background:${g.titleBg}">${g.label}</div>
-      <div class="db-cat-items">${g.items.map(i=>`<div class="db-item" style="background:${g.bg};color:${g.fg||'#333'}">${i}</div>`).join("")}</div>`;
-    grid.appendChild(div);
-  });
+const grid=document.getElementById(“dbGrid”);
+Object.entries(COLOR_GROUPS).forEach(([key,g])=>{
+const div=document.createElement(“div”); div.className=“db-cat”;
+div.innerHTML=`<div class="db-cat-title" style="background:${g.titleBg}">${g.label}</div> <div class="db-cat-items">${g.items.map(i=>`<div class="db-item" style="background:${g.bg};color:${g.fg||'#333'}">${i}</div>`).join("")}</div>`;
+grid.appendChild(div);
+});
 }
 
 const CAT_STYLES = {
-  "健康餐主菜": { titleBg:"#2e7d32", titleFg:"#fff", itemBg:"#c8e6c9", itemFg:"#1b5e20" },
-  "風味餐主菜": { titleBg:"#1565c0", titleFg:"#fff", itemBg:"#bbdefb", itemFg:"#0d47a1" },
-  "副主菜":     { titleBg:"#f57f17", titleFg:"#fff", itemBg:"#fff9c4", itemFg:"#6d4c00" },
-  "米飯":       { titleBg:"#795548", titleFg:"#fff", itemBg:"#ffe0b2", itemFg:"#4e342e" },
-  "白葉菜":     { titleBg:"#546e7a", titleFg:"#fff", itemBg:"#eceff1", itemFg:"#263238" },
-  "綠葉菜":     { titleBg:"#388e3c", titleFg:"#fff", itemBg:"#dcedc8", itemFg:"#1b5e20" },
-  "蛋白質":     { titleBg:"#e65100", titleFg:"#fff", itemBg:"#ffe0b2", itemFg:"#bf360c" },
-  "菇":         { titleBg:"#6d4c41", titleFg:"#fff", itemBg:"#d7ccc8", itemFg:"#3e2723" },
-  "瓜果":       { titleBg:"#00838f", titleFg:"#fff", itemBg:"#b2ebf2", itemFg:"#006064" },
-  "根莖":       { titleBg:"#c62828", titleFg:"#fff", itemBg:"#ffcdd2", itemFg:"#b71c1c" },
-  "海帶":       { titleBg:"#1a237e", titleFg:"#fff", itemBg:"#c5cae9", itemFg:"#1a237e" },
-  "其他":       { titleBg:"#616161", titleFg:"#fff", itemBg:"#f5f5f5", itemFg:"#424242" },
-  "輔料":       { titleBg:"#6a1b9a", titleFg:"#fff", itemBg:"#e1bee7", itemFg:"#4a148c" }
+“健康餐主菜”: { titleBg:”#2e7d32”, titleFg:”#fff”, itemBg:”#c8e6c9”, itemFg:”#1b5e20” },
+“風味餐主菜”: { titleBg:”#1565c0”, titleFg:”#fff”, itemBg:”#bbdefb”, itemFg:”#0d47a1” },
+“副主菜”:     { titleBg:”#f57f17”, titleFg:”#fff”, itemBg:”#fff9c4”, itemFg:”#6d4c00” },
+“米飯”:       { titleBg:”#795548”, titleFg:”#fff”, itemBg:”#ffe0b2”, itemFg:”#4e342e” },
+“白葉菜”:     { titleBg:”#546e7a”, titleFg:”#fff”, itemBg:”#eceff1”, itemFg:”#263238” },
+“綠葉菜”:     { titleBg:”#388e3c”, titleFg:”#fff”, itemBg:”#dcedc8”, itemFg:”#1b5e20” },
+“蛋白質”:     { titleBg:”#e65100”, titleFg:”#fff”, itemBg:”#ffe0b2”, itemFg:”#bf360c” },
+“菇”:         { titleBg:”#6d4c41”, titleFg:”#fff”, itemBg:”#d7ccc8”, itemFg:”#3e2723” },
+“瓜果”:       { titleBg:”#00838f”, titleFg:”#fff”, itemBg:”#b2ebf2”, itemFg:”#006064” },
+“根莖”:       { titleBg:”#c62828”, titleFg:”#fff”, itemBg:”#ffcdd2”, itemFg:”#b71c1c” },
+“海帶”:       { titleBg:”#1a237e”, titleFg:”#fff”, itemBg:”#c5cae9”, itemFg:”#1a237e” },
+“其他”:       { titleBg:”#616161”, titleFg:”#fff”, itemBg:”#f5f5f5”, itemFg:”#424242” },
+“輔料”:       { titleBg:”#6a1b9a”, titleFg:”#fff”, itemBg:”#e1bee7”, itemFg:”#4a148c” }
 };
 
 function renderCatDB() {
-  const grid = document.getElementById("catGrid");
-  Object.entries(DB).forEach(([cat, items]) => {
-    const style = CAT_STYLES[cat] || { titleBg:"#607d8b", titleFg:"#fff", itemBg:"#eceff1", itemFg:"#37474f" };
-    const realItems = items.filter(i => i !== "-");
-    const div = document.createElement("div");
-    div.className = "db-cat";
-    div.innerHTML = `
-      <div class="db-cat-title" style="background:${style.titleBg};color:${style.titleFg}">${cat}</div>
-      <div class="db-cat-items">${realItems.map(i =>
-        `<div class="db-item" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
-      ).join("")}</div>`;
-    grid.appendChild(div);
-  });
+const grid = document.getElementById(“catGrid”);
+Object.entries(DB).forEach(([cat, items]) => {
+const style = CAT_STYLES[cat] || { titleBg:”#607d8b”, titleFg:”#fff”, itemBg:”#eceff1”, itemFg:”#37474f” };
+const realItems = items.filter(i => i !== “-”);
+const div = document.createElement(“div”);
+div.className = “db-cat”;
+div.innerHTML = `<div class="db-cat-title" style="background:${style.titleBg};color:${style.titleFg}">${cat}</div> <div class="db-cat-items">${realItems.map(i =>`<div class="db-item" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>` ).join("")}</div>`;
+grid.appendChild(div);
+});
 }
 
 // ===== Firebase 初始化流程 =====
 async function initApp() {
-  await loadHistory();
-  const loaded = await loadAll();
-  if (!loaded) {
-    addWeek();
-    addWeek();
-  }
-  renderHistoryPanel();
-  initMgmtItems();
-  rerenderDBPanels();
+await loadHistory();
+const loaded = await loadAll();
+if (!loaded) {
+addWeek();
+addWeek();
+}
+renderHistoryPanel();
+initMgmtItems();
+rerenderDBPanels();
 }
 
 // 超時保護：3秒內 Firebase 沒準備好就直接啟動（本機離線模式）
 let fbTimeoutDone = false;
 setTimeout(() => {
-  if (fbTimeoutDone) return;
-  fbTimeoutDone = true;
-  if (!window._fbReady) {
-    const loading = document.getElementById("authLoading");
-    const loggedOut = document.getElementById("authLoggedOut");
-    if (loading) loading.style.display = "none";
-    if (loggedOut) loggedOut.style.display = "flex";
-    // Firebase 離線也要檢查存取（未登入狀態）
-    showAccessOverlay("nologin");
-  }
+if (fbTimeoutDone) return;
+fbTimeoutDone = true;
+if (!window._fbReady) {
+const loading = document.getElementById(“authLoading”);
+const loggedOut = document.getElementById(“authLoggedOut”);
+if (loading) loading.style.display = “none”;
+if (loggedOut) loggedOut.style.display = “flex”;
+// Firebase 離線也要檢查存取（未登入狀態）
+showAccessOverlay(“nologin”);
+}
 }, 3000);
 
 // 等 Firebase module 載入完成（用 polling，避免 event 已錯過）
 function startWhenReady() {
-  if (window._fbReady) {
-    fbTimeoutDone = true;
-    _startFirebase();
-  } else {
-    // 每 100ms 檢查一次，最多等 5 秒
-    let tries = 0;
-    const poll = setInterval(() => {
-      tries++;
-      if (window._fbReady) {
-        clearInterval(poll);
-        fbTimeoutDone = true;
-        _startFirebase();
-      } else if (tries > 50) {
-        clearInterval(poll); // 5秒後放棄，由 setTimeout fallback 處理
-      }
-    }, 100);
-  }
+if (window._fbReady) {
+fbTimeoutDone = true;
+_startFirebase();
+} else {
+// 每 100ms 檢查一次，最多等 5 秒
+let tries = 0;
+const poll = setInterval(() => {
+tries++;
+if (window._fbReady) {
+clearInterval(poll);
+fbTimeoutDone = true;
+_startFirebase();
+} else if (tries > 50) {
+clearInterval(poll); // 5秒後放棄，由 setTimeout fallback 處理
+}
+}, 100);
+}
 }
 
 function _startFirebase() {
-  const { auth, onAuthStateChanged, getRedirectResult } = window._fb;
-  let appInitialized = false;
+const { auth, onAuthStateChanged, getRedirectResult } = window._fb;
+let appInitialized = false;
 
-  // ── Presence（在線狀態）管理 ──
-  let presenceRef = null;
-  let presenceListenerSet = false;
+// ── Presence（在線狀態）管理 ──
+let presenceRef = null;
+let presenceListenerSet = false;
 
-  function setupPresence(user) {
-    const { db, ref, set, onValue } = window._fb;
-    // 引入 onDisconnect 和 serverTimestamp
-    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(mod => {
-      const { onDisconnect, serverTimestamp } = mod;
+function setupPresence(user) {
+const { db, ref, set, onValue } = window._fb;
+// 引入 onDisconnect 和 serverTimestamp
+import(“https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js”).then(mod => {
+const { onDisconnect, serverTimestamp } = mod;
 
-      // 寫入自己的在線資訊
-      presenceRef = ref(db, `presence/${user.uid}`);
-      const userData = {
-        name: user.displayName || user.email,
-        email: user.email || "",
-        photo: user.photoURL || "",
-        uid: user.uid,
-        online: true,
-        lastSeen: serverTimestamp()
-      };
-      set(presenceRef, userData);
-      onDisconnect(presenceRef).remove(); // 斷線時自動移除
+```
+  // 寫入自己的在線資訊
+  presenceRef = ref(db, `presence/${user.uid}`);
+  const userData = {
+    name: user.displayName || user.email,
+    email: user.email || "",
+    photo: user.photoURL || "",
+    uid: user.uid,
+    online: true,
+    lastSeen: serverTimestamp()
+  };
+  set(presenceRef, userData);
+  onDisconnect(presenceRef).remove(); // 斷線時自動移除
 
-      // 監聽所有在線用戶
-      if (!presenceListenerSet) {
-        presenceListenerSet = true;
-        onValue(ref(db, "presence"), (snap) => {
-          const users = snap.exists() ? Object.values(snap.val()) : [];
-          renderOnlineUsers(users);
-        });
+  // 監聽所有在線用戶
+  if (!presenceListenerSet) {
+    presenceListenerSet = true;
+    onValue(ref(db, "presence"), (snap) => {
+      const users = snap.exists() ? Object.values(snap.val()) : [];
+      renderOnlineUsers(users);
+    });
+  }
+});
+```
+
+}
+
+function clearPresence(user) {
+if (presenceRef) {
+const { db, ref, set: fbSet } = window._fb; // eslint-disable-line
+import(“https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js”).then(mod => {
+mod.remove(presenceRef);
+});
+presenceRef = null;
+}
+closeAllChatWindows();
+renderOnlineUsers([]);
+}
+
+function renderOnlineUsers(users) {
+_lastOnlineUsers = users || [];
+const el = document.getElementById(“onlineUsersList”);
+if (!el) return;
+// 只顯示白名單內的在線用戶
+const allowedUsers = (users || []).filter(u => {
+if (!u.email) return false;
+return ALLOWED_EMAILS.map(e => e.trim().toLowerCase()).includes(u.email.toLowerCase());
+});
+if (allowedUsers.length === 0) {
+el.innerHTML = ‘<span style="color:#455a64;font-size:0.72rem;">—</span>’;
+return;
+}
+el.innerHTML = allowedUsers.map(u => {
+const isMe = currentUser && u.uid === currentUser.uid;
+const meStyle = isMe ? ‘opacity:0.6;cursor:default;’ : ‘cursor:pointer;’;
+return `<span class="online-user-chip" style="${meStyle}"> <span class="online-dot"></span> ${u.name || "未知用戶"}${isMe ? " （我）" : ""} </span>`;
+}).join(””);
+}
+
+onAuthStateChanged(auth, async (user) => {
+currentUser = user;
+updateAuthUI(user);
+
+```
+// ── 存取控制：未登入或不在白名單 ──
+if (!checkAccess(user)) {
+  if (user) {
+    clearPresence();
+  }
+  return; // 停止後續所有初始化
+}
+
+if (user) {
+  setupPresence(user);
+} else {
+  clearPresence();
+}
+
+if (user && !fbListenerActive) {
+  fbListenerActive = true;
+  let _lastMenuAt = null;       // 記錄上次資料時間戳
+  let _menuListenerReady = false; // 忽略第一次觸發（連線時的初始快照）
+  const { db, ref, onValue } = window._fb;
+  onValue(ref(db, "menu"), (snap) => {
+    if (!snap.exists()) { _menuListenerReady = true; return; }
+    const data = snap.val();
+    // 第一次觸發是 Firebase 連線後的初始快照，只更新顯示不重載
+    if (!_menuListenerReady) {
+      _menuListenerReady = true;
+      if (data?.savedBy) {
+        _lastMenuAt = data.savedBy.at || "";
+        const info = document.getElementById("lastSaveInfo");
+        if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
       }
-    });
-  }
-
-  function clearPresence(user) {
-    if (presenceRef) {
-      const { db, ref, set: fbSet } = window._fb; // eslint-disable-line
-      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(mod => {
-        mod.remove(presenceRef);
-      });
-      presenceRef = null;
-    }
-    closeAllChatWindows();
-    renderOnlineUsers([]);
-  }
-
-  function renderOnlineUsers(users) {
-    _lastOnlineUsers = users || [];
-    const el = document.getElementById("onlineUsersList");
-    if (!el) return;
-    // 只顯示白名單內的在線用戶
-    const allowedUsers = (users || []).filter(u => {
-      if (!u.email) return false;
-      return ALLOWED_EMAILS.map(e => e.trim().toLowerCase()).includes(u.email.toLowerCase());
-    });
-    if (allowedUsers.length === 0) {
-      el.innerHTML = '<span style="color:#455a64;font-size:0.72rem;">—</span>';
       return;
     }
-    el.innerHTML = allowedUsers.map(u => {
-      const isMe = currentUser && u.uid === currentUser.uid;
-      const meStyle = isMe ? 'opacity:0.6;cursor:default;' : 'cursor:pointer;';
-      return `<span class="online-user-chip" style="${meStyle}">
-        <span class="online-dot"></span>
-        ${u.name || "未知用戶"}${isMe ? " （我）" : ""}
-      </span>`;
-    }).join("");
-  }
-
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    updateAuthUI(user);
-
-    // ── 存取控制：未登入或不在白名單 ──
-    if (!checkAccess(user)) {
-      if (user) {
-        clearPresence();
+    // 後續：只有「別人存檔且時間戳真的變了」才重載
+    if (data?.savedBy && data.savedBy.uid !== currentUser?.uid) {
+      const thisAt = data.savedBy.at || "";
+      if (thisAt !== _lastMenuAt) {
+        _lastMenuAt = thisAt;
+        loadAll().then(() => {
+          showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
+        });
       }
-      return; // 停止後續所有初始化
     }
-
-    if (user) {
-      setupPresence(user);
-    } else {
-      clearPresence();
-    }
-
-    if (user && !fbListenerActive) {
-      fbListenerActive = true;
-      let _lastMenuAt = null;       // 記錄上次資料時間戳
-      let _menuListenerReady = false; // 忽略第一次觸發（連線時的初始快照）
-      const { db, ref, onValue } = window._fb;
-      onValue(ref(db, "menu"), (snap) => {
-        if (!snap.exists()) { _menuListenerReady = true; return; }
-        const data = snap.val();
-        // 第一次觸發是 Firebase 連線後的初始快照，只更新顯示不重載
-        if (!_menuListenerReady) {
-          _menuListenerReady = true;
-          if (data?.savedBy) {
-            _lastMenuAt = data.savedBy.at || "";
-            const info = document.getElementById("lastSaveInfo");
-            if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
-          }
-          return;
-        }
-        // 後續：只有「別人存檔且時間戳真的變了」才重載
-        if (data?.savedBy && data.savedBy.uid !== currentUser?.uid) {
-          const thisAt = data.savedBy.at || "";
-          if (thisAt !== _lastMenuAt) {
-            _lastMenuAt = thisAt;
-            loadAll().then(() => {
-              showSaveToast(`🔄 ${data.savedBy.name} 剛剛更新了資料`);
-            });
-          }
-        }
-        if (data?.savedBy) {
-          const info = document.getElementById("lastSaveInfo");
-          if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
-        }
-      });
-    }
-
-    if (!appInitialized) {
-      appInitialized = true;
-      await initApp();
-    } else if (user) {
-      await initApp();
+    if (data?.savedBy) {
+      const info = document.getElementById("lastSaveInfo");
+      if (info) info.textContent = `上次儲存：${data.savedBy.name} ${data.savedBy.at}`;
     }
   });
+}
 
-  getRedirectResult(auth).catch(e => {
-    if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
-      console.warn("redirect result error:", e.code);
-    }
-  });
+if (!appInitialized) {
+  appInitialized = true;
+  await initApp();
+} else if (user) {
+  await initApp();
+}
+```
+
+});
+
+getRedirectResult(auth).catch(e => {
+if (e.code !== ‘auth/no-current-user’ && e.code !== ‘auth/null-user’) {
+console.warn(“redirect result error:”, e.code);
+}
+});
 }
 
 // 登出時刪除自己所有的聊天訊息
 async function deleteMyChatMsgs() {
-  if (myMsgRefs.length === 0) return;
-  try {
-    await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js").then(async mod => {
-      for (const r of myMsgRefs) {
-        await mod.remove(r).catch(() => {});
-      }
-    });
-  } catch(e) {}
-  myMsgRefs = [];
+if (myMsgRefs.length === 0) return;
+try {
+await import(“https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js”).then(async mod => {
+for (const r of myMsgRefs) {
+await mod.remove(r).catch(() => {});
+}
+});
+} catch(e) {}
+myMsgRefs = [];
 }
 
-
 function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
-    .replace(/\n/g,"<br>");
+return String(str)
+.replace(/&/g,”&”).replace(/</g,”<”)
+.replace(/>/g,”>”).replace(/”/g,”"”)
+.replace(/\n/g,”<br>”);
 }
 
 startWhenReady();
 
 // ===== 多抽屜系統 =====
-const DRAWER_IDS = ['mgmt','export','hist','colors','cats'];
+const DRAWER_IDS = [‘mgmt’,‘export’,‘hist’,‘colors’,‘cats’];
 
 function openDrawer(id) {
-  DRAWER_IDS.forEach(d => {
-    document.getElementById('drawer-'+d)?.classList.remove('open');
-    document.getElementById('tab-'+d)?.classList.remove('open');
-  });
-  document.getElementById('drawer-'+id).classList.add('open');
-  document.getElementById('tab-'+id).classList.add('open');
-  document.getElementById('drawer-overlay').classList.add('show');
-  if (id === 'mgmt')   { initMgmtItems(); qaInitSelects(); }
-  if (id === 'export') { updateImgDateHint(); updateHistDateHint(); }
-  if (id === 'hist')   { renderHistoryPanel(); }
-  if (id === 'colors') { initMgmtColors(); }
-  if (id === 'cats')   { rerenderDBPanels(); }
+DRAWER_IDS.forEach(d => {
+document.getElementById(‘drawer-’+d)?.classList.remove(‘open’);
+document.getElementById(‘tab-’+d)?.classList.remove(‘open’);
+});
+document.getElementById(‘drawer-’+id).classList.add(‘open’);
+document.getElementById(‘tab-’+id).classList.add(‘open’);
+document.getElementById(‘drawer-overlay’).classList.add(‘show’);
+if (id === ‘mgmt’)   { initMgmtItems(); qaInitSelects(); }
+if (id === ‘export’) { updateImgDateHint(); updateHistDateHint(); }
+if (id === ‘hist’)   { renderHistoryPanel(); }
+if (id === ‘colors’) { initMgmtColors(); }
+if (id === ‘cats’)   { rerenderDBPanels(); }
 }
 
 function closeAllDrawers() {
-  DRAWER_IDS.forEach(d => {
-    document.getElementById('drawer-'+d)?.classList.remove('open');
-    document.getElementById('tab-'+d)?.classList.remove('open');
-  });
-  document.getElementById('drawer-overlay').classList.remove('show');
+DRAWER_IDS.forEach(d => {
+document.getElementById(‘drawer-’+d)?.classList.remove(‘open’);
+document.getElementById(‘tab-’+d)?.classList.remove(‘open’);
+});
+document.getElementById(‘drawer-overlay’).classList.remove(‘show’);
 }
 
-function toggleDrawer() { openDrawer('mgmt'); }
+function toggleDrawer() { openDrawer(‘mgmt’); }
 function closeDrawer()  { closeAllDrawers(); }
 
 function switchDrawerTab(tab, btn) {
-  const body = btn.closest('.drawer-body');
-  body.querySelectorAll('.drawer-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  body.querySelectorAll('.drawer-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('mgmt-'+tab).classList.add('active');
-  if (tab==='colors') initMgmtColors();
-  if (tab==='rowcats') initMgmtRowCats();
+const body = btn.closest(’.drawer-body’);
+body.querySelectorAll(’.drawer-tab’).forEach(b => b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+body.querySelectorAll(’.drawer-section’).forEach(s => s.classList.remove(‘active’));
+document.getElementById(‘mgmt-’+tab).classList.add(‘active’);
+if (tab===‘colors’) initMgmtColors();
+if (tab===‘rowcats’) initMgmtRowCats();
 }
 
 // ===== 快速新增 =====
 function qaInitSelects() {
-  const catSel = document.getElementById('qa-cat');
-  catSel.innerHTML = Object.keys(DB).map(k => `<option value="${k}">${k}</option>`).join('');
-  const colorSel = document.getElementById('qa-color');
-  colorSel.innerHTML = '<option value="">— 不設定 —</option>' +
-    Object.entries(COLOR_GROUPS).map(([k,g]) =>
-      `<option value="${k}">${g.label}（${k}）</option>`
-    ).join('');
-  qaUpdatePreview();
+const catSel = document.getElementById(‘qa-cat’);
+catSel.innerHTML = Object.keys(DB).map(k => `<option value="${k}">${k}</option>`).join(’’);
+const colorSel = document.getElementById(‘qa-color’);
+colorSel.innerHTML = ‘<option value="">— 不設定 —</option>’ +
+Object.entries(COLOR_GROUPS).map(([k,g]) =>
+`<option value="${k}">${g.label}（${k}）</option>`
+).join(’’);
+qaUpdatePreview();
 }
 
 function qaUpdatePreview() {
-  const name = document.getElementById('qa-name').value.trim();
-  const cat  = document.getElementById('qa-cat').value;
-  const colorKey = document.getElementById('qa-color').value;
-  const prev = document.getElementById('qa-preview');
-  if (!name) { prev.innerHTML = '<span style="color:#b0bec5;">輸入名稱後會顯示預覽…</span>'; return; }
-  const catStyle = CAT_STYLES[cat] || { itemBg:'#eceff1', itemFg:'#37474f' };
-  let html = `將 <span class="qa-tag" style="background:${catStyle.itemBg};color:${catStyle.itemFg};border:1px solid rgba(0,0,0,0.1);">${name}</span>`;
-  html += ` 加到「<b>${cat}</b>」`;
-  if (colorKey && COLOR_GROUPS[colorKey]) {
-    const g = COLOR_GROUPS[colorKey];
-    html += `，顏色：<span class="qa-tag" style="background:${g.bg};color:${g.fg};border:1px solid rgba(0,0,0,0.12);">${g.label}</span>`;
-  }
-  prev.innerHTML = html;
+const name = document.getElementById(‘qa-name’).value.trim();
+const cat  = document.getElementById(‘qa-cat’).value;
+const colorKey = document.getElementById(‘qa-color’).value;
+const prev = document.getElementById(‘qa-preview’);
+if (!name) { prev.innerHTML = ‘<span style="color:#b0bec5;">輸入名稱後會顯示預覽…</span>’; return; }
+const catStyle = CAT_STYLES[cat] || { itemBg:’#eceff1’, itemFg:’#37474f’ };
+let html = `將 <span class="qa-tag" style="background:${catStyle.itemBg};color:${catStyle.itemFg};border:1px solid rgba(0,0,0,0.1);">${name}</span>`;
+html += ` 加到「<b>${cat}</b>」`;
+if (colorKey && COLOR_GROUPS[colorKey]) {
+const g = COLOR_GROUPS[colorKey];
+html += `，顏色：<span class="qa-tag" style="background:${g.bg};color:${g.fg};border:1px solid rgba(0,0,0,0.12);">${g.label}</span>`;
+}
+prev.innerHTML = html;
 }
 
 function qaAddItem() {
-  const inp = document.getElementById('qa-name');
-  const name = inp.value.trim();
-  if (!name) { inp.focus(); return; }
-  const cat = document.getElementById('qa-cat').value;
-  const colorKey = document.getElementById('qa-color').value;
-  if (!DB[cat]) DB[cat] = ['-'];
-  if (DB[cat].includes(name)) { alert(`「${name}」在類別「${cat}」中已存在！`); return; }
-  DB[cat].push(name);
-  if (colorKey && COLOR_GROUPS[colorKey]) {
-    if (!COLOR_GROUPS[colorKey].items.includes(name)) {
-      COLOR_GROUPS[colorKey].items.push(name);
-      FOOD_COLOR[name] = colorKey;
-    }
-  }
-  inp.value = '';
-  inp.focus();
-  qaUpdatePreview();
-  renderMgmtItems();
-  rerenderDBPanels();
-  scheduleAutoSave();
-  showSaveToast(`✅ 已新增「${name}」到「${cat}」${colorKey ? ' + 顏色組' : ''}`);
+const inp = document.getElementById(‘qa-name’);
+const name = inp.value.trim();
+if (!name) { inp.focus(); return; }
+const cat = document.getElementById(‘qa-cat’).value;
+const colorKey = document.getElementById(‘qa-color’).value;
+if (!DB[cat]) DB[cat] = [’-’];
+if (DB[cat].includes(name)) { alert(`「${name}」在類別「${cat}」中已存在！`); return; }
+DB[cat].push(name);
+if (colorKey && COLOR_GROUPS[colorKey]) {
+if (!COLOR_GROUPS[colorKey].items.includes(name)) {
+COLOR_GROUPS[colorKey].items.push(name);
+FOOD_COLOR[name] = colorKey;
+}
+}
+inp.value = ‘’;
+inp.focus();
+qaUpdatePreview();
+renderMgmtItems();
+rerenderDBPanels();
+scheduleAutoSave();
+showSaveToast(`✅ 已新增「${name}」到「${cat}」${colorKey ? ' + 顏色組' : ''}`);
 }
 
 // ===== 管理面板邏輯 =====
@@ -3651,224 +3663,225 @@ function qaAddItem() {
 function switchMgmtTab(tab) {}
 
 function initMgmtItems() {
-  const sel = document.getElementById('mgmt-cat-sel');
-  const cur = sel.value;
-  sel.innerHTML = Object.keys(DB).map(k => `<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join('');
-  renderMgmtItems();
+const sel = document.getElementById(‘mgmt-cat-sel’);
+const cur = sel.value;
+sel.innerHTML = Object.keys(DB).map(k => `<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join(’’);
+renderMgmtItems();
 }
 
 function renderMgmtItems() {
-  const cat = document.getElementById('mgmt-cat-sel').value;
-  const list = document.getElementById('mgmt-items-list');
-  const style = CAT_STYLES[cat] || { itemBg:'#eceff1', itemFg:'#37474f' };
-  list.innerHTML = '';
-  (DB[cat]||[]).filter(i=>i!=='-').forEach(item => {
-    const chip = document.createElement('span');
-    chip.className = 'mgmt-item-chip';
-    chip.style.background = style.itemBg;
-    chip.style.color = style.itemFg;
-    chip.innerHTML = `${item}<button class="chip-del" title="刪除" onclick="removeItemFromCategory('${cat}','${item.replace(/'/g,"\\'")}')">✕</button>`;
-    list.appendChild(chip);
-  });
-  if (!list.children.length) list.innerHTML = '<span style="color:#90a4ae;font-size:0.78rem;">（尚無品項）</span>';
+const cat = document.getElementById(‘mgmt-cat-sel’).value;
+const list = document.getElementById(‘mgmt-items-list’);
+const style = CAT_STYLES[cat] || { itemBg:’#eceff1’, itemFg:’#37474f’ };
+list.innerHTML = ‘’;
+(DB[cat]||[]).filter(i=>i!==’-’).forEach(item => {
+const chip = document.createElement(‘span’);
+chip.className = ‘mgmt-item-chip’;
+chip.style.background = style.itemBg;
+chip.style.color = style.itemFg;
+chip.innerHTML = `${item}<button class="chip-del" title="刪除" onclick="removeItemFromCategory('${cat}','${item.replace(/'/g,"\\'")}')">✕</button>`;
+list.appendChild(chip);
+});
+if (!list.children.length) list.innerHTML = ‘<span style="color:#90a4ae;font-size:0.78rem;">（尚無品項）</span>’;
 }
 
 function addItemToCategory() {
-  const cat = document.getElementById('mgmt-cat-sel').value;
-  const inp = document.getElementById('mgmt-item-input');
-  const val = inp.value.trim();
-  if (!val) { inp.focus(); return; }
-  if (!DB[cat]) DB[cat] = ['-'];
-  if (DB[cat].includes(val)) { alert('此品項已存在！'); return; }
-  DB[cat].push(val);
-  inp.value = '';
-  renderMgmtItems();
-  rerenderDBPanels();
-  scheduleAutoSave();
+const cat = document.getElementById(‘mgmt-cat-sel’).value;
+const inp = document.getElementById(‘mgmt-item-input’);
+const val = inp.value.trim();
+if (!val) { inp.focus(); return; }
+if (!DB[cat]) DB[cat] = [’-’];
+if (DB[cat].includes(val)) { alert(‘此品項已存在！’); return; }
+DB[cat].push(val);
+inp.value = ‘’;
+renderMgmtItems();
+rerenderDBPanels();
+scheduleAutoSave();
 }
 
 function removeItemFromCategory(cat, item) {
-  if (!confirm(`確定刪除「${item}」？`)) return;
-  DB[cat] = DB[cat].filter(i => i !== item);
-  renderMgmtItems();
-  rerenderDBPanels();
-  scheduleAutoSave();
+if (!confirm(`確定刪除「${item}」？`)) return;
+DB[cat] = DB[cat].filter(i => i !== item);
+renderMgmtItems();
+rerenderDBPanels();
+scheduleAutoSave();
 }
 
 // 數字列（1~7），新增/刪除類別時自動同步
-const DATA_ROWS = ["1","2","3","4","5","6","7"];
+const DATA_ROWS = [“1”,“2”,“3”,“4”,“5”,“6”,“7”];
 
 function addNewCategory() {
-  const name = prompt('輸入新類別名稱：');
-  if (!name || !name.trim()) return;
-  const key = name.trim();
-  if (DB[key]) { alert('此類別已存在！'); return; }
-  DB[key] = ['-'];
-  CAT_STYLES[key] = { titleBg:'#607d8b', titleFg:'#fff', itemBg:'#eceff1', itemFg:'#37474f' };
-  // 自動加入 1~7 列
-  DATA_ROWS.forEach(row => {
-    if (!ROW_CATS[row]) ROW_CATS[row] = ['-'];
-    if (!ROW_CATS[row].includes(key)) ROW_CATS[row].push(key);
-  });
-  initMgmtItems();
-  document.getElementById('mgmt-cat-sel').value = key;
-  renderMgmtItems();
-  rerenderDBPanels();
-  scheduleAutoSave();
+const name = prompt(‘輸入新類別名稱：’);
+if (!name || !name.trim()) return;
+const key = name.trim();
+if (DB[key]) { alert(‘此類別已存在！’); return; }
+DB[key] = [’-’];
+CAT_STYLES[key] = { titleBg:’#607d8b’, titleFg:’#fff’, itemBg:’#eceff1’, itemFg:’#37474f’ };
+// 自動加入 1~7 列
+DATA_ROWS.forEach(row => {
+if (!ROW_CATS[row]) ROW_CATS[row] = [’-’];
+if (!ROW_CATS[row].includes(key)) ROW_CATS[row].push(key);
+});
+initMgmtItems();
+document.getElementById(‘mgmt-cat-sel’).value = key;
+renderMgmtItems();
+rerenderDBPanels();
+scheduleAutoSave();
 }
 
 function deleteCurrentCategory() {
-  const cat = document.getElementById('mgmt-cat-sel').value;
-  if (!confirm(`確定刪除整個「${cat}」類別及其所有品項？`)) return;
-  delete DB[cat];
-  delete CAT_STYLES[cat];
-  // 從所有 ROW_CATS 列中移除此類別
-  Object.keys(ROW_CATS).forEach(row => {
-    ROW_CATS[row] = (ROW_CATS[row] || []).filter(c => c !== cat);
-  });
-  initMgmtItems();
-  rerenderDBPanels();
-  scheduleAutoSave();
+const cat = document.getElementById(‘mgmt-cat-sel’).value;
+if (!confirm(`確定刪除整個「${cat}」類別及其所有品項？`)) return;
+delete DB[cat];
+delete CAT_STYLES[cat];
+// 從所有 ROW_CATS 列中移除此類別
+Object.keys(ROW_CATS).forEach(row => {
+ROW_CATS[row] = (ROW_CATS[row] || []).filter(c => c !== cat);
+});
+initMgmtItems();
+rerenderDBPanels();
+scheduleAutoSave();
 }
 
 function initMgmtColors() {
-  const sel = document.getElementById('mgmt-color-sel');
-  const cur = sel.value;
-  sel.innerHTML = Object.entries(COLOR_GROUPS).map(([k,g]) =>
-    `<option value="${k}" ${k===cur?'selected':''}>${g.label}（${k}）</option>`
-  ).join('');
-  renderMgmtColorItems();
+const sel = document.getElementById(‘mgmt-color-sel’);
+const cur = sel.value;
+sel.innerHTML = Object.entries(COLOR_GROUPS).map(([k,g]) =>
+`<option value="${k}" ${k===cur?'selected':''}>${g.label}（${k}）</option>`
+).join(’’);
+renderMgmtColorItems();
 }
 
 function renderMgmtColorItems() {
-  const key = document.getElementById('mgmt-color-sel').value;
-  const g = COLOR_GROUPS[key];
-  const list = document.getElementById('mgmt-color-items-list');
-  list.innerHTML = '';
-  if (!g) return;
-  document.getElementById('mgmt-color-bg').value = rgbToHex(g.bg) || g.bg;
-  document.getElementById('mgmt-color-fg').value = rgbToHex(g.fg||'#333') || '#333333';
-  document.getElementById('mgmt-color-titlebg').value = rgbToHex(g.titleBg) || g.titleBg;
-  g.items.forEach(item => {
-    const chip = document.createElement('span');
-    chip.className = 'mgmt-item-chip';
-    chip.style.background = g.bg;
-    chip.style.color = g.fg || '#333';
-    chip.innerHTML = `${item}<button class="chip-del" title="刪除" onclick="removeItemFromColorGroup('${key}','${item.replace(/'/g,"\\'")}')">✕</button>`;
-    list.appendChild(chip);
-  });
-  if (!list.children.length) list.innerHTML = '<span style="color:#90a4ae;font-size:0.78rem;">（尚無食材）</span>';
+const key = document.getElementById(‘mgmt-color-sel’).value;
+const g = COLOR_GROUPS[key];
+const list = document.getElementById(‘mgmt-color-items-list’);
+list.innerHTML = ‘’;
+if (!g) return;
+document.getElementById(‘mgmt-color-bg’).value = rgbToHex(g.bg) || g.bg;
+document.getElementById(‘mgmt-color-fg’).value = rgbToHex(g.fg||’#333’) || ‘#333333’;
+document.getElementById(‘mgmt-color-titlebg’).value = rgbToHex(g.titleBg) || g.titleBg;
+g.items.forEach(item => {
+const chip = document.createElement(‘span’);
+chip.className = ‘mgmt-item-chip’;
+chip.style.background = g.bg;
+chip.style.color = g.fg || ‘#333’;
+chip.innerHTML = `${item}<button class="chip-del" title="刪除" onclick="removeItemFromColorGroup('${key}','${item.replace(/'/g,"\\'")}')">✕</button>`;
+list.appendChild(chip);
+});
+if (!list.children.length) list.innerHTML = ‘<span style="color:#90a4ae;font-size:0.78rem;">（尚無食材）</span>’;
 }
 
 function addItemToColorGroup() {
-  const key = document.getElementById('mgmt-color-sel').value;
-  const inp = document.getElementById('mgmt-color-item-input');
-  const val = inp.value.trim();
-  if (!val) { inp.focus(); return; }
-  if (!COLOR_GROUPS[key]) return;
-  if (COLOR_GROUPS[key].items.includes(val)) { alert('此食材已存在！'); return; }
-  COLOR_GROUPS[key].items.push(val);
-  FOOD_COLOR[val] = key;
-  inp.value = '';
-  renderMgmtColorItems();
-  rerenderDBPanels();
-  scheduleAutoSave();
+const key = document.getElementById(‘mgmt-color-sel’).value;
+const inp = document.getElementById(‘mgmt-color-item-input’);
+const val = inp.value.trim();
+if (!val) { inp.focus(); return; }
+if (!COLOR_GROUPS[key]) return;
+if (COLOR_GROUPS[key].items.includes(val)) { alert(‘此食材已存在！’); return; }
+COLOR_GROUPS[key].items.push(val);
+FOOD_COLOR[val] = key;
+inp.value = ‘’;
+renderMgmtColorItems();
+rerenderDBPanels();
+scheduleAutoSave();
 }
 
 function removeItemFromColorGroup(key, item) {
-  if (!confirm(`確定從顏色組刪除「${item}」？`)) return;
-  COLOR_GROUPS[key].items = COLOR_GROUPS[key].items.filter(i=>i!==item);
-  delete FOOD_COLOR[item];
-  renderMgmtColorItems();
-  rerenderDBPanels();
-  scheduleAutoSave();
+if (!confirm(`確定從顏色組刪除「${item}」？`)) return;
+COLOR_GROUPS[key].items = COLOR_GROUPS[key].items.filter(i=>i!==item);
+delete FOOD_COLOR[item];
+renderMgmtColorItems();
+rerenderDBPanels();
+scheduleAutoSave();
 }
 
 function addNewColorGroup() {
-  const key = prompt('輸入顏色組 key（英文，如 orange）：');
-  if (!key || !key.trim()) return;
-  const k = key.trim().toLowerCase().replace(/\s+/g,'');
-  if (COLOR_GROUPS[k]) { alert('已存在！'); return; }
-  const label = prompt('顯示名稱（如 橙）：') || k;
-  COLOR_GROUPS[k] = { label, bg:'#ffcc80', fg:'#333', titleBg:'#ef6c00', items:[] };
-  initMgmtColors();
-  document.getElementById('mgmt-color-sel').value = k;
-  renderMgmtColorItems();
+const key = prompt(‘輸入顏色組 key（英文，如 orange）：’);
+if (!key || !key.trim()) return;
+const k = key.trim().toLowerCase().replace(/\s+/g,’’);
+if (COLOR_GROUPS[k]) { alert(‘已存在！’); return; }
+const label = prompt(‘顯示名稱（如 橙）：’) || k;
+COLOR_GROUPS[k] = { label, bg:’#ffcc80’, fg:’#333’, titleBg:’#ef6c00’, items:[] };
+initMgmtColors();
+document.getElementById(‘mgmt-color-sel’).value = k;
+renderMgmtColorItems();
 }
 
 function deleteCurrentColorGroup() {
-  const key = document.getElementById('mgmt-color-sel').value;
-  if (!confirm(`確定刪除顏色組「${COLOR_GROUPS[key]?.label}」？`)) return;
-  COLOR_GROUPS[key].items.forEach(item => { if (FOOD_COLOR[item]===key) delete FOOD_COLOR[item]; });
-  delete COLOR_GROUPS[key];
-  initMgmtColors();
-  rerenderDBPanels();
+const key = document.getElementById(‘mgmt-color-sel’).value;
+if (!confirm(`確定刪除顏色組「${COLOR_GROUPS[key]?.label}」？`)) return;
+COLOR_GROUPS[key].items.forEach(item => { if (FOOD_COLOR[item]===key) delete FOOD_COLOR[item]; });
+delete COLOR_GROUPS[key];
+initMgmtColors();
+rerenderDBPanels();
 }
 
 function applyColorGroupColors() {
-  const key = document.getElementById('mgmt-color-sel').value;
-  if (!COLOR_GROUPS[key]) return;
-  COLOR_GROUPS[key].bg = document.getElementById('mgmt-color-bg').value;
-  COLOR_GROUPS[key].fg = document.getElementById('mgmt-color-fg').value;
-  COLOR_GROUPS[key].titleBg = document.getElementById('mgmt-color-titlebg').value;
-  renderMgmtColorItems();
-  rerenderDBPanels();
+const key = document.getElementById(‘mgmt-color-sel’).value;
+if (!COLOR_GROUPS[key]) return;
+COLOR_GROUPS[key].bg = document.getElementById(‘mgmt-color-bg’).value;
+COLOR_GROUPS[key].fg = document.getElementById(‘mgmt-color-fg’).value;
+COLOR_GROUPS[key].titleBg = document.getElementById(‘mgmt-color-titlebg’).value;
+renderMgmtColorItems();
+rerenderDBPanels();
 }
 
 function initMgmtRowCats() {
-  const sel = document.getElementById('mgmt-row-sel');
-  const cur = sel.value;
-  sel.innerHTML = Object.keys(ROW_CATS).map(k => `<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join('');
-  renderMgmtRowCats();
+const sel = document.getElementById(‘mgmt-row-sel’);
+const cur = sel.value;
+sel.innerHTML = Object.keys(ROW_CATS).map(k => `<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join(’’);
+renderMgmtRowCats();
 }
 
 function renderMgmtRowCats() {
-  const row = document.getElementById('mgmt-row-sel').value;
-  const list = document.getElementById('mgmt-rowcats-list');
-  list.innerHTML = '';
-  (ROW_CATS[row]||[]).filter(c=>c!=='-').forEach(cat => {
-    const chip = document.createElement('span');
-    chip.className = 'rowcat-chip';
-    chip.innerHTML = `${cat}<button class="chip-del" onclick="removeCatFromRow('${row}','${cat.replace(/'/g,"\\'")}')">✕</button>`;
-    list.appendChild(chip);
-  });
-  const addSel = document.getElementById('mgmt-rowcat-add-sel');
-  const existing = ROW_CATS[row] || [];
-  addSel.innerHTML = Object.keys(DB).filter(k=>!existing.includes(k))
-    .map(k=>`<option value="${k}">${k}</option>`).join('');
+const row = document.getElementById(‘mgmt-row-sel’).value;
+const list = document.getElementById(‘mgmt-rowcats-list’);
+list.innerHTML = ‘’;
+(ROW_CATS[row]||[]).filter(c=>c!==’-’).forEach(cat => {
+const chip = document.createElement(‘span’);
+chip.className = ‘rowcat-chip’;
+chip.innerHTML = `${cat}<button class="chip-del" onclick="removeCatFromRow('${row}','${cat.replace(/'/g,"\\'")}')">✕</button>`;
+list.appendChild(chip);
+});
+const addSel = document.getElementById(‘mgmt-rowcat-add-sel’);
+const existing = ROW_CATS[row] || [];
+addSel.innerHTML = Object.keys(DB).filter(k=>!existing.includes(k))
+.map(k=>`<option value="${k}">${k}</option>`).join(’’);
 }
 
 function addCatToRow() {
-  const row = document.getElementById('mgmt-row-sel').value;
-  const cat = document.getElementById('mgmt-rowcat-add-sel').value;
-  if (!cat) return;
-  if (!ROW_CATS[row]) ROW_CATS[row] = ['-'];
-  if (ROW_CATS[row].includes(cat)) return;
-  ROW_CATS[row].push(cat);
-  renderMgmtRowCats();
+const row = document.getElementById(‘mgmt-row-sel’).value;
+const cat = document.getElementById(‘mgmt-rowcat-add-sel’).value;
+if (!cat) return;
+if (!ROW_CATS[row]) ROW_CATS[row] = [’-’];
+if (ROW_CATS[row].includes(cat)) return;
+ROW_CATS[row].push(cat);
+renderMgmtRowCats();
 }
 
 function removeCatFromRow(row, cat) {
-  ROW_CATS[row] = (ROW_CATS[row]||[]).filter(c=>c!==cat);
-  renderMgmtRowCats();
+ROW_CATS[row] = (ROW_CATS[row]||[]).filter(c=>c!==cat);
+renderMgmtRowCats();
 }
 
 function rerenderDBPanels() {
-  const g1 = document.getElementById('dbGrid');
-  const g2 = document.getElementById('catGrid');
-  g1.innerHTML = ''; g2.innerHTML = '';
-  renderDB(); renderCatDB();
+const g1 = document.getElementById(‘dbGrid’);
+const g2 = document.getElementById(‘catGrid’);
+g1.innerHTML = ‘’; g2.innerHTML = ‘’;
+renderDB(); renderCatDB();
 }
 
 function rgbToHex(color) {
-  if (!color) return null;
-  if (color.startsWith('#')) return color;
-  const m = color.match(/\d+/g);
-  if (!m || m.length < 3) return null;
-  return '#' + m.slice(0,3).map(n=>parseInt(n).toString(16).padStart(2,'0')).join('');
+if (!color) return null;
+if (color.startsWith(’#’)) return color;
+const m = color.match(/\d+/g);
+if (!m || m.length < 3) return null;
+return ‘#’ + m.slice(0,3).map(n=>parseInt(n).toString(16).padStart(2,‘0’)).join(’’);
 }
 
 // initMgmtItems() called via initApp()
 </script>
+
 </body>
 </html>
