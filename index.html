@@ -241,6 +241,17 @@ select.sel-l2:disabled {
   background-color: #f5f5f5; color: #bdbdbd;
   border-color: #e0e0e0; cursor: default;
 }
+input.sel-l2-inp {
+  width: 100%; font-size: 0.75rem; padding: 3px 5px;
+  border: 1px solid #b0bec5; border-radius: 4px;
+  font-family: inherit; background-color: #fff;
+  transition: border-color 0.15s; box-sizing: border-box;
+}
+input.sel-l2-inp:focus { outline: none; border-color: #43a047; }
+input.sel-l2-inp:disabled {
+  background-color: #e0e0e0; color: #9e9e9e;
+  border-color: #e0e0e0; cursor: default;
+}
 
 .save-toast {
   position: fixed; bottom: 20px; right: 20px;
@@ -627,12 +638,6 @@ select.sel-l2:disabled {
 
 /* 抽屜內容區 */
 .drawer-body {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 14px 16px;
-  -webkit-overflow-scrolling: touch;
-}
 
 /* ─ Quick-Add 快速新增區 ─ */
 .quick-add-box {
@@ -1432,11 +1437,14 @@ function saveAll() {
     const resolvedHLocs = hLocs.map(() => {
       const s = locSels[locIdx]; const inp = locInps[locIdx]; locIdx++;
       if (!s) return "";
+      // 若 sel 被隱藏（已切換為自訂輸入模式），直接讀 inp 的值
+      if (!s || s.style.display === "none") return inp?.value || "";
       return s.value === "__custom__" ? (inp?.value || "") : s.value;
     });
     const resolvedWLocs = wLocs.map(() => {
       const s = locSels[locIdx]; const inp = locInps[locIdx]; locIdx++;
       if (!s) return "";
+      if (!s || s.style.display === "none") return inp?.value || "";
       return s.value === "__custom__" ? (inp?.value || "") : s.value;
     });
     const resolvedHQtys = hLocs.map((_, i) => locQtys[i]?.value || "");
@@ -1448,9 +1456,11 @@ function saveAll() {
       if (!catTd) return;
       const rowName = catTd.textContent;
       const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
       const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
       sels1.forEach((s1, i) => {
-        cells.push({ row: rowName, col: i, v1: s1.value, v2: sels2[i]?.value || "" });
+        const v2 = inps2[i] ? inps2[i].value : (sels2[i]?.value || "");
+        cells.push({ row: rowName, col: i, v1: s1.value, v2 });
       });
     });
 
@@ -1504,11 +1514,13 @@ function extractWeekData(block) {
   const resolvedHLocs = hLocs.map(() => {
     const s = locSels[locIdx]; const inp = locInps[locIdx]; locIdx++;
     if (!s) return "";
+    if (s.style.display === "none") return inp?.value || "";
     return s.value === "__custom__" ? (inp?.value || "") : s.value;
   });
   const resolvedWLocs = wLocs.map(() => {
     const s = locSels[locIdx]; const inp = locInps[locIdx]; locIdx++;
     if (!s) return "";
+    if (s.style.display === "none") return inp?.value || "";
     return s.value === "__custom__" ? (inp?.value || "") : s.value;
   });
   const resolvedHQtys = hLocs.map((_, i) => locQtys[i]?.value || "");
@@ -1520,9 +1532,11 @@ function extractWeekData(block) {
     if (!catTd) return;
     const rowName = catTd.textContent;
     const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
     const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
     sels1.forEach((s1, i) => {
-      cells.push({ row: rowName, col: i, v1: s1.value, v2: sels2[i]?.value || "" });
+      const v2 = inps2[i] ? inps2[i].value : (sels2[i]?.value || "");
+      cells.push({ row: rowName, col: i, v1: s1.value, v2 });
     });
   });
 
@@ -1738,15 +1752,15 @@ function restoreFromHistory(idx) {
   (entry.cells || []).forEach(c => {
     const tr = rowMap[c.row]; if (!tr) return;
     const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-    const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
-    const s1 = sels1[c.col]; const s2 = sels2[c.col];
+    const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+    const s1 = sels1[c.col]; const inp2 = inps2[c.col];
     if (s1 && c.v1) {
       s1.value = c.v1;
       s1.dispatchEvent(new Event("change"));
       setTimeout(() => {
-        if (s2 && c.v2) {
-          s2.value = c.v2;
-          s2.dispatchEvent(new Event("change"));
+        if (inp2 && c.v2) {
+          inp2.value = c.v2;
+          inp2.dispatchEvent(new Event("input"));
         }
       }, 50);
     }
@@ -2078,7 +2092,7 @@ async function exportAsImage(itemOnlyMode) {
       if (!catTd) return;
       const rowName = catTd.textContent;
       const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
+      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
       const [hS, hS2, wS, wS2] = getRowStyles(rowName);
       rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
       sels1.forEach((s1, i) => {
@@ -2086,11 +2100,11 @@ async function exportAsImage(itemOnlyMode) {
         const baseS = isH ? hS : wS;
         const baseS2 = isH ? hS2 : wS2;
         const v1 = s1.value && s1.value !== "-" ? s1.value : "";
-        const s2el = sels2[i];
-        const v2 = s2el?.value && s2el.value !== "-" && s2el.value !== "-- 品項 --" ? s2el.value : "";
+        const rawV2 = inps2[i]?.value || "";
+        const v2 = rawV2 && rawV2 !== "-" && rawV2 !== "-- 品項 --" ? rawV2 : "";
         let itemBgStyle = "";
-        if (s2el && s2el.value && s2el.value !== "-" && s2el.value !== "-- 品項 --") {
-          const colors = getFoodColors(s2el.value);
+        if (v2) {
+          const colors = getFoodColors(v2);
           if (colors) itemBgStyle = `background:${colors.bg};color:${colors.fg};`;
         }
         if (!itemOnlyMode) {
@@ -2309,15 +2323,15 @@ async function loadAll() {
     (item.cells || []).forEach(c => {
       const tr = rowMap[c.row]; if (!tr) return;
       const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
-      const s1 = sels1[c.col]; const s2 = sels2[c.col];
+      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+      const s1 = sels1[c.col]; const inp2 = inps2[c.col];
       if (s1 && c.v1) {
         s1.value = c.v1;
         s1.dispatchEvent(new Event("change"));
         setTimeout(() => {
-          if (s2 && c.v2) {
-            s2.value = c.v2;
-            s2.dispatchEvent(new Event("change"));
+          if (inp2 && c.v2) {
+            inp2.value = c.v2;
+            inp2.dispatchEvent(new Event("input"));
           }
         }, 50);
       }
@@ -2354,64 +2368,116 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     `<option value="${c}" ${c==="-"?"selected":""}>${c}</option>`
   ).join("");
 
-  const sel2 = document.createElement("select");
-  sel2.className = "sel-l2";
+  // ── L2: 改為 input + datalist ──
+  const dlId = "dl_" + Math.random().toString(36).slice(2, 9);
+  const dl = document.createElement("datalist");
+  dl.id = dlId;
+
+  const inp2 = document.createElement("input");
+  inp2.type = "text";
+  inp2.className = "sel-l2 sel-l2-inp";
+  inp2.setAttribute("list", dlId);
+  inp2.placeholder = "品項";
+  inp2.autocomplete = "off";
 
   const td1 = document.createElement("td");
   td1.className = `td-l1 ${defaultStyle}`;
   const td2 = document.createElement("td");
   td2.className = `td-l2 ${defaultStyleL2}`;
 
+  function populateDatalistFromCat(cat) {
+    const items = DB[cat] || [];
+    dl.innerHTML = items.filter(i => i !== "-").map(i => `<option value="${i}">`).join("");
+  }
+
+  function buildFullDatalist() {
+    // Build datalist with all items from allowed cats for this row
+    const allItems = new Set();
+    cats.filter(c => c !== "-").forEach(c => {
+      (DB[c] || []).filter(i => i !== "-").forEach(i => allItems.add(i));
+    });
+    dl.innerHTML = [...allItems].map(i => `<option value="${i}">`).join("");
+  }
+
   function applyClosedState() {
-    sel2.innerHTML = `<option value="-">-</option>`;
-    sel2.disabled = true;
-    sel2.style.background = "#e0e0e0";
-    sel2.style.color = "#9e9e9e";
-    sel2.style.fontWeight = "600";
-    sel2.style.borderColor = "";
-    td2.style.background = "#e0e0e0";
-    td2.style.color = "#9e9e9e";
+    buildFullDatalist();  // 讓 L1="-" 時也能從品項欄直接選
+    inp2.value = "";
+    inp2.disabled = false;
+    inp2.style.background = "";
+    inp2.style.color = "";
+    inp2.style.fontWeight = "";
+    inp2.style.borderColor = "";
+    td2.style.background = "";
+    td2.style.color = "";
     td2.className = `td-l2 ${defaultStyleL2}`;
   }
   applyClosedState();
 
-  sel1.addEventListener("change", () => {
-    const cat = sel1.value;
-    td2.className = `td-l2 ${defaultStyleL2}`;
-    td2.style.background=""; td2.style.color="";
-    sel2.style.color=""; sel2.style.fontWeight=""; sel2.style.borderColor="";
-    if (!cat || cat==="-") { applyClosedState(); scheduleAutoSave(); return; }
-    const items = DB[cat] || [];
-    sel2.innerHTML = `<option value="">-- 品項 --</option>` +
-      items.map(i=>`<option value="${i}">${i}</option>`).join("");
-    sel2.disabled=false; sel2.style.background=""; sel2.style.color=""; sel2.value="";
-    scheduleAutoSave();
-  });
-
-  sel2.addEventListener("change", () => {
-    const item = sel2.value;
-    if (!item || item==="-" || item==="-- 品項 --") {
-      td2.style.background=""; td2.style.color="";
-      sel2.style.background=""; sel2.style.color="";
-      sel2.style.fontWeight=""; sel2.style.borderColor="";
-      td2.className=`td-l2 ${defaultStyleL2}`;
+  function applyItemColor(item) {
+    if (!item || item === "-" || item === "-- 品項 --") {
+      td2.style.background = ""; td2.style.color = "";
+      inp2.style.background = ""; inp2.style.color = "";
+      inp2.style.fontWeight = ""; inp2.style.borderColor = "";
+      td2.className = `td-l2 ${defaultStyleL2}`;
     } else {
       const colors = getFoodColors(item);
       if (colors) {
-        td2.style.background=colors.bg; td2.style.color=colors.fg;
-        sel2.style.background=colors.bg; sel2.style.color=colors.fg;
-        sel2.style.fontWeight="600"; sel2.style.borderColor="transparent";
+        td2.style.background = colors.bg; td2.style.color = colors.fg;
+        inp2.style.background = colors.bg; inp2.style.color = colors.fg;
+        inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
       } else {
-        td2.style.background=""; td2.style.color="";
-        sel2.style.background=""; sel2.style.color="";
-        sel2.style.fontWeight="600"; sel2.style.borderColor="transparent";
-        td2.className=`td-l2 ${defaultStyleL2}`;
+        td2.style.background = ""; td2.style.color = "";
+        inp2.style.background = ""; inp2.style.color = "";
+        inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
+        td2.className = `td-l2 ${defaultStyleL2}`;
+      }
+    }
+  }
+
+  sel1.addEventListener("change", () => {
+    const cat = sel1.value;
+    td2.className = `td-l2 ${defaultStyleL2}`;
+    td2.style.background = ""; td2.style.color = "";
+    inp2.style.color = ""; inp2.style.fontWeight = ""; inp2.style.borderColor = "";
+    if (!cat || cat === "-") { applyClosedState(); scheduleAutoSave(); return; }
+    populateDatalistFromCat(cat);
+    inp2.value = "";
+    inp2.disabled = false;
+    inp2.style.background = ""; inp2.style.color = "";
+    scheduleAutoSave();
+  });
+
+  inp2.addEventListener("input", () => {
+    const item = inp2.value.trim();
+    applyItemColor(item);
+
+    // Auto-fill L1 category if item typed directly and matches a known item
+    if (item && sel1.value === "-") {
+      // Search all cats for this item
+      for (const cat of cats) {
+        if (cat === "-") continue;
+        if ((DB[cat] || []).includes(item)) {
+          sel1.value = cat;
+          // Update datalist to this cat's items
+          populateDatalistFromCat(cat);
+          break;
+        }
       }
     }
     scheduleAutoSave();
   });
 
-  td1.appendChild(sel1); td2.appendChild(sel2);
+  // Allow typing even when cat not selected (auto mode)
+  inp2.addEventListener("focus", () => {
+    if (inp2.disabled) return;
+    if (sel1.value === "-") {
+      buildFullDatalist();
+    }
+  });
+
+  td1.appendChild(sel1);
+  td2.appendChild(inp2);
+  td2.appendChild(dl);
   return [td1, td2];
 }
 
@@ -2775,7 +2841,7 @@ function exportHTML(itemOnlyMode) {
       if (!catTd) return;
       const rowName = catTd.textContent;
       const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      const sels2 = [...tr.querySelectorAll("td.td-l2 select")];
+      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
 
       const [hS, hS2, wS, wS2] = getRowStyles(rowName);
 
@@ -2788,12 +2854,12 @@ function exportHTML(itemOnlyMode) {
         const col    = i % (isH ? hLocNames.length : wLocNames.length);
 
         const v1 = s1.value && s1.value !== "-" ? s1.value : "";
-        const s2el = sels2[i];
-        const v2 = s2el?.value && s2el.value !== "-" && s2el.value !== "-- 品項 --" ? s2el.value : "";
+        const rawV2 = inps2[i]?.value || "";
+        const v2 = rawV2 && rawV2 !== "-" && rawV2 !== "-- 品項 --" ? rawV2 : "";
 
         let itemBgStyle = "";
-        if (s2el && s2el.value && s2el.value !== "-" && s2el.value !== "-- 品項 --") {
-          const colors = getFoodColors(s2el.value);
+        if (v2) {
+          const colors = getFoodColors(v2);
           if (colors) {
             itemBgStyle = `background:${colors.bg};color:${colors.fg};`;
           }
@@ -2903,7 +2969,6 @@ function renderCatDB() {
 
 // ===== Firebase 初始化流程 =====
 async function initApp() {
-  await loadDBConfig();   // 先從 Firebase 同步最新類別/品項/顏色設定
   await loadHistory();
   const loaded = await loadAll();
   if (!loaded) {
@@ -2971,7 +3036,6 @@ function _startFirebase() {
         name: user.displayName || user.email,
         photo: user.photoURL || "",
         uid: user.uid,
-        email: user.email || "",
         online: true,
         lastSeen: serverTimestamp()
       };
@@ -3005,14 +3069,11 @@ function _startFirebase() {
     _lastOnlineUsers = users || [];
     const el = document.getElementById("onlineUsersList");
     if (!el) return;
-    // 只顯示在白名單內的在線用戶
-    const allowedSet = new Set(ALLOWED_EMAILS.map(e => e.trim().toLowerCase()));
-    const filtered = (users || []).filter(u => allowedSet.has((u.email || "").toLowerCase()));
-    if (filtered.length === 0) {
+    if (!users || users.length === 0) {
       el.innerHTML = '<span style="color:#455a64;font-size:0.72rem;">—</span>';
       return;
     }
-    el.innerHTML = filtered.map(u => {
+    el.innerHTML = users.map(u => {
       const isMe = currentUser && u.uid === currentUser.uid;
       const meStyle = isMe ? 'opacity:0.6;cursor:default;' : 'cursor:pointer;';
       return `<span class="online-user-chip" style="${meStyle}">
@@ -3042,22 +3103,9 @@ function _startFirebase() {
 
     if (user && !fbListenerActive) {
       fbListenerActive = true;
-      let _lastMenuAt = null;
-      let _menuListenerReady = false;
-      let _dbconfigListenerReady = false;
+      let _lastMenuAt = null;       // 記錄上次資料時間戳
+      let _menuListenerReady = false; // 忽略第一次觸發（連線時的初始快照）
       const { db, ref, onValue } = window._fb;
-
-      // ── 監聽 dbconfig（類別/品項/顏色）別人改了即時同步 ──
-      onValue(ref(db, "dbconfig"), (snap) => {
-        if (!snap.exists()) { _dbconfigListenerReady = true; return; }
-        if (!_dbconfigListenerReady) { _dbconfigListenerReady = true; return; } // 略過初始快照
-        const val = snap.val();
-        if (val?.updatedBy && val.updatedBy.uid !== currentUser?.uid) {
-          applyDBConfig(val);
-          showSaveToast(`🔄 ${val.updatedBy.name} 更新了類別／品項`);
-        }
-      });
-
       onValue(ref(db, "menu"), (snap) => {
         if (!snap.exists()) { _menuListenerReady = true; return; }
         const data = snap.val();
@@ -3217,75 +3265,6 @@ function qaAddItem() {
   showSaveToast(`✅ 已新增「${name}」到「${cat}」${colorKey ? ' + 顏色組' : ''}`);
 }
 
-// ===== 即時刷新所有日期菜單的下拉選單 =====
-function refreshAllDropdowns(changedCat) {
-  document.querySelectorAll(".week-block").forEach(block => {
-    block.querySelectorAll("table tr").forEach(tr => {
-      const catTd = tr.querySelector(".td-cat");
-      if (!catTd) return;
-      const rowName = catTd.textContent;
-      const rowCats = ROW_CATS[rowName] || [];
-      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
-      sels1.forEach(sel1 => {
-        const curVal = sel1.value;
-        sel1.innerHTML = rowCats.map(c =>
-          `<option value="${c}" ${c === curVal ? "selected" : ""}>${c}</option>`
-        ).join("");
-        if (!rowCats.includes(curVal)) sel1.value = "-";
-        // 若目前選的正好是被更動的類別，同步刷新 sel2
-        if (sel1.value === changedCat) {
-          const td2 = sel1.closest("td")?.nextElementSibling;
-          const sel2 = td2?.querySelector("select");
-          if (sel2 && !sel2.disabled) {
-            const curVal2 = sel2.value;
-            const items = DB[changedCat] || [];
-            sel2.innerHTML = `<option value="">-- 品項 --</option>` +
-              items.map(i => `<option value="${i}">${i}</option>`).join("");
-            if (items.includes(curVal2)) sel2.value = curVal2;
-          }
-        }
-      });
-    });
-  });
-}
-
-// ===== DB / ROW_CATS / COLOR_GROUPS 同步到 Firebase =====
-function saveDBConfig() {
-  if (!window._fbReady || !currentUser) return;
-  const { db, ref, set } = window._fb;
-  set(ref(db, "dbconfig"), {
-    DB, ROW_CATS, COLOR_GROUPS,
-    updatedBy: {
-      name: currentUser.displayName || currentUser.email,
-      uid: currentUser.uid,
-      at: new Date().toLocaleString("zh-TW")
-    }
-  }).catch(e => console.warn("dbconfig 儲存失敗", e));
-}
-
-async function loadDBConfig() {
-  if (!window._fbReady || !currentUser) return;
-  const { db, ref, get } = window._fb;
-  try {
-    const snap = await get(ref(db, "dbconfig"));
-    if (snap.exists()) applyDBConfig(snap.val());
-  } catch(e) { console.warn("dbconfig 載入失敗", e); }
-}
-
-function applyDBConfig(val) {
-  if (!val) return;
-  if (val.DB)           Object.assign(DB, val.DB);
-  if (val.ROW_CATS)     Object.assign(ROW_CATS, val.ROW_CATS);
-  if (val.COLOR_GROUPS) Object.assign(COLOR_GROUPS, val.COLOR_GROUPS);
-  // 重建 FOOD_COLOR 索引
-  Object.entries(COLOR_GROUPS).forEach(([key, g]) => {
-    (g.items || []).forEach(item => { FOOD_COLOR[item] = key; });
-  });
-  rerenderDBPanels();
-  initMgmtItems();
-  Object.keys(DB).forEach(cat => refreshAllDropdowns(cat));
-}
-
 // ===== 管理面板邏輯 =====
 
 function switchMgmtTab(tab) {}
@@ -3324,9 +3303,7 @@ function addItemToCategory() {
   inp.value = '';
   renderMgmtItems();
   rerenderDBPanels();
-  refreshAllDropdowns(cat);
   scheduleAutoSave();
-  saveDBConfig();
 }
 
 function removeItemFromCategory(cat, item) {
@@ -3334,9 +3311,7 @@ function removeItemFromCategory(cat, item) {
   DB[cat] = DB[cat].filter(i => i !== item);
   renderMgmtItems();
   rerenderDBPanels();
-  refreshAllDropdowns(cat);
   scheduleAutoSave();
-  saveDBConfig();
 }
 
 // 數字列（1~7），新增/刪除類別時自動同步
@@ -3349,6 +3324,7 @@ function addNewCategory() {
   if (DB[key]) { alert('此類別已存在！'); return; }
   DB[key] = ['-'];
   CAT_STYLES[key] = { titleBg:'#607d8b', titleFg:'#fff', itemBg:'#eceff1', itemFg:'#37474f' };
+  // 自動加入 1~7 列
   DATA_ROWS.forEach(row => {
     if (!ROW_CATS[row]) ROW_CATS[row] = ['-'];
     if (!ROW_CATS[row].includes(key)) ROW_CATS[row].push(key);
@@ -3357,9 +3333,7 @@ function addNewCategory() {
   document.getElementById('mgmt-cat-sel').value = key;
   renderMgmtItems();
   rerenderDBPanels();
-  refreshAllDropdowns(key);
   scheduleAutoSave();
-  saveDBConfig();
 }
 
 function deleteCurrentCategory() {
@@ -3367,14 +3341,13 @@ function deleteCurrentCategory() {
   if (!confirm(`確定刪除整個「${cat}」類別及其所有品項？`)) return;
   delete DB[cat];
   delete CAT_STYLES[cat];
+  // 從所有 ROW_CATS 列中移除此類別
   Object.keys(ROW_CATS).forEach(row => {
     ROW_CATS[row] = (ROW_CATS[row] || []).filter(c => c !== cat);
   });
   initMgmtItems();
   rerenderDBPanels();
-  refreshAllDropdowns(cat);
   scheduleAutoSave();
-  saveDBConfig();
 }
 
 function initMgmtColors() {
@@ -3419,7 +3392,6 @@ function addItemToColorGroup() {
   renderMgmtColorItems();
   rerenderDBPanels();
   scheduleAutoSave();
-  saveDBConfig();
 }
 
 function removeItemFromColorGroup(key, item) {
@@ -3429,7 +3401,6 @@ function removeItemFromColorGroup(key, item) {
   renderMgmtColorItems();
   rerenderDBPanels();
   scheduleAutoSave();
-  saveDBConfig();
 }
 
 function addNewColorGroup() {
@@ -3442,7 +3413,6 @@ function addNewColorGroup() {
   initMgmtColors();
   document.getElementById('mgmt-color-sel').value = k;
   renderMgmtColorItems();
-  saveDBConfig();
 }
 
 function deleteCurrentColorGroup() {
@@ -3452,7 +3422,6 @@ function deleteCurrentColorGroup() {
   delete COLOR_GROUPS[key];
   initMgmtColors();
   rerenderDBPanels();
-  saveDBConfig();
 }
 
 function applyColorGroupColors() {
@@ -3463,7 +3432,6 @@ function applyColorGroupColors() {
   COLOR_GROUPS[key].titleBg = document.getElementById('mgmt-color-titlebg').value;
   renderMgmtColorItems();
   rerenderDBPanels();
-  saveDBConfig();
 }
 
 function initMgmtRowCats() {
@@ -3497,15 +3465,11 @@ function addCatToRow() {
   if (ROW_CATS[row].includes(cat)) return;
   ROW_CATS[row].push(cat);
   renderMgmtRowCats();
-  refreshAllDropdowns(cat);
-  saveDBConfig();
 }
 
 function removeCatFromRow(row, cat) {
   ROW_CATS[row] = (ROW_CATS[row]||[]).filter(c=>c!==cat);
   renderMgmtRowCats();
-  refreshAllDropdowns(cat);
-  saveDBConfig();
 }
 
 function rerenderDBPanels() {
