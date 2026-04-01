@@ -5,6 +5,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -951,20 +953,7 @@ select.sel-l2:disabled {
 <!-- 共用遮罩 -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeAllDrawers()"></div>
 
-  <!-- 在線用戶列 -->
-  <div class="chat-online-list" id="chatOnlineList">
-    <div class="chat-online-list-title">👥 在線成員</div>
-    <div class="chat-online-chips" id="chatOnlineChips">
-      <span class="chat-no-online">目前無人在線</span>
-    </div>
-  </div>
-  <!-- 聊天面板堆疊區 -->
-    <div class="chat-panel-empty" id="chatPanelEmpty">
-      <span class="empty-icon">💬</span>
-      <span>點選上方在線成員即可開始聊天</span>
-    </div>
-  </div>
-</div>
+
 
 <!-- ① 資料管理抽屜 -->
 <div class="side-drawer" id="drawer-mgmt">
@@ -1221,13 +1210,13 @@ const ROW_CATS = {
   "主菜":   ["-","健康餐主菜","風味餐主菜"],
   "副主菜": ["-","副主菜"],
   "米飯":   ["-","米飯"],
-  "1":      ["-","白葉菜","綠葉菜","菇","瓜果","根莖","海帶","其他"],
-  "2":      ["-","白葉菜","綠葉菜","菇","瓜果","根莖","海帶","其他"],
+  "1":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
+  "2":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
   "3":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
-  "4":      ["-","菇","蛋白質","瓜果","根莖","海帶","其他"],
-  "5":      ["-","瓜果","根莖","菇","蛋白質","海帶","其他"],
-  "6":      ["-","根莖","瓜果","海帶","其他"],
-  "7":      ["-","輔料","其他"]
+  "4":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
+  "5":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
+  "6":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
+  "7":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","輔料","其他"]
 };
 
 const ROWS = ["主菜","副主菜","米飯","1","2","3","4","5","6","7"];
@@ -3251,6 +3240,9 @@ function removeItemFromCategory(cat, item) {
   scheduleAutoSave();
 }
 
+// 數字列（1~7），新增/刪除類別時自動同步
+const DATA_ROWS = ["1","2","3","4","5","6","7"];
+
 function addNewCategory() {
   const name = prompt('輸入新類別名稱：');
   if (!name || !name.trim()) return;
@@ -3258,10 +3250,16 @@ function addNewCategory() {
   if (DB[key]) { alert('此類別已存在！'); return; }
   DB[key] = ['-'];
   CAT_STYLES[key] = { titleBg:'#607d8b', titleFg:'#fff', itemBg:'#eceff1', itemFg:'#37474f' };
+  // 自動加入 1~7 列
+  DATA_ROWS.forEach(row => {
+    if (!ROW_CATS[row]) ROW_CATS[row] = ['-'];
+    if (!ROW_CATS[row].includes(key)) ROW_CATS[row].push(key);
+  });
   initMgmtItems();
   document.getElementById('mgmt-cat-sel').value = key;
   renderMgmtItems();
   rerenderDBPanels();
+  scheduleAutoSave();
 }
 
 function deleteCurrentCategory() {
@@ -3269,6 +3267,10 @@ function deleteCurrentCategory() {
   if (!confirm(`確定刪除整個「${cat}」類別及其所有品項？`)) return;
   delete DB[cat];
   delete CAT_STYLES[cat];
+  // 從所有 ROW_CATS 列中移除此類別
+  Object.keys(ROW_CATS).forEach(row => {
+    ROW_CATS[row] = (ROW_CATS[row] || []).filter(c => c !== cat);
+  });
   initMgmtItems();
   rerenderDBPanels();
   scheduleAutoSave();
