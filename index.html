@@ -2542,13 +2542,9 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   }
 
   function selectItem(val) {
+    _isSelecting = true;
     inp2.value = val;
     hideDropdown();
-    dropdown.style.display = "none"; // 強制確保關閉
-    _isSelecting = true;
-    inp2.dispatchEvent(new Event("input"));
-    _isSelecting = false;
-    // auto-fill L1
     if (sel1.value === "-") {
       for (const cat of cats) {
         if (cat === "-") continue;
@@ -2561,6 +2557,8 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     }
     applyItemColor(val);
     scheduleAutoSave();
+    inp2.blur();
+    setTimeout(() => { _isSelecting = false; }, 300);
   }
 
   // 鍵盤導航
