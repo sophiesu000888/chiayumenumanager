@@ -1857,7 +1857,15 @@ function restoreFromHistory(idx) {
       setTimeout(() => {
         if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
           inp2.value = c.v2;
-          inp2.dispatchEvent(new Event("input"));
+          // 套顏色但不觸發 dropdown
+          const _c = getFoodColors(c.v2);
+          if (_c) {
+            inp2.style.background = _c.bg; inp2.style.color = _c.fg;
+            inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
+            if (inp2.closest("td")) { inp2.closest("td").style.background = _c.bg; inp2.closest("td").style.color = _c.fg; }
+          } else {
+            inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
+          }
         }
       }, 50);
     }
@@ -2428,7 +2436,12 @@ async function loadAll() {
         setTimeout(() => {
           if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
             inp2.value = c.v2;
-            inp2.dispatchEvent(new Event("input"));
+            const _c2 = getFoodColors(c.v2);
+            if (_c2) {
+              inp2.style.background = _c2.bg; inp2.style.color = _c2.fg;
+              inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
+              if (inp2.closest("td")) { inp2.closest("td").style.background = _c2.bg; inp2.closest("td").style.color = _c2.fg; }
+            } else { inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent"; }
           }
         }, 50);
       }
@@ -2755,7 +2768,16 @@ function pasteLocColumn(block, colIdx) {
     setTimeout(() => {
       if (i2 && c.v2) {
         i2.value = c.v2;
-        i2.dispatchEvent(new Event("input"));
+        // 套用顏色但不開 dropdown
+        const colors = getFoodColors(c.v2);
+        if (colors) {
+          i2.style.background = colors.bg;
+          i2.style.color = colors.fg;
+          i2.style.fontWeight = "600";
+          i2.style.borderColor = "transparent";
+          i2.closest("td").style.background = colors.bg;
+          i2.closest("td").style.color = colors.fg;
+        }
       }
     }, 50);
   });
@@ -2786,7 +2808,10 @@ function clearLocColumn(block, colIdx) {
     }
     if (i2) {
       i2.value = "";
-      i2.dispatchEvent(new Event("input"));
+      // 清空顏色樣式
+      i2.style.background = ""; i2.style.color = "";
+      i2.style.fontWeight = ""; i2.style.borderColor = "";
+      if (i2.closest("td")) { i2.closest("td").style.background = ""; i2.closest("td").style.color = ""; }
     }
   });
 
