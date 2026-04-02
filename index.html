@@ -2659,6 +2659,11 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
         }
       }
     }
+    // 品項清空時，自動清空第一層類別
+    if (!item) {
+      sel1.value = "-";
+      buildFullDatalist();
+    }
     scheduleAutoSave();
   });
 
