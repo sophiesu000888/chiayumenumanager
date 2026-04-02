@@ -2538,8 +2538,10 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
 
   function selectItem(val) {
     inp2.value = val;
+    _isSelecting = true;
     hideDropdown();
     inp2.dispatchEvent(new Event("input"));
+    _isSelecting = false;
     // auto-fill L1
     if (sel1.value === "-") {
       for (const cat of cats) {
@@ -2640,7 +2642,7 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   inp2.addEventListener("input", () => {
     const item = inp2.value.trim();
     applyItemColor(item);
-    showDropdown(item);
+    if (!_isSelecting) showDropdown(item);
 
     // Auto-fill L1 category if item typed directly and matches a known item
     if (item && sel1.value === "-") {
