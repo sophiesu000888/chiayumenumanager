@@ -1857,15 +1857,7 @@ function restoreFromHistory(idx) {
       setTimeout(() => {
         if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
           inp2.value = c.v2;
-          // 套顏色但不觸發 dropdown
-          const _c = getFoodColors(c.v2);
-          if (_c) {
-            inp2.style.background = _c.bg; inp2.style.color = _c.fg;
-            inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
-            if (inp2.closest("td")) { inp2.closest("td").style.background = _c.bg; inp2.closest("td").style.color = _c.fg; }
-          } else {
-            inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
-          }
+          if (inp2._applyColor) inp2._applyColor(c.v2);
         }
       }, 50);
     }
@@ -2436,12 +2428,7 @@ async function loadAll() {
         setTimeout(() => {
           if (inp2 && c.v2 && c.v2 !== "-" && c.v2 !== "-- 品項 --") {
             inp2.value = c.v2;
-            const _c2 = getFoodColors(c.v2);
-            if (_c2) {
-              inp2.style.background = _c2.bg; inp2.style.color = _c2.fg;
-              inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent";
-              if (inp2.closest("td")) { inp2.closest("td").style.background = _c2.bg; inp2.closest("td").style.color = _c2.fg; }
-            } else { inp2.style.fontWeight = "600"; inp2.style.borderColor = "transparent"; }
+            if (inp2._applyColor) inp2._applyColor(c.v2);
           }
         }, 50);
       }
@@ -2700,6 +2687,10 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     }
   });
 
+  // 暴露給外部直接呼叫，不走事件流程
+  inp2._applyColor = applyItemColor;
+  inp2._reset = applyClosedState;
+
   td1.appendChild(sel1);
   td2.appendChild(inp2);
   return [td1, td2];
@@ -2769,27 +2760,9 @@ function pasteLocColumn(block, colIdx) {
     // 直接設 L2 + 套顏色，完全不觸發任何事件
     if (i2 && c.v2) {
       i2.value = c.v2;
-      const colors = getFoodColors(c.v2);
-      if (colors) {
-        i2.style.background = colors.bg;
-        i2.style.color = colors.fg;
-        i2.style.fontWeight = "600";
-        i2.style.borderColor = "transparent";
-        i2.closest("td").style.background = colors.bg;
-        i2.closest("td").style.color = colors.fg;
-      } else {
-        i2.style.background = "";
-        i2.style.color = "";
-        i2.style.fontWeight = "600";
-        i2.style.borderColor = "transparent";
-        i2.closest("td").style.background = "";
-        i2.closest("td").style.color = "";
-      }
+      if (i2._applyColor) i2._applyColor(c.v2);
     } else if (i2) {
-      i2.value = "";
-      i2.style.background = ""; i2.style.color = "";
-      i2.style.fontWeight = ""; i2.style.borderColor = "";
-      if (i2.closest("td")) { i2.closest("td").style.background = ""; i2.closest("td").style.color = ""; }
+      if (i2._reset) i2._reset();
     }
   });
 
@@ -2813,17 +2786,8 @@ function clearLocColumn(block, colIdx) {
     const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
     const s1 = sels1[colIdx];
     const i2 = inps2[colIdx];
-    if (s1) {
-      s1.value = "-";
-      s1.dispatchEvent(new Event("change"));
-    }
-    if (i2) {
-      i2.value = "";
-      // 清空顏色樣式
-      i2.style.background = ""; i2.style.color = "";
-      i2.style.fontWeight = ""; i2.style.borderColor = "";
-      if (i2.closest("td")) { i2.closest("td").style.background = ""; i2.closest("td").style.color = ""; }
-    }
+    if (s1) s1.value = "-";
+    if (i2) i2._reset ? i2._reset() : (i2.value = "");
   });
 
   scheduleAutoSave();
