@@ -2520,11 +2520,11 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
       return `<div class="fuzzy-dropdown-item" data-val="${item}">${hi}</div>`;
     }).join("");
     dropdown.querySelectorAll(".fuzzy-dropdown-item").forEach(el => {
-      el.addEventListener("mousedown", e => {
+      el.addEventListener("pointerdown", e => {
         e.preventDefault();
         _isSelecting = true;
         selectItem(el.dataset.val);
-        _isSelecting = false;
+        setTimeout(() => { _isSelecting = false; }, 200);
       });
     });
     positionDropdown();
@@ -2538,8 +2538,9 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
 
   function selectItem(val) {
     inp2.value = val;
-    _isSelecting = true;
     hideDropdown();
+    dropdown.style.display = "none"; // 強制確保關閉
+    _isSelecting = true;
     inp2.dispatchEvent(new Event("input"));
     _isSelecting = false;
     // auto-fill L1
