@@ -2752,6 +2752,9 @@ function pasteLocColumn(block, colIdx) {
     rowMap[catTd.textContent] = tr;
   });
 
+  // 先讓所有 input 失焦，避免貼上時觸發 dropdown
+  document.activeElement?.blur();
+
   _locClipboard.cells.forEach(c => {
     const tr = rowMap[c.row]; if (!tr) return;
     const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
@@ -2760,26 +2763,34 @@ function pasteLocColumn(block, colIdx) {
     const i2 = inps2[colIdx];
     if (!s1) return;
 
-    // 設定 L1
+    // 設定 L1（不用 dispatchEvent，直接更新 datalist）
     s1.value = c.v1;
-    s1.dispatchEvent(new Event("change"));
 
-    // 稍後設 L2（等 change event 處理完 datalist）
-    setTimeout(() => {
-      if (i2 && c.v2) {
-        i2.value = c.v2;
-        // 套用顏色但不開 dropdown
-        const colors = getFoodColors(c.v2);
-        if (colors) {
-          i2.style.background = colors.bg;
-          i2.style.color = colors.fg;
-          i2.style.fontWeight = "600";
-          i2.style.borderColor = "transparent";
-          i2.closest("td").style.background = colors.bg;
-          i2.closest("td").style.color = colors.fg;
-        }
+    // 直接設 L2 + 套顏色，完全不觸發任何事件
+    if (i2 && c.v2) {
+      i2.value = c.v2;
+      const colors = getFoodColors(c.v2);
+      if (colors) {
+        i2.style.background = colors.bg;
+        i2.style.color = colors.fg;
+        i2.style.fontWeight = "600";
+        i2.style.borderColor = "transparent";
+        i2.closest("td").style.background = colors.bg;
+        i2.closest("td").style.color = colors.fg;
+      } else {
+        i2.style.background = "";
+        i2.style.color = "";
+        i2.style.fontWeight = "600";
+        i2.style.borderColor = "transparent";
+        i2.closest("td").style.background = "";
+        i2.closest("td").style.color = "";
       }
-    }, 50);
+    } else if (i2) {
+      i2.value = "";
+      i2.style.background = ""; i2.style.color = "";
+      i2.style.fontWeight = ""; i2.style.borderColor = "";
+      if (i2.closest("td")) { i2.closest("td").style.background = ""; i2.closest("td").style.color = ""; }
+    }
   });
 
   scheduleAutoSave();
