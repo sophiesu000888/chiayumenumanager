@@ -1425,6 +1425,9 @@ let _lastOnlineUsers = [];  // 最新在線用戶清單（全局）
 // ===== 歷史紀錄資料 =====
 let historyList = [];
 
+// ── 聊天視窗（功能已停用，保留空函式避免登出報錯） ──
+function closeAllChatWindows() {}
+
 // ── Firebase 登入 / 登出 ──
 function fbLogin() {
   const { auth, provider, signInWithPopup, signInWithRedirect } = window._fb;
