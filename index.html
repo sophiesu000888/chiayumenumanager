@@ -525,6 +525,12 @@ input.sel-l2-inp:disabled {
 .db-cat-items::-webkit-scrollbar-thumb { background: #90a4ae; border-radius: 3px; }
 .db-cat-items::-webkit-scrollbar-thumb:hover { background: #607d8b; }
 .db-item { padding: 2px 4px; border-radius: 3px; margin-bottom: 1px; font-size: 0.73rem; }
+.db-group-label {
+  font-size: 0.65rem; font-weight: 700; color: #90a4ae;
+  padding: 4px 4px 1px; letter-spacing: 1px;
+  border-top: 1px solid #e0e0e0; margin-top: 3px;
+}
+.db-group-label:first-child { border-top: none; margin-top: 0; }
 
 .db-item[style*="#FFFFFF"],
 .db-item[style*="#ffffff"],
@@ -3397,11 +3403,27 @@ function renderCatDB() {
     const realItems = items.filter(i => i !== "-");
     const div = document.createElement("div");
     div.className = "db-cat";
+
+    const groups = MENU_GROUPS[cat] || null;
+    let itemsHTML = "";
+    if (groups) {
+      groups.forEach(group => {
+        const gi = group.items.filter(i => realItems.includes(i));
+        if (!gi.length) return;
+        itemsHTML += `<div class="db-group-label">${group.label}</div>`;
+        itemsHTML += gi.map(i =>
+          `<div class="db-item" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
+        ).join("");
+      });
+    } else {
+      itemsHTML = realItems.map(i =>
+        `<div class="db-item" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
+      ).join("");
+    }
+
     div.innerHTML = `
       <div class="db-cat-title" style="background:${style.titleBg};color:${style.titleFg}">${cat}</div>
-      <div class="db-cat-items">${realItems.map(i =>
-        `<div class="db-item" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
-      ).join("")}</div>`;
+      <div class="db-cat-items">${itemsHTML}</div>`;
     grid.appendChild(div);
   });
 }
