@@ -282,6 +282,18 @@ input.sel-l2-inp:disabled {
   background: #e8f5e9;
   color: #2e7d32;
 }
+.fuzzy-dropdown-group {
+  padding: 4px 10px 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #90a4ae;
+  background: #f5f7f9;
+  border-top: 1px solid #e0e0e0;
+  letter-spacing: 1px;
+  pointer-events: none;
+  user-select: none;
+}
+.fuzzy-dropdown-group:first-child { border-top: none; }
 .fuzzy-dropdown-item mark {
   background: #fff9c4;
   color: #e65100;
@@ -1298,7 +1310,7 @@ Object.entries(COLOR_GROUPS).forEach(([key, g]) => {
 
 // ===== 食材資料庫 =====
 const DB = {
-  "主菜": ["雙拼舒肥雞胸*","紐澳良腿排*","蔥燒豬五花*","義式雞胸*","滑蛋豬肉*","醬烤梅花豬*","洋蔥肉片*","蒜泥白肉*","韓式肉片*","蒜香烤五花*","照燒腿排*","黑胡椒胸丁*","義式腿排*","鳳梨糖醋雞","深井脆皮掛爐烤鴨","鳳城玫瑰油雞","沙茶肉片","北菇滑雞","川椒雞","叉燒/油雞","韓式炸雞","古早味滷排骨","古早紅糟肉","蜜汁雞腿","炸排骨","烤鴨/叉燒","蔗香腿排","香酥雞排","鹹豬肉"],
+  "主菜": ["雙拼舒肥雞胸*","紐澳良腿排*","義式雞胸*","照燒腿排*","黑胡椒胸丁*","義式腿排*","蔗香腿排*","鳳梨糖醋雞","鳳城玫瑰油雞","北菇滑雞","川椒雞","韓式炸雞","蜜汁雞腿","香酥雞排","蔥燒豬五花*","滑蛋豬肉*","醬烤梅花豬*","洋蔥肉片*","蒜泥白肉*","韓式肉片*","蒜香烤五花*","沙茶肉片","古早味滷排骨","古早紅糟肉","炸排骨","鹹豬肉","深井脆皮掛爐烤鴨","叉燒/油雞","烤鴨/叉燒"],
   "副主菜":  ["士林香腸","雞捲"],
   "米飯":    ["白米","紫米","小米","藜麥","糙米","五穀"],
   "白葉菜":  ["高麗菜","大白菜","豆芽菜","黃豆芽","白花椰"],
@@ -1310,6 +1322,15 @@ const DB = {
   "海帶":    ["海帶根","海帶結","海帶絲"],
   "其他":    ["冬粉","杏鮑菇玉米筍","港點","魚丸","麻婆豆腐"],
   "輔料":    ["香鬆粉","海苔粉","義式香料","紅白梅粉","枸杞"]
+};
+
+const MENU_GROUPS = {
+  "主菜": [
+    { label: "🐔 雞", items: ["雙拼舒肥雞胸*","紐澳良腿排*","義式雞胸*","照燒腿排*","黑胡椒胸丁*","義式腿排*","蔗香腿排*","鳳梨糖醋雞","鳳城玫瑰油雞","北菇滑雞","川椒雞","韓式炸雞","蜜汁雞腿","香酥雞排"] },
+    { label: "🐷 豬", items: ["蔥燒豬五花*","滑蛋豬肉*","醬烤梅花豬*","洋蔥肉片*","蒜泥白肉*","韓式肉片*","蒜香烤五花*","沙茶肉片","古早味滷排骨","古早紅糟肉","炸排骨","鹹豬肉"] },
+    { label: "🦆 鴨", items: ["深井脆皮掛爐烤鴨"] },
+    { label: "🍱 雙拼", items: ["叉燒/油雞","烤鴨/叉燒"] },
+  ]
 };
 
 const ROW_CATS = {
@@ -2520,13 +2541,37 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     const matched = _allItems.filter(i => i.toLowerCase().includes(kw));
     if (!matched.length) { hideDropdown(); return; }
     _activeIdx = -1;
-    dropdown.innerHTML = matched.map(item => {
+
+    // 檢查是否有分組設定（主菜）
+    const groups = cats.length === 2 && cats[1] === "主菜" ? (MENU_GROUPS["主菜"] || null) : null;
+
+    function highlight(item) {
       const idx = item.toLowerCase().indexOf(kw);
-      const hi = item.slice(0, idx) +
+      if (idx < 0) return item;
+      return item.slice(0, idx) +
         `<mark>${item.slice(idx, idx + keyword.length)}</mark>` +
         item.slice(idx + keyword.length);
-      return `<div class="fuzzy-dropdown-item" data-val="${item}">${hi}</div>`;
-    }).join("");
+    }
+
+    if (groups) {
+      // 分組顯示
+      let html = "";
+      groups.forEach(group => {
+        const groupMatched = group.items.filter(i => matched.includes(i));
+        if (!groupMatched.length) return;
+        html += `<div class="fuzzy-dropdown-group">${group.label}</div>`;
+        html += groupMatched.map(item =>
+          `<div class="fuzzy-dropdown-item" data-val="${item}">${highlight(item)}</div>`
+        ).join("");
+      });
+      dropdown.innerHTML = html;
+    } else {
+      // 一般顯示
+      dropdown.innerHTML = matched.map(item =>
+        `<div class="fuzzy-dropdown-item" data-val="${item}">${highlight(item)}</div>`
+      ).join("");
+    }
+
     positionDropdown();
     dropdown.style.display = "block";
   }
