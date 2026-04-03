@@ -3947,8 +3947,12 @@ function removeCatFromRow(row, cat) {
 
 function rerenderDBPanels() {
   const g1 = document.getElementById('dbGrid');
-  const g2 = document.getElementById('catGrid');
-  g1.innerHTML = ''; g2.innerHTML = '';
+  if (g1) g1.innerHTML = '';
+  // catGrid 已改為分頁，直接清空 tabs/content
+  const tabsBar = document.getElementById('catTabsBar');
+  const tabContent = document.getElementById('catTabContent');
+  if (tabsBar) tabsBar.innerHTML = '';
+  if (tabContent) tabContent.innerHTML = '';
   renderDB(); renderCatDB();
 }
 
