@@ -281,18 +281,6 @@ input.sel-l2-inp:disabled {
   background: #e8f5e9;
   color: #2e7d32;
 }
-.fuzzy-dropdown-group {
-  padding: 4px 10px 2px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #90a4ae;
-  background: #f5f7f9;
-  border-top: 1px solid #e0e0e0;
-  letter-spacing: 1px;
-  pointer-events: none;
-  user-select: none;
-}
-.fuzzy-dropdown-group:first-child { border-top: none; }
 .fuzzy-dropdown-item mark {
   background: #fff9c4;
   color: #e65100;
@@ -525,12 +513,37 @@ input.sel-l2-inp:disabled {
 .db-cat-items::-webkit-scrollbar-thumb { background: #90a4ae; border-radius: 3px; }
 .db-cat-items::-webkit-scrollbar-thumb:hover { background: #607d8b; }
 .db-item { padding: 2px 4px; border-radius: 3px; margin-bottom: 1px; font-size: 0.73rem; }
-.db-group-label {
-  font-size: 0.65rem; font-weight: 700; color: #90a4ae;
-  padding: 4px 4px 1px; letter-spacing: 1px;
-  border-top: 1px solid #e0e0e0; margin-top: 3px;
+
+/* ===== 類別分組抽屜分頁 ===== */
+.cat-tab-btn {
+  padding: 5px 12px;
+  border: 1.5px solid #b0bec5;
+  border-radius: 20px;
+  background: #eceff1;
+  color: #37474f;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
 }
-.db-group-label:first-child { border-top: none; margin-top: 0; }
+.cat-tab-btn:hover { background: #cfd8dc; }
+.cat-tab-btn.active { background: #37474f; color: #fff; border-color: #37474f; }
+.cat-tab-panel { display: none; }
+.cat-tab-panel.active { display: block; }
+.cat-items-grid { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0; }
+.cat-item-chip {
+  padding: 4px 10px; border-radius: 6px;
+  font-size: 0.78rem; font-weight: 500;
+  border: 1px solid rgba(0,0,0,0.08); white-space: nowrap;
+}
+.cat-sub-label {
+  width: 100%; font-size: 0.68rem; font-weight: 700;
+  color: #90a4ae; padding: 6px 2px 2px; letter-spacing: 1px;
+  border-bottom: 1px solid #e0e0e0; margin-bottom: 2px;
+}
+.cat-sub-label:first-child { padding-top: 0; }
 
 .db-item[style*="#FFFFFF"],
 .db-item[style*="#ffffff"],
@@ -1281,9 +1294,10 @@ button {
     <h2>類別分組一覽</h2>
     <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
   </div>
-  <div class="drawer-body">
+  <div class="drawer-body" style="padding:10px 12px 20px;">
     <p style="font-size:0.76rem;color:#90a4ae;margin-bottom:10px;">所有食材依類別分類顯示。要新增品項請至⚙️管理。</p>
-    <div class="db-grid" id="catGrid"></div>
+    <div id="catTabsBar" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"></div>
+    <div id="catTabContent"></div>
   </div>
 </div>
 
@@ -1315,7 +1329,8 @@ Object.entries(COLOR_GROUPS).forEach(([key, g]) => {
 
 // ===== 食材資料庫 =====
 const DB = {
-  "主菜": ["雙拼舒肥雞胸*","紐澳良腿排*","義式雞胸*","照燒腿排*","黑胡椒胸丁*","義式腿排*","蔗香腿排*","鳳梨糖醋雞","鳳城玫瑰油雞","北菇滑雞","川椒雞","韓式炸雞","蜜汁雞腿","香酥雞排","蔥燒豬五花*","滑蛋豬肉*","醬烤梅花豬*","洋蔥肉片*","蒜泥白肉*","韓式肉片*","蒜香烤五花*","沙茶肉片","古早味滷排骨","古早紅糟肉","炸排骨","鹹豬肉","深井脆皮掛爐烤鴨","叉燒/油雞","烤鴨/叉燒"],
+  "健康餐主菜": ["雙拼舒肥雞胸","紐澳良腿排","蔥燒豬五花","義式雞胸","滑蛋豬肉","醬烤梅花豬","洋蔥肉片","蒜泥白肉","韓式肉片","蒜香烤五花","照燒腿排","黑胡椒胸丁","義式腿排"],
+  "風味餐主菜": ["鳳梨糖醋雞","深井脆皮掛爐烤鴨","鳳城玫瑰油雞","沙茶肉片","北菇滑雞","川椒雞","叉燒/油雞","韓式炸雞","古早味滷排骨","古早紅糟肉","蜜汁雞腿","炸排骨","烤鴨/叉燒","蔗香腿排","醬烤梅花豬","香酥雞排","鹹豬肉"],
   "副主菜":  ["士林香腸","雞捲"],
   "米飯":    ["白米","紫米","小米","藜麥","糙米","五穀"],
   "白葉菜":  ["高麗菜","大白菜","豆芽菜","黃豆芽","白花椰"],
@@ -1329,17 +1344,8 @@ const DB = {
   "輔料":    ["香鬆粉","海苔粉","義式香料","紅白梅粉","枸杞"]
 };
 
-const MENU_GROUPS = {
-  "主菜": [
-    { label: "🐔 雞", items: ["雙拼舒肥雞胸*","紐澳良腿排*","義式雞胸*","照燒腿排*","黑胡椒胸丁*","義式腿排*","蔗香腿排*","鳳梨糖醋雞","鳳城玫瑰油雞","北菇滑雞","川椒雞","韓式炸雞","蜜汁雞腿","香酥雞排"] },
-    { label: "🐷 豬", items: ["蔥燒豬五花*","滑蛋豬肉*","醬烤梅花豬*","洋蔥肉片*","蒜泥白肉*","韓式肉片*","蒜香烤五花*","沙茶肉片","古早味滷排骨","古早紅糟肉","炸排骨","鹹豬肉"] },
-    { label: "🦆 鴨", items: ["深井脆皮掛爐烤鴨"] },
-    { label: "🍱 雙拼", items: ["叉燒/油雞","烤鴨/叉燒"] },
-  ]
-};
-
 const ROW_CATS = {
-  "主菜":   ["-","主菜"],
+  "主菜":   ["-","健康餐主菜","風味餐主菜"],
   "副主菜": ["-","副主菜"],
   "米飯":   ["-","米飯"],
   "1":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
@@ -2478,7 +2484,13 @@ function getFoodColors(item) {
 function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   let cats = ROW_CATS[rowKey] || [];
 
-
+  if (rowKey === "主菜") {
+    if (side === "h") {
+      cats = cats.filter(c => c === "-" || c === "健康餐主菜");
+    } else if (side === "w") {
+      cats = cats.filter(c => c === "-" || c === "風味餐主菜");
+    }
+  }
 
   const sel1 = document.createElement("select");
   sel1.className = "sel-l1";
@@ -2520,18 +2532,6 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   dropdown.style.display = "none";
   document.body.appendChild(dropdown);
 
-  function _onDropdownSelect(e) {
-    const item = e.target.closest(".fuzzy-dropdown-item");
-    if (!item) return;
-    e.preventDefault();
-    e.stopPropagation();
-    _isSelecting = true;
-    selectItem(item.dataset.val);
-    setTimeout(() => { _isSelecting = false; }, 300);
-  }
-  dropdown.addEventListener("mousedown", _onDropdownSelect);
-  dropdown.addEventListener("touchstart", _onDropdownSelect, { passive: false });
-
   // 用事件委派，同時處理 mouse 和 touch，掛一次就夠
   function _onDropdownSelect(e) {
     const item = e.target.closest(".fuzzy-dropdown-item");
@@ -2554,37 +2554,17 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
 
   function showDropdown(keyword) {
     if (!keyword) { hideDropdown(); return; }
-    const showAll = keyword === "_all_";
-    const kw = showAll ? "" : keyword.toLowerCase();
-    const matched = showAll ? [..._allItems] : _allItems.filter(i => i.toLowerCase().includes(kw));
+    const kw = keyword.toLowerCase();
+    const matched = _allItems.filter(i => i.toLowerCase().includes(kw));
     if (!matched.length) { hideDropdown(); return; }
     _activeIdx = -1;
-
-    function highlight(item) {
-      if (showAll || !kw) return item;
+    dropdown.innerHTML = matched.map(item => {
       const idx = item.toLowerCase().indexOf(kw);
-      if (idx < 0) return item;
-      return item.slice(0, idx) +
+      const hi = item.slice(0, idx) +
         `<mark>${item.slice(idx, idx + keyword.length)}</mark>` +
         item.slice(idx + keyword.length);
-    }
-
-    const groups = cats.includes("主菜") ? (MENU_GROUPS["主菜"] || null) : null;
-    if (groups) {
-      let html = "";
-      groups.forEach(group => {
-        const gm = group.items.filter(i => matched.includes(i));
-        if (!gm.length) return;
-        html += `<div class="fuzzy-dropdown-group">${group.label}</div>`;
-        html += gm.map(item => `<div class="fuzzy-dropdown-item" data-val="${item}">${highlight(item)}</div>`).join("");
-      });
-      if (!html) { hideDropdown(); return; }
-      dropdown.innerHTML = html;
-    } else {
-      dropdown.innerHTML = matched.map(item =>
-        `<div class="fuzzy-dropdown-item" data-val="${item}">${highlight(item)}</div>`
-      ).join("");
-    }
+      return `<div class="fuzzy-dropdown-item" data-val="${item}">${hi}</div>`;
+    }).join("");
     positionDropdown();
     dropdown.style.display = "block";
   }
@@ -2743,13 +2723,9 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     if (sel1.value === "-") {
       buildFullDatalist();
     }
-    showDropdown(inp2.value.trim() || "_all_");
   });
 
   // 暴露給外部直接呼叫，不走事件流程
-  inp2._applyColor = applyItemColor;
-  inp2._reset = applyClosedState;
-
   inp2._applyColor = applyItemColor;
   inp2._reset = applyClosedState;
 
@@ -3382,7 +3358,8 @@ function renderDB() {
 }
 
 const CAT_STYLES = {
-  "主菜": { titleBg:"#2e7d32", titleFg:"#fff", itemBg:"#c8e6c9", itemFg:"#1b5e20" },
+  "健康餐主菜": { titleBg:"#2e7d32", titleFg:"#fff", itemBg:"#c8e6c9", itemFg:"#1b5e20" },
+  "風味餐主菜": { titleBg:"#1565c0", titleFg:"#fff", itemBg:"#bbdefb", itemFg:"#0d47a1" },
   "副主菜":     { titleBg:"#f57f17", titleFg:"#fff", itemBg:"#fff9c4", itemFg:"#6d4c00" },
   "米飯":       { titleBg:"#795548", titleFg:"#fff", itemBg:"#ffe0b2", itemFg:"#4e342e" },
   "白葉菜":     { titleBg:"#546e7a", titleFg:"#fff", itemBg:"#eceff1", itemFg:"#263238" },
@@ -3397,34 +3374,63 @@ const CAT_STYLES = {
 };
 
 function renderCatDB() {
-  const grid = document.getElementById("catGrid");
-  Object.entries(DB).forEach(([cat, items]) => {
+  const tabsBar = document.getElementById("catTabsBar");
+  const tabContent = document.getElementById("catTabContent");
+  if (!tabsBar || !tabContent) return;
+  tabsBar.innerHTML = "";
+  tabContent.innerHTML = "";
+
+  const cats = Object.entries(DB);
+  cats.forEach(([cat, items], idx) => {
     const style = CAT_STYLES[cat] || { titleBg:"#607d8b", titleFg:"#fff", itemBg:"#eceff1", itemFg:"#37474f" };
     const realItems = items.filter(i => i !== "-");
-    const div = document.createElement("div");
-    div.className = "db-cat";
+
+    // Tab 按鈕
+    const btn = document.createElement("button");
+    btn.className = "cat-tab-btn" + (idx === 0 ? " active" : "");
+    btn.style.borderColor = style.titleBg;
+    btn.style.color = idx === 0 ? "#fff" : style.titleBg;
+    btn.style.background = idx === 0 ? style.titleBg : "#fff";
+    btn.textContent = cat;
+    btn.addEventListener("click", () => {
+      tabsBar.querySelectorAll(".cat-tab-btn").forEach(b => {
+        const s = CAT_STYLES[b.textContent] || { titleBg:"#607d8b" };
+        b.style.background = "#fff";
+        b.style.color = s.titleBg;
+        b.classList.remove("active");
+      });
+      btn.style.background = style.titleBg;
+      btn.style.color = "#fff";
+      btn.classList.add("active");
+      tabContent.querySelectorAll(".cat-tab-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("catPanel_" + idx).classList.add("active");
+    });
+    tabsBar.appendChild(btn);
+
+    // 內容面板
+    const panel = document.createElement("div");
+    panel.className = "cat-tab-panel" + (idx === 0 ? " active" : "");
+    panel.id = "catPanel_" + idx;
 
     const groups = MENU_GROUPS[cat] || null;
-    let itemsHTML = "";
+    let html = '<div class="cat-items-grid">';
     if (groups) {
       groups.forEach(group => {
         const gi = group.items.filter(i => realItems.includes(i));
         if (!gi.length) return;
-        itemsHTML += `<div class="db-group-label">${group.label}</div>`;
-        itemsHTML += gi.map(i =>
-          `<div class="db-item" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
+        html += `<div class="cat-sub-label">${group.label}</div>`;
+        html += gi.map(i =>
+          `<div class="cat-item-chip" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
         ).join("");
       });
     } else {
-      itemsHTML = realItems.map(i =>
-        `<div class="db-item" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
+      html += realItems.map(i =>
+        `<div class="cat-item-chip" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
       ).join("");
     }
-
-    div.innerHTML = `
-      <div class="db-cat-title" style="background:${style.titleBg};color:${style.titleFg}">${cat}</div>
-      <div class="db-cat-items">${itemsHTML}</div>`;
-    grid.appendChild(div);
+    html += "</div>";
+    panel.innerHTML = html;
+    tabContent.appendChild(panel);
   });
 }
 
