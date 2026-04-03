@@ -527,7 +527,7 @@ input.sel-l2-inp:disabled {
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
-  width: 5em;
+  width: 8em;
   text-align: center;
   display: inline-block;
 }
@@ -541,7 +541,7 @@ input.sel-l2-inp:disabled {
   font-size: 0.78rem; font-weight: 500;
   border: 1px solid rgba(0,0,0,0.08);
   white-space: nowrap;
-  width: 8em;
+  width: 12em;
   text-align: center;
   display: inline-block;
   box-sizing: border-box;
@@ -1289,9 +1289,10 @@ button {
     <h2>食材依顏色分組</h2>
     <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
   </div>
-  <div class="drawer-body">
+  <div class="drawer-body" style="padding:10px 12px 20px;">
     <p style="font-size:0.76rem;color:#90a4ae;margin-bottom:10px;">所有食材依顏色分組顯示。要編輯請至⚙️管理 → 🎨顏色分組。</p>
-    <div class="db-grid" id="dbGrid"></div>
+    <div id="colorTabsBar" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"></div>
+    <div id="colorTabContent"></div>
   </div>
 </div>
 
@@ -3359,12 +3360,44 @@ ${tablesHTML}
 
 
 function renderDB() {
-  const grid=document.getElementById("dbGrid");
-  Object.entries(COLOR_GROUPS).forEach(([key,g])=>{
-    const div=document.createElement("div"); div.className="db-cat";
-    div.innerHTML=`<div class="db-cat-title" style="background:${g.titleBg}">${g.label}</div>
-      <div class="db-cat-items">${g.items.map(i=>`<div class="db-item" style="background:${g.bg};color:${g.fg||'#333'}">${i}</div>`).join("")}</div>`;
-    grid.appendChild(div);
+  const tabsBar = document.getElementById("colorTabsBar");
+  const tabContent = document.getElementById("colorTabContent");
+  if (!tabsBar || !tabContent) return;
+  tabsBar.innerHTML = "";
+  tabContent.innerHTML = "";
+
+  Object.entries(COLOR_GROUPS).forEach(([key, g], idx) => {
+    // Tab 按鈕
+    const btn = document.createElement("button");
+    btn.className = "cat-tab-btn" + (idx === 0 ? " active" : "");
+    btn.style.borderColor = g.titleBg;
+    btn.style.color = idx === 0 ? (g.fg || "#333") : g.titleBg;
+    btn.style.background = idx === 0 ? g.bg : "#fff";
+    btn.textContent = g.label;
+    btn.addEventListener("click", () => {
+      tabsBar.querySelectorAll(".cat-tab-btn").forEach(b => {
+        const k = Object.keys(COLOR_GROUPS).find(k => COLOR_GROUPS[k].label === b.textContent);
+        const gs = k ? COLOR_GROUPS[k] : { bg:"#fff", fg:"#607d8b", titleBg:"#607d8b" };
+        b.style.background = "#fff";
+        b.style.color = gs.titleBg;
+        b.classList.remove("active");
+      });
+      btn.style.background = g.bg;
+      btn.style.color = g.fg || "#333";
+      btn.classList.add("active");
+      tabContent.querySelectorAll(".cat-tab-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("colorPanel_" + idx).classList.add("active");
+    });
+    tabsBar.appendChild(btn);
+
+    // 內容面板
+    const panel = document.createElement("div");
+    panel.className = "cat-tab-panel" + (idx === 0 ? " active" : "");
+    panel.id = "colorPanel_" + idx;
+    panel.innerHTML = `<div class="cat-items-grid">${
+      g.items.map(i => `<div class="cat-item-chip" style="background:${g.bg};color:${g.fg||'#333'}">${i}</div>`).join("")
+    }</div>`;
+    tabContent.appendChild(panel);
   });
 }
 
@@ -3671,7 +3704,7 @@ function openDrawer(id) {
   if (id === 'mgmt')   { initMgmtItems(); qaInitSelects(); }
   if (id === 'export') { updateImgDateHint(); updateHistDateHint(); }
   if (id === 'hist')   { renderHistoryPanel(); }
-  if (id === 'colors') { initMgmtColors(); }
+  if (id === 'colors') { initMgmtColors(); rerenderDBPanels(); }
   if (id === 'cats')   { rerenderDBPanels(); }
 }
 
@@ -3956,13 +3989,10 @@ function removeCatFromRow(row, cat) {
 }
 
 function rerenderDBPanels() {
-  const g1 = document.getElementById('dbGrid');
-  if (g1) g1.innerHTML = '';
-  // catGrid 已改為分頁，直接清空 tabs/content
-  const tabsBar = document.getElementById('catTabsBar');
-  const tabContent = document.getElementById('catTabContent');
-  if (tabsBar) tabsBar.innerHTML = '';
-  if (tabContent) tabContent.innerHTML = '';
+  ['colorTabsBar','colorTabContent','catTabsBar','catTabContent'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
   renderDB(); renderCatDB();
 }
 
