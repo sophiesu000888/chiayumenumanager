@@ -546,6 +546,35 @@ input.sel-l2-inp:disabled {
   display: inline-block;
   box-sizing: border-box;
 }
+.color-item-chip {
+  padding: 4px 6px; border-radius: 6px;
+  font-size: 0.78rem; font-weight: 500;
+  border: 1px solid rgba(0,0,0,0.08);
+  white-space: nowrap;
+  width: 8em;
+  text-align: center;
+  display: inline-block;
+  box-sizing: border-box;
+}
+/* 可編輯品項 */
+.chip-editable {
+  cursor: pointer;
+  position: relative;
+}
+.chip-editable:hover {
+  opacity: 0.85;
+  outline: 2px solid rgba(0,0,0,0.2);
+  outline-offset: 1px;
+}
+.chip-edit-input {
+  border: none; outline: none;
+  background: transparent;
+  font-family: inherit; font-size: inherit;
+  font-weight: inherit; color: inherit;
+  text-align: center;
+  width: 100%;
+  padding: 0;
+}
 .cat-sub-label {
   width: 100%; font-size: 0.68rem; font-weight: 700;
   color: #90a4ae; padding: 6px 2px 2px; letter-spacing: 1px;
@@ -3394,9 +3423,53 @@ function renderDB() {
     const panel = document.createElement("div");
     panel.className = "cat-tab-panel" + (idx === 0 ? " active" : "");
     panel.id = "colorPanel_" + idx;
-    panel.innerHTML = `<div class="cat-items-grid">${
-      g.items.map(i => `<div class="cat-item-chip" style="background:${g.bg};color:${g.fg||'#333'}">${i}</div>`).join("")
-    }</div>`;
+    const colorGrid = document.createElement("div");
+    colorGrid.className = "cat-items-grid";
+    g.items.forEach(itemName => {
+      const chip = document.createElement("div");
+      chip.className = "color-item-chip chip-editable";
+      chip.style.background = g.bg;
+      chip.style.color = g.fg || "#333";
+      chip.title = "點擊編輯";
+
+      const span = document.createElement("span");
+      span.textContent = itemName;
+      chip.appendChild(span);
+
+      chip.addEventListener("click", () => {
+        const inp = document.createElement("input");
+        inp.className = "chip-edit-input";
+        inp.value = itemName;
+        inp.style.color = g.fg || "#333";
+        chip.innerHTML = "";
+        chip.appendChild(inp);
+        inp.focus();
+        inp.select();
+
+        function save() {
+          const newVal = inp.value.trim();
+          if (newVal && newVal !== itemName) {
+            const idx2 = COLOR_GROUPS[key].items.indexOf(itemName);
+            if (idx2 >= 0) {
+              COLOR_GROUPS[key].items[idx2] = newVal;
+              if (FOOD_COLOR[itemName] === key) {
+                delete FOOD_COLOR[itemName];
+                FOOD_COLOR[newVal] = key;
+              }
+              scheduleAutoSave();
+            }
+          }
+          rerenderDBPanels();
+        }
+        inp.addEventListener("blur", save);
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Enter") { e.preventDefault(); inp.blur(); }
+          if (e.key === "Escape") { inp.value = itemName; inp.blur(); }
+        });
+      });
+      colorGrid.appendChild(chip);
+    });
+    panel.appendChild(colorGrid);
     tabContent.appendChild(panel);
   });
 }
@@ -3455,24 +3528,80 @@ function renderCatDB() {
     panel.className = "cat-tab-panel" + (idx === 0 ? " active" : "");
     panel.id = "catPanel_" + idx;
 
+    function makeCatChip(itemName) {
+      const chip = document.createElement("div");
+      chip.className = "cat-item-chip chip-editable";
+      chip.style.background = style.itemBg;
+      chip.style.color = style.itemFg;
+      chip.title = "點擊編輯";
+      const span = document.createElement("span");
+      span.textContent = itemName;
+      chip.appendChild(span);
+      chip.addEventListener("click", () => {
+        const inp = document.createElement("input");
+        inp.className = "chip-edit-input";
+        inp.value = itemName;
+        inp.style.color = style.itemFg;
+        chip.innerHTML = "";
+        chip.appendChild(inp);
+        inp.focus();
+        inp.select();
+        function save() {
+          const newVal = inp.value.trim();
+          if (newVal && newVal !== itemName) {
+            const catArr = DB[cat];
+            const i2 = catArr ? catArr.indexOf(itemName) : -1;
+            if (i2 >= 0) {
+              catArr[i2] = newVal;
+              // 同步 MENU_GROUPS
+              Object.values(MENU_GROUPS).forEach(groups => {
+                groups.forEach(g => {
+                  const gi = g.items.indexOf(itemName);
+                  if (gi >= 0) g.items[gi] = newVal;
+                });
+              });
+              // 同步 FOOD_COLOR
+              const colorKey = FOOD_COLOR[itemName];
+              if (colorKey) {
+                delete FOOD_COLOR[itemName];
+                FOOD_COLOR[newVal] = colorKey;
+                const cg = COLOR_GROUPS[colorKey];
+                if (cg) {
+                  const ci = cg.items.indexOf(itemName);
+                  if (ci >= 0) cg.items[ci] = newVal;
+                }
+              }
+              scheduleAutoSave();
+            }
+          }
+          rerenderDBPanels();
+        }
+        inp.addEventListener("blur", save);
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Enter") { e.preventDefault(); inp.blur(); }
+          if (e.key === "Escape") { inp.value = itemName; inp.blur(); }
+        });
+      });
+      return chip;
+    }
+
     const groups = MENU_GROUPS[cat] || null;
-    let html = '<div class="cat-items-grid">';
+    const catGrid = document.createElement("div");
+    catGrid.className = "cat-items-grid";
     if (groups) {
       groups.forEach(group => {
         const gi = group.items.filter(i => realItems.includes(i));
         if (!gi.length) return;
-        html += `<div class="cat-sub-label">${group.label}</div>`;
-        html += gi.map(i =>
-          `<div class="cat-item-chip" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
-        ).join("");
+        const label = document.createElement("div");
+        label.className = "cat-sub-label";
+        label.textContent = group.label;
+        catGrid.appendChild(label);
+        gi.forEach(i => catGrid.appendChild(makeCatChip(i)));
       });
     } else {
-      html += realItems.map(i =>
-        `<div class="cat-item-chip" style="background:${style.itemBg};color:${style.itemFg}">${i}</div>`
-      ).join("");
+      realItems.forEach(i => catGrid.appendChild(makeCatChip(i)));
     }
-    html += "</div>";
-    panel.innerHTML = html;
+    panel.appendChild(catGrid);
     tabContent.appendChild(panel);
   });
 }
