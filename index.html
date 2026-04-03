@@ -3467,6 +3467,71 @@ function renderDB() {
     panel.appendChild(colorGrid);
     tabContent.appendChild(panel);
   });
+
+  // ── 「未標示」tab：收集所有 DB 品項中未歸入任何顏色分組的 ──
+  const allTagged = new Set(Object.values(COLOR_GROUPS).flatMap(g => g.items));
+  const untagged = [];
+  Object.values(DB).forEach(items => {
+    items.filter(i => i !== "-").forEach(i => {
+      if (!allTagged.has(i) && !untagged.includes(i)) untagged.push(i);
+    });
+  });
+
+  // 未標示的顏色：中性藍灰，明顯跟白色有區隔
+  const UT_BG      = "#cfd8dc";   // 藍灰底
+  const UT_FG      = "#263238";   // 深藍灰字
+  const UT_TITLE   = "#455a64";   // 標籤邊框色
+
+  const utIdx = Object.keys(COLOR_GROUPS).length;
+  const utBtn = document.createElement("button");
+  utBtn.className = "cat-tab-btn";
+  utBtn.style.borderColor = UT_TITLE;
+  utBtn.style.color = UT_TITLE;
+  utBtn.style.background = "#fff";
+  utBtn.textContent = `未標示${untagged.length ? "（" + untagged.length + "）" : ""}`;
+  utBtn.addEventListener("click", () => {
+    tabsBar.querySelectorAll(".cat-tab-btn").forEach(b => {
+      const k = Object.keys(COLOR_GROUPS).find(k => COLOR_GROUPS[k].label === b.textContent);
+      const gs = k ? COLOR_GROUPS[k] : { bg: "#fff", fg: UT_TITLE, titleBg: UT_TITLE };
+      b.style.background = "#fff";
+      b.style.color = k ? gs.titleBg : UT_TITLE;
+      b.classList.remove("active");
+    });
+    utBtn.style.background = UT_BG;
+    utBtn.style.color = UT_FG;
+    utBtn.classList.add("active");
+    tabContent.querySelectorAll(".cat-tab-panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("colorPanel_untagged").classList.add("active");
+  });
+  tabsBar.appendChild(utBtn);
+
+  const utPanel = document.createElement("div");
+  utPanel.className = "cat-tab-panel";
+  utPanel.id = "colorPanel_untagged";
+  const utGrid = document.createElement("div");
+  utGrid.className = "cat-items-grid";
+
+  if (!untagged.length) {
+    const empty = document.createElement("span");
+    empty.style.cssText = "color:#90a4ae;font-size:0.78rem;";
+    empty.textContent = "所有品項都已有顏色標示 🎉";
+    utGrid.appendChild(empty);
+  } else {
+    untagged.forEach(itemName => {
+      const chip = document.createElement("div");
+      chip.className = "color-item-chip";
+      chip.style.background = UT_BG;
+      chip.style.color = UT_FG;
+      chip.style.border = "1.5px dashed " + UT_TITLE;
+      chip.title = itemName;
+      const span = document.createElement("span");
+      span.textContent = itemName;
+      chip.appendChild(span);
+      utGrid.appendChild(chip);
+    });
+  }
+  utPanel.appendChild(utGrid);
+  tabContent.appendChild(utPanel);
 }
 
 const CAT_STYLES = {
