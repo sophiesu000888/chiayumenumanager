@@ -11,6 +11,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -1296,8 +1298,7 @@ Object.entries(COLOR_GROUPS).forEach(([key, g]) => {
 
 // ===== 食材資料庫 =====
 const DB = {
-  "健康餐主菜": ["雙拼舒肥雞胸","紐澳良腿排","蔥燒豬五花","義式雞胸","滑蛋豬肉","醬烤梅花豬","洋蔥肉片","蒜泥白肉","韓式肉片","蒜香烤五花","照燒腿排","黑胡椒胸丁","義式腿排"],
-  "風味餐主菜": ["鳳梨糖醋雞","深井脆皮掛爐烤鴨","鳳城玫瑰油雞","沙茶肉片","北菇滑雞","川椒雞","叉燒/油雞","韓式炸雞","古早味滷排骨","古早紅糟肉","蜜汁雞腿","炸排骨","烤鴨/叉燒","蔗香腿排","醬烤梅花豬","香酥雞排","鹹豬肉"],
+  "主菜": ["雙拼舒肥雞胸*","紐澳良腿排*","蔥燒豬五花*","義式雞胸*","滑蛋豬肉*","醬烤梅花豬*","洋蔥肉片*","蒜泥白肉*","韓式肉片*","蒜香烤五花*","照燒腿排*","黑胡椒胸丁*","義式腿排*","鳳梨糖醋雞","深井脆皮掛爐烤鴨","鳳城玫瑰油雞","沙茶肉片","北菇滑雞","川椒雞","叉燒/油雞","韓式炸雞","古早味滷排骨","古早紅糟肉","蜜汁雞腿","炸排骨","烤鴨/叉燒","蔗香腿排","香酥雞排","鹹豬肉"],
   "副主菜":  ["士林香腸","雞捲"],
   "米飯":    ["白米","紫米","小米","藜麥","糙米","五穀"],
   "白葉菜":  ["高麗菜","大白菜","豆芽菜","黃豆芽","白花椰"],
@@ -1312,7 +1313,7 @@ const DB = {
 };
 
 const ROW_CATS = {
-  "主菜":   ["-","健康餐主菜","風味餐主菜"],
+  "主菜":   ["-","主菜"],
   "副主菜": ["-","副主菜"],
   "米飯":   ["-","米飯"],
   "1":      ["-","白葉菜","綠葉菜","蛋白質","菇","瓜果","根莖","海帶","其他"],
@@ -2451,13 +2452,7 @@ function getFoodColors(item) {
 function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   let cats = ROW_CATS[rowKey] || [];
 
-  if (rowKey === "主菜") {
-    if (side === "h") {
-      cats = cats.filter(c => c === "-" || c === "健康餐主菜");
-    } else if (side === "w") {
-      cats = cats.filter(c => c === "-" || c === "風味餐主菜");
-    }
-  }
+
 
   const sel1 = document.createElement("select");
   sel1.className = "sel-l1";
@@ -3325,8 +3320,7 @@ function renderDB() {
 }
 
 const CAT_STYLES = {
-  "健康餐主菜": { titleBg:"#2e7d32", titleFg:"#fff", itemBg:"#c8e6c9", itemFg:"#1b5e20" },
-  "風味餐主菜": { titleBg:"#1565c0", titleFg:"#fff", itemBg:"#bbdefb", itemFg:"#0d47a1" },
+  "主菜": { titleBg:"#2e7d32", titleFg:"#fff", itemBg:"#c8e6c9", itemFg:"#1b5e20" },
   "副主菜":     { titleBg:"#f57f17", titleFg:"#fff", itemBg:"#fff9c4", itemFg:"#6d4c00" },
   "米飯":       { titleBg:"#795548", titleFg:"#fff", itemBg:"#ffe0b2", itemFg:"#4e342e" },
   "白葉菜":     { titleBg:"#546e7a", titleFg:"#fff", itemBg:"#eceff1", itemFg:"#263238" },
