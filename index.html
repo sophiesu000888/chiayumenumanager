@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -3468,38 +3454,38 @@ function renderDB() {
     tabContent.appendChild(panel);
   });
 
-  // ── 「未標示」tab：收集所有 DB 品項中未歸入任何顏色分組的 ──
+    // ── 「未標示」tab：排除主菜/副主菜，依類別分組顯示 ──
+  const EXCLUDED_CATS_FROM_UNTAGGED = ["主菜", "副主菜"];
   const allTagged = new Set(Object.values(COLOR_GROUPS).flatMap(g => g.items));
-  const untagged = [];
-  Object.values(DB).forEach(items => {
+
+  const untaggedByCat = {};
+  let untaggedTotal = 0;
+  Object.entries(DB).forEach(([cat, items]) => {
+    if (EXCLUDED_CATS_FROM_UNTAGGED.includes(cat)) return;
     items.filter(i => i !== "-").forEach(i => {
-      if (!allTagged.has(i) && !untagged.includes(i)) untagged.push(i);
+      if (!allTagged.has(i)) {
+        if (!untaggedByCat[cat]) untaggedByCat[cat] = [];
+        if (!untaggedByCat[cat].includes(i)) { untaggedByCat[cat].push(i); untaggedTotal++; }
+      }
     });
   });
 
-  // 未標示的顏色：中性藍灰，明顯跟白色有區隔
-  const UT_BG      = "#cfd8dc";   // 藍灰底
-  const UT_FG      = "#263238";   // 深藍灰字
-  const UT_TITLE   = "#455a64";   // 標籤邊框色
+  const UT_BG = "#cfd8dc", UT_FG = "#263238", UT_TITLE = "#455a64";
 
-  const utIdx = Object.keys(COLOR_GROUPS).length;
   const utBtn = document.createElement("button");
   utBtn.className = "cat-tab-btn";
   utBtn.style.borderColor = UT_TITLE;
   utBtn.style.color = UT_TITLE;
   utBtn.style.background = "#fff";
-  utBtn.textContent = `未標示${untagged.length ? "（" + untagged.length + "）" : ""}`;
+  utBtn.textContent = `未標示${untaggedTotal ? "（" + untaggedTotal + "）" : ""}`;
   utBtn.addEventListener("click", () => {
     tabsBar.querySelectorAll(".cat-tab-btn").forEach(b => {
       const k = Object.keys(COLOR_GROUPS).find(k => COLOR_GROUPS[k].label === b.textContent);
-      const gs = k ? COLOR_GROUPS[k] : { bg: "#fff", fg: UT_TITLE, titleBg: UT_TITLE };
-      b.style.background = "#fff";
-      b.style.color = k ? gs.titleBg : UT_TITLE;
+      const gs = k ? COLOR_GROUPS[k] : { bg:"#fff", fg:UT_TITLE, titleBg:UT_TITLE };
+      b.style.background = "#fff"; b.style.color = k ? gs.titleBg : UT_TITLE;
       b.classList.remove("active");
     });
-    utBtn.style.background = UT_BG;
-    utBtn.style.color = UT_FG;
-    utBtn.classList.add("active");
+    utBtn.style.background = UT_BG; utBtn.style.color = UT_FG; utBtn.classList.add("active");
     tabContent.querySelectorAll(".cat-tab-panel").forEach(p => p.classList.remove("active"));
     document.getElementById("colorPanel_untagged").classList.add("active");
   });
@@ -3508,31 +3494,43 @@ function renderDB() {
   const utPanel = document.createElement("div");
   utPanel.className = "cat-tab-panel";
   utPanel.id = "colorPanel_untagged";
-  const utGrid = document.createElement("div");
-  utGrid.className = "cat-items-grid";
 
-  if (!untagged.length) {
+  if (!untaggedTotal) {
+    const utGrid = document.createElement("div");
+    utGrid.className = "cat-items-grid";
     const empty = document.createElement("span");
     empty.style.cssText = "color:#90a4ae;font-size:0.78rem;";
     empty.textContent = "所有品項都已有顏色標示 🎉";
     utGrid.appendChild(empty);
+    utPanel.appendChild(utGrid);
   } else {
-    untagged.forEach(itemName => {
-      const chip = document.createElement("div");
-      chip.className = "color-item-chip";
-      chip.style.background = UT_BG;
-      chip.style.color = UT_FG;
-      chip.style.border = "1.5px dashed " + UT_TITLE;
-      chip.title = itemName;
-      const span = document.createElement("span");
-      span.textContent = itemName;
-      chip.appendChild(span);
-      utGrid.appendChild(chip);
+    Object.entries(untaggedByCat).forEach(([cat, items]) => {
+      if (!items.length) return;
+      const catStyle = CAT_STYLES[cat] || { titleBg:"#607d8b" };
+      const catLabel = document.createElement("div");
+      catLabel.style.cssText = `width:100%;font-size:0.7rem;font-weight:700;color:#fff;background:${catStyle.titleBg};padding:3px 8px 3px 10px;border-radius:4px;margin:8px 0 4px;letter-spacing:1px;box-sizing:border-box;`;
+      catLabel.textContent = cat;
+      utPanel.appendChild(catLabel);
+
+      const catGrid = document.createElement("div");
+      catGrid.className = "cat-items-grid";
+      catGrid.style.marginBottom = "2px";
+      items.forEach(itemName => {
+        const chip = document.createElement("div");
+        chip.className = "color-item-chip";
+        chip.style.cssText = `background:${UT_BG};color:${UT_FG};border:1.5px dashed ${UT_TITLE};`;
+        chip.title = itemName;
+        const span = document.createElement("span");
+        span.textContent = itemName;
+        chip.appendChild(span);
+        catGrid.appendChild(chip);
+      });
+      utPanel.appendChild(catGrid);
     });
   }
-  utPanel.appendChild(utGrid);
   tabContent.appendChild(utPanel);
 }
+
 
 const CAT_STYLES = {
   "主菜": { titleBg:"#2e7d32", titleFg:"#fff", itemBg:"#c8e6c9", itemFg:"#1b5e20" },
