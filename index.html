@@ -2593,12 +2593,15 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   }
 
   function showDropdown(keyword) {
-    if (!keyword) { hideDropdown(); return; }
-    const kw = keyword.toLowerCase();
-    const matched = _allItems.filter(i => i.toLowerCase().includes(kw));
+    const showAll = (!keyword || keyword === "_all_");
+    const matched = showAll
+      ? _allItems
+      : _allItems.filter(i => i.toLowerCase().includes(keyword.toLowerCase()));
     if (!matched.length) { hideDropdown(); return; }
+    const kw = showAll ? "" : keyword.toLowerCase();
     _activeIdx = -1;
     dropdown.innerHTML = matched.map(item => {
+      if (!kw) return `<div class="fuzzy-dropdown-item" data-val="${item}">${item}</div>`;
       const idx = item.toLowerCase().indexOf(kw);
       const hi = item.slice(0, idx) +
         `<mark>${item.slice(idx, idx + keyword.length)}</mark>` +
@@ -2740,20 +2743,12 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     scheduleAutoSave();
   });
 
-  // 離開欄位時驗證：若不在合法品項內則清空
+  // 離開欄位時：關閉下拉選單，允許自行輸入的內容保留
   inp2.addEventListener("blur", () => {
     if (_isSelecting) return;
     setTimeout(() => {
       if (_isSelecting) return;
       hideDropdown();
-      const item = inp2.value.trim();
-      if (!item) return;
-      const valid = getValidItems();
-      if (valid.length > 0 && !valid.includes(item)) {
-        inp2.value = "";
-        applyItemColor("");
-        scheduleAutoSave();
-      }
     }, 350);
   });
 
