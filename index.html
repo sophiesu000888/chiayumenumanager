@@ -1169,8 +1169,8 @@ button {
         <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentCategory()">🗑️ 刪除此類別</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-        <input id="mgmt-item-input" type="text" placeholder="輸入新品項名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToCategory()">
-        <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToCategory()">➕ 新增品項</button>
+        <input id="mgmt-item-input" type="text" placeholder="輸入新品項名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToCategory()" oninput="mgmtItemInputChange(this)">
+        <button id="mgmt-item-btn" class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToCategory()">➕ 新增品項</button>
       </div>
       <div id="mgmt-items-list" class="mgmt-items-list"></div>
     </div>
@@ -1182,8 +1182,8 @@ button {
         <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentColorGroup()">🗑️ 刪除</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <input id="mgmt-color-item-input" type="text" placeholder="輸入食材名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToColorGroup()">
-        <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToColorGroup()">➕ 新增食材</button>
+        <input id="mgmt-color-item-input" type="text" placeholder="輸入食材名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToColorGroup()" oninput="mgmtColorInputChange(this)">
+        <button id="mgmt-color-item-btn" class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToColorGroup()">➕ 新增食材</button>
       </div>
       <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;font-size:0.82rem;color:#546e7a;">
         <label>背景色 <input type="color" id="mgmt-color-bg" value="#4cd964" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
@@ -3931,7 +3931,29 @@ function renderMgmtItems() {
     chip.className = 'mgmt-item-chip';
     chip.style.background = style.itemBg;
     chip.style.color = style.itemFg;
-    chip.innerHTML = `${item}<button class="chip-del" title="刪除" onclick="removeItemFromCategory('${cat}','${item.replace(/'/g,"\\'")}')">✕</button>`;
+    chip.style.width = '12em';
+    chip.style.justifyContent = 'space-between';
+    chip.style.cursor = 'pointer';
+    chip.title = '點擊帶回修改';
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = item;
+    nameSpan.style.flex = '1';
+    nameSpan.style.textAlign = 'center';
+    nameSpan.onclick = () => {
+      const inp = document.getElementById('mgmt-item-input');
+      inp.value = item;
+      inp.dataset.editingItem = item;
+      inp.focus();
+      const btn = document.getElementById('mgmt-item-btn');
+      if (btn) btn.textContent = '✏️ 修改品項';
+    };
+    const delBtn = document.createElement('button');
+    delBtn.className = 'chip-del';
+    delBtn.title = '刪除';
+    delBtn.textContent = '✕';
+    delBtn.onclick = (e) => { e.stopPropagation(); removeItemFromCategory(cat, item); };
+    chip.appendChild(nameSpan);
+    chip.appendChild(delBtn);
     list.appendChild(chip);
   });
   if (!list.children.length) list.innerHTML = '<span style="color:#90a4ae;font-size:0.78rem;">（尚無品項）</span>';
@@ -3942,10 +3964,29 @@ function addItemToCategory() {
   const inp = document.getElementById('mgmt-item-input');
   const val = inp.value.trim();
   if (!val) { inp.focus(); return; }
-  if (!DB[cat]) DB[cat] = ['-'];
-  if (DB[cat].includes(val)) { alert('此品項已存在！'); return; }
-  DB[cat].push(val);
+  const oldVal = inp.dataset.editingItem || '';
+  if (oldVal && oldVal !== val) {
+    // 改名模式
+    if (!DB[cat]) DB[cat] = ['-'];
+    if (DB[cat].includes(val)) { alert('此品項已存在！'); return; }
+    const idx = DB[cat].indexOf(oldVal);
+    if (idx !== -1) DB[cat][idx] = val;
+    // 同步 FOOD_COLOR
+    if (FOOD_COLOR[oldVal]) { FOOD_COLOR[val] = FOOD_COLOR[oldVal]; delete FOOD_COLOR[oldVal]; }
+    // 同步 COLOR_GROUPS
+    Object.values(COLOR_GROUPS).forEach(g => {
+      const ci = g.items.indexOf(oldVal);
+      if (ci !== -1) g.items[ci] = val;
+    });
+  } else {
+    if (!DB[cat]) DB[cat] = ['-'];
+    if (DB[cat].includes(val)) { alert('此品項已存在！'); return; }
+    DB[cat].push(val);
+  }
   inp.value = '';
+  delete inp.dataset.editingItem;
+  const btn = document.getElementById('mgmt-item-btn');
+  if (btn) btn.textContent = '➕ 新增品項';
   renderMgmtItems();
   rerenderDBPanels();
   scheduleAutoSave();
@@ -4018,7 +4059,29 @@ function renderMgmtColorItems() {
     chip.className = 'mgmt-item-chip';
     chip.style.background = g.bg;
     chip.style.color = g.fg || '#333';
-    chip.innerHTML = `${item}<button class="chip-del" title="刪除" onclick="removeItemFromColorGroup('${key}','${item.replace(/'/g,"\\'")}')">✕</button>`;
+    chip.style.width = '8em';
+    chip.style.justifyContent = 'space-between';
+    chip.style.cursor = 'pointer';
+    chip.title = '點擊帶回修改';
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = item;
+    nameSpan.style.flex = '1';
+    nameSpan.style.textAlign = 'center';
+    nameSpan.onclick = () => {
+      const inp = document.getElementById('mgmt-color-item-input');
+      inp.value = item;
+      inp.dataset.editingItem = item;
+      inp.focus();
+      const btn = document.getElementById('mgmt-color-item-btn');
+      if (btn) btn.textContent = '✏️ 修改食材';
+    };
+    const delBtn = document.createElement('button');
+    delBtn.className = 'chip-del';
+    delBtn.title = '刪除';
+    delBtn.textContent = '✕';
+    delBtn.onclick = (e) => { e.stopPropagation(); removeItemFromColorGroup(key, item); };
+    chip.appendChild(nameSpan);
+    chip.appendChild(delBtn);
     list.appendChild(chip);
   });
   if (!list.children.length) list.innerHTML = '<span style="color:#90a4ae;font-size:0.78rem;">（尚無食材）</span>';
@@ -4030,10 +4093,27 @@ function addItemToColorGroup() {
   const val = inp.value.trim();
   if (!val) { inp.focus(); return; }
   if (!COLOR_GROUPS[key]) return;
-  if (COLOR_GROUPS[key].items.includes(val)) { alert('此食材已存在！'); return; }
-  COLOR_GROUPS[key].items.push(val);
-  FOOD_COLOR[val] = key;
+  const oldVal = inp.dataset.editingItem || '';
+  if (oldVal && oldVal !== val) {
+    // 改名模式
+    if (COLOR_GROUPS[key].items.includes(val)) { alert('此食材已存在！'); return; }
+    const ci = COLOR_GROUPS[key].items.indexOf(oldVal);
+    if (ci !== -1) COLOR_GROUPS[key].items[ci] = val;
+    if (FOOD_COLOR[oldVal] === key) { FOOD_COLOR[val] = key; delete FOOD_COLOR[oldVal]; }
+    // 同步 DB
+    Object.keys(DB).forEach(cat => {
+      const di = DB[cat].indexOf(oldVal);
+      if (di !== -1) DB[cat][di] = val;
+    });
+  } else {
+    if (COLOR_GROUPS[key].items.includes(val)) { alert('此食材已存在！'); return; }
+    COLOR_GROUPS[key].items.push(val);
+    FOOD_COLOR[val] = key;
+  }
   inp.value = '';
+  delete inp.dataset.editingItem;
+  const btn = document.getElementById('mgmt-color-item-btn');
+  if (btn) btn.textContent = '➕ 新增食材';
   renderMgmtColorItems();
   rerenderDBPanels();
   scheduleAutoSave();
@@ -4131,6 +4211,21 @@ function rgbToHex(color) {
   const m = color.match(/\d+/g);
   if (!m || m.length < 3) return null;
   return '#' + m.slice(0,3).map(n=>parseInt(n).toString(16).padStart(2,'0')).join('');
+}
+
+function mgmtItemInputChange(inp) {
+  if (inp.dataset.editingItem && inp.value !== inp.dataset.editingItem) {
+    delete inp.dataset.editingItem;
+    const btn = document.getElementById('mgmt-item-btn');
+    if (btn) btn.textContent = '➕ 新增品項';
+  }
+}
+function mgmtColorInputChange(inp) {
+  if (inp.dataset.editingItem && inp.value !== inp.dataset.editingItem) {
+    delete inp.dataset.editingItem;
+    const btn = document.getElementById('mgmt-color-item-btn');
+    if (btn) btn.textContent = '➕ 新增食材';
+  }
 }
 
 // initMgmtItems() called via initApp()
