@@ -3526,17 +3526,27 @@ function renderCatDB() {
     function makeCatChip(itemName) {
       const chip = document.createElement("div");
       chip.className = "cat-item-chip chip-editable";
-      chip.style.background = style.itemBg;
-      chip.style.color = style.itemFg;
+      // 主菜：有 * 用綠色系，無 * 用藍色系
+      if (cat === "主菜") {
+        const hasStar = itemName.endsWith("*");
+        chip.style.background = hasStar ? "#c8e6c9" : "#bbdefb";
+        chip.style.color       = hasStar ? "#1b5e20" : "#0d47a1";
+      } else {
+        chip.style.background = style.itemBg;
+        chip.style.color = style.itemFg;
+      }
       chip.title = "點擊編輯";
       const span = document.createElement("span");
       span.textContent = itemName;
       chip.appendChild(span);
+      const chipColor = cat === "主菜"
+        ? (itemName.endsWith("*") ? "#1b5e20" : "#0d47a1")
+        : style.itemFg;
       chip.addEventListener("click", () => {
         const inp = document.createElement("input");
         inp.className = "chip-edit-input";
         inp.value = itemName;
-        inp.style.color = style.itemFg;
+        inp.style.color = chipColor;
         chip.innerHTML = "";
         chip.appendChild(inp);
         inp.focus();
@@ -3587,11 +3597,16 @@ function renderCatDB() {
       groups.forEach(group => {
         const gi = group.items.filter(i => realItems.includes(i));
         if (!gi.length) return;
+        // 有 * 的排前，無 * 的排後
+        const sorted = [
+          ...gi.filter(i => i.endsWith("*")),
+          ...gi.filter(i => !i.endsWith("*"))
+        ];
         const label = document.createElement("div");
         label.className = "cat-sub-label";
         label.textContent = group.label;
         catGrid.appendChild(label);
-        gi.forEach(i => catGrid.appendChild(makeCatChip(i)));
+        sorted.forEach(i => catGrid.appendChild(makeCatChip(i)));
       });
     } else {
       realItems.forEach(i => catGrid.appendChild(makeCatChip(i)));
