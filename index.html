@@ -516,7 +516,7 @@ input.sel-l2-inp:disabled {
 
 /* ===== 類別分組抽屜分頁 ===== */
 .cat-tab-btn {
-  padding: 5px 12px;
+  padding: 5px 8px;
   border: 1.5px solid #b0bec5;
   border-radius: 20px;
   background: #eceff1;
@@ -527,6 +527,9 @@ input.sel-l2-inp:disabled {
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
+  width: 5em;
+  text-align: center;
+  display: inline-block;
 }
 .cat-tab-btn:hover { background: #cfd8dc; }
 .cat-tab-btn.active { background: #37474f; color: #fff; border-color: #37474f; }
@@ -534,9 +537,14 @@ input.sel-l2-inp:disabled {
 .cat-tab-panel.active { display: block; }
 .cat-items-grid { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0; }
 .cat-item-chip {
-  padding: 4px 10px; border-radius: 6px;
+  padding: 4px 6px; border-radius: 6px;
   font-size: 0.78rem; font-weight: 500;
-  border: 1px solid rgba(0,0,0,0.08); white-space: nowrap;
+  border: 1px solid rgba(0,0,0,0.08);
+  white-space: nowrap;
+  width: 8em;
+  text-align: center;
+  display: inline-block;
+  box-sizing: border-box;
 }
 .cat-sub-label {
   width: 100%; font-size: 0.68rem; font-weight: 700;
