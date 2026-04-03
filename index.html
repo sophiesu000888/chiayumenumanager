@@ -12,7 +12,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -2515,6 +2514,18 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
   dropdown.style.display = "none";
   document.body.appendChild(dropdown);
 
+  function _onDropdownSelect(e) {
+    const item = e.target.closest(".fuzzy-dropdown-item");
+    if (!item) return;
+    e.preventDefault();
+    e.stopPropagation();
+    _isSelecting = true;
+    selectItem(item.dataset.val);
+    setTimeout(() => { _isSelecting = false; }, 300);
+  }
+  dropdown.addEventListener("mousedown", _onDropdownSelect);
+  dropdown.addEventListener("touchstart", _onDropdownSelect, { passive: false });
+
   // 用事件委派，同時處理 mouse 和 touch，掛一次就夠
   function _onDropdownSelect(e) {
     const item = e.target.closest(".fuzzy-dropdown-item");
@@ -2537,15 +2548,14 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
 
   function showDropdown(keyword) {
     if (!keyword) { hideDropdown(); return; }
-    const kw = keyword.toLowerCase();
-    const matched = _allItems.filter(i => i.toLowerCase().includes(kw));
+    const showAll = keyword === "_all_";
+    const kw = showAll ? "" : keyword.toLowerCase();
+    const matched = showAll ? [..._allItems] : _allItems.filter(i => i.toLowerCase().includes(kw));
     if (!matched.length) { hideDropdown(); return; }
     _activeIdx = -1;
 
-    // 檢查是否有分組設定（主菜）
-    const groups = cats.length === 2 && cats[1] === "主菜" ? (MENU_GROUPS["主菜"] || null) : null;
-
     function highlight(item) {
+      if (showAll || !kw) return item;
       const idx = item.toLowerCase().indexOf(kw);
       if (idx < 0) return item;
       return item.slice(0, idx) +
@@ -2553,25 +2563,22 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
         item.slice(idx + keyword.length);
     }
 
+    const groups = cats.includes("主菜") ? (MENU_GROUPS["主菜"] || null) : null;
     if (groups) {
-      // 分組顯示
       let html = "";
       groups.forEach(group => {
-        const groupMatched = group.items.filter(i => matched.includes(i));
-        if (!groupMatched.length) return;
+        const gm = group.items.filter(i => matched.includes(i));
+        if (!gm.length) return;
         html += `<div class="fuzzy-dropdown-group">${group.label}</div>`;
-        html += groupMatched.map(item =>
-          `<div class="fuzzy-dropdown-item" data-val="${item}">${highlight(item)}</div>`
-        ).join("");
+        html += gm.map(item => `<div class="fuzzy-dropdown-item" data-val="${item}">${highlight(item)}</div>`).join("");
       });
+      if (!html) { hideDropdown(); return; }
       dropdown.innerHTML = html;
     } else {
-      // 一般顯示
       dropdown.innerHTML = matched.map(item =>
         `<div class="fuzzy-dropdown-item" data-val="${item}">${highlight(item)}</div>`
       ).join("");
     }
-
     positionDropdown();
     dropdown.style.display = "block";
   }
@@ -2730,9 +2737,13 @@ function makeColPair(rowKey, defaultStyle, defaultStyleL2, side) {
     if (sel1.value === "-") {
       buildFullDatalist();
     }
+    showDropdown(inp2.value.trim() || "_all_");
   });
 
   // 暴露給外部直接呼叫，不走事件流程
+  inp2._applyColor = applyItemColor;
+  inp2._reset = applyClosedState;
+
   inp2._applyColor = applyItemColor;
   inp2._reset = applyClosedState;
 
