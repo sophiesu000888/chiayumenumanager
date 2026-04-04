@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -37,7 +38,7 @@
   window.dispatchEvent(new Event("fb-ready"));
 </script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
 :root {
   --green-dark: #2e7d32;
@@ -49,7 +50,7 @@
 
 body {
   font-family: 'Noto Sans TC', sans-serif;
-  background: #eceff1;
+  background: #12122a;
   min-height: 100vh;
   padding: 18px 12px;
 }
@@ -57,7 +58,7 @@ body {
 h1 {
   text-align: center;
   font-family: 'Playfair Display', 'Georgia', serif;
-  background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 50%, #2e7d32 100%);
+  background: linear-gradient(135deg, #c9a84c 0%, #e8d5a3 50%, #c9a84c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -80,13 +81,13 @@ h1 {
 }
 .toolbar button:hover { opacity: 0.85; }
 
-.btn-add    { background: #66bb6a; color: #fff; }
-.btn-add-hloc { background: #2e7d32; color: #fff; }
-.btn-add-wloc { background: #1565c0; color: #fff; }
-.btn-export { background: #42a5f5; color: #fff; }
+.btn-add    { background: #b8942a; color: #fff; }
+.btn-add-hloc { background: #9a7220; color: #fff; }
+.btn-add-wloc { background: #2a4a8a; color: #fff; }
+.btn-export { background: #3a6abf; color: #fff; }
 .btn-save   { background: #ff9800; color: #fff; cursor: default !important; }
 .btn-clear  { background: #c62828; color: #fff; }
-.btn-history-save { background: #7b1fa2; color: #fff; cursor: pointer !important; }
+.btn-history-save { background: #2a2a4a; color: #c9a84c; border: 1px solid #c9a84c; cursor: pointer !important; }
 
 .schedule-area { display: flex; flex-direction: column; gap: 24px; }
 
@@ -217,7 +218,7 @@ select {
   width: 100%; padding: 3px 18px 3px 5px;
   border: 1px solid #b0bec5; border-radius: 4px;
   font-family: inherit; font-size: 0.77rem;
-  background-color: #fff; appearance: none;
+  background-color: #fff; appearance: none; color: #37474f;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23607d8b'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 4px center;
   cursor: pointer; transition: border-color 0.15s;
@@ -233,7 +234,7 @@ select.sel-l2:disabled {
 input.sel-l2-inp {
   width: 100%; font-size: 0.75rem; padding: 3px 5px;
   border: 1px solid #b0bec5; border-radius: 4px;
-  font-family: inherit; background-color: #fff;
+  font-family: inherit; background-color: #fff; color: #37474f;
   transition: border-color 0.15s; box-sizing: border-box;
 }
 input.sel-l2-inp:focus { outline: none; border-color: #43a047; }
@@ -290,43 +291,43 @@ input.sel-l2-inp:disabled {
 .auth-bar {
   display: flex; align-items: center; gap: 10px;
   justify-content: center; flex-wrap: wrap;
-  background: #263238; border-radius: 8px;
+  background: #12122a; border-radius: 8px;
   padding: 8px 16px; margin-bottom: 14px;
-  font-size: 0.84rem; color: #cfd8dc;
+  font-size: 0.84rem; color: #a0a8c0;
 }
 .auth-bar .auth-user {
   display: flex; align-items: center; gap: 7px;
 }
 .auth-bar img.auth-avatar {
   width: 24px; height: 24px; border-radius: 50%;
-  border: 2px solid #66bb6a;
+  border: 2px solid #c9a84c;
   flex-shrink: 0; object-fit: cover;
   display: block;
 }
 .auth-bar .auth-name { color: #fff; font-weight: 600; }
 .btn-login {
-  background: #fff; color: #333; border: none; border-radius: 5px;
+  background: #23233a; color: #e8d5a3; border: 1px solid rgba(201,168,76,0.3); border-radius: 5px;
   padding: 5px 14px; font-size: 0.82rem; font-weight: 600;
   cursor: pointer; display: flex; align-items: center; gap: 6px;
   font-family: inherit; transition: background 0.15s;
 }
-.btn-login:hover { background: #e8f5e9; }
+.btn-login:hover { background: rgba(201,168,76,0.15); }
 .btn-logout {
   background: transparent; color: #ef9a9a; border: 1px solid #ef9a9a;
   border-radius: 5px; padding: 4px 10px; font-size: 0.78rem;
   cursor: pointer; font-family: inherit; transition: all 0.15s;
 }
 .btn-logout:hover { background: #ef9a9a; color: #fff; }
-.auth-hint { color: #78909c; font-size: 0.78rem; }
+.auth-hint { color: #606080; font-size: 0.78rem; }
 .sync-badge {
   font-size: 0.74rem; padding: 2px 8px; border-radius: 10px;
-  background: rgba(102,187,106,0.2); color: #66bb6a; font-weight: 600;
+  background: rgba(201,168,76,0.15); color: #c9a84c; font-weight: 600;
 }
-.sync-badge.offline { background: rgba(239,154,154,0.2); color: #ef9a9a; }
+.sync-badge.offline { background: rgba(220,80,80,0.2); color: #e88080; }
 .history-panel {
-  background: #fff;
+  background: var(--surface-card);
   border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   margin-top: 16px;
   overflow: hidden;
 }
@@ -336,7 +337,7 @@ input.sel-l2-inp:disabled {
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
-  background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4a 100%); border-bottom: 1px solid rgba(201,168,76,0.3);
   flex-wrap: wrap;
 }
 .history-panel-header h2 {
@@ -381,7 +382,7 @@ input.sel-l2-inp:disabled {
 }
 
 .history-entry {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   transition: background 0.12s;
 }
 .history-entry:last-child { border-bottom: none; }
@@ -394,14 +395,14 @@ input.sel-l2-inp:disabled {
   cursor: pointer;
   user-select: none;
   flex-wrap: wrap;
-  background: #9c27b0;
+  background: #1e1e35;
   transition: background 0.12s;
 }
-.history-entry-header:hover { background: #e1bee7; }
-.history-entry-header:hover .hist-date { color: #4a148c; }
-.history-entry-header:hover .hist-day { background: rgba(74,20,140,0.15); color: #4a148c; }
-.history-entry-header:hover .hist-saved-at { color: #7b1fa2; }
-.history-entry-header:hover .hist-toggle { color: #6a1b9a; }
+.history-entry-header:hover { background: rgba(201,168,76,0.1); }
+.history-entry-header:hover .hist-date { color: #e8d5a3; }
+.history-entry-header:hover .hist-day { background: rgba(201,168,76,0.2); color: #c9a84c; }
+.history-entry-header:hover .hist-saved-at { color: #a0a8c0; }
+.history-entry-header:hover .hist-toggle { color: #c9a84c; }
 
 .history-entry-header .hist-date {
   font-weight: 700;
@@ -409,7 +410,7 @@ input.sel-l2-inp:disabled {
   font-size: 0.9rem;
 }
 .history-entry-header .hist-day {
-  background: rgba(255,255,255,0.25);
+  background: rgba(201,168,76,0.2);
   color: #fff;
   font-size: 0.78rem;
   font-weight: 700;
@@ -436,14 +437,14 @@ input.sel-l2-inp:disabled {
   flex-shrink: 0;
 }
 .btn-hist-restore {
-  background: #7b1fa2; color: #fff;
-  border: none; border-radius: 4px;
+  background: rgba(201,168,76,0.2); color: #e8d5a3;
+  border: 1px solid rgba(201,168,76,0.4); border-radius: 4px;
   padding: 3px 10px; font-size: 0.74rem;
   cursor: pointer; font-family: inherit;
   font-weight: 600;
   transition: background 0.12s;
 }
-.btn-hist-restore:hover { background: #4a148c; }
+.btn-hist-restore:hover { background: rgba(201,168,76,0.35); }
 .btn-hist-del {
   background: #ef9a9a; color: #b71c1c;
   border: none; border-radius: 4px;
@@ -454,14 +455,14 @@ input.sel-l2-inp:disabled {
 }
 .btn-hist-del:hover { background: #e57373; }
 .btn-hist-export {
-  background: #42a5f5; color: #fff;
+  background: rgba(58,106,191,0.25); color: #7aa0e0; border: 1px solid rgba(58,106,191,0.4);
   border: none; border-radius: 4px;
   padding: 3px 10px; font-size: 0.74rem;
   cursor: pointer; font-family: inherit;
   font-weight: 600;
   transition: background 0.12s;
 }
-.btn-hist-export:hover { background: #1976d2; }
+.btn-hist-export:hover { background: rgba(58,106,191,0.45); }
 
 .history-entry-body {
   display: none;
@@ -477,36 +478,36 @@ input.sel-l2-inp:disabled {
 
 /* DB panel */
 .db-panel {
-  background: #fff; border-radius: 10px;
-  padding: 16px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); margin-top: 8px;
+  background: var(--surface-card); border-radius: 10px;
+  padding: 16px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); margin-top: 8px;
 }
-.db-panel h2 { font-size: 0.95rem; color: #37474f; margin-bottom: 10px; font-weight: 700; }
+.db-panel h2 { font-size: 0.95rem; color: #e8d5a3; margin-bottom: 10px; font-weight: 700; }
 .db-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.db-cat { border: 1px solid #e0e0e0; border-radius: 6px; overflow: visible; min-width: 110px; display: flex; flex-direction: column; }
+.db-cat { border: 1px solid rgba(201,168,76,0.2); border-radius: 6px; overflow: visible; min-width: 110px; display: flex; flex-direction: column; }
 .db-cat-title { color: #fff; font-size: 0.76rem; font-weight: 700; padding: 4px 8px; text-align: center; border-radius: 5px 5px 0 0; }
 
 .db-cat-items {
-  padding: 5px 2px 5px 7px; font-size: 0.74rem; color: #455a64;
+  padding: 5px 2px 5px 7px; font-size: 0.74rem; color: #a0a8c0;
   display: flex; flex-direction: column; gap: 2px;
   max-height: 260px;
   overflow-y: scroll;
   scrollbar-width: thin;
-  scrollbar-color: #90a4ae #eceff1;
+  scrollbar-color: #3a3a5a #1a1a2e;
   border-radius: 0 0 5px 5px;
 }
 .db-cat-items::-webkit-scrollbar { width: 6px; }
-.db-cat-items::-webkit-scrollbar-track { background: #eceff1; border-radius: 3px; }
-.db-cat-items::-webkit-scrollbar-thumb { background: #90a4ae; border-radius: 3px; }
-.db-cat-items::-webkit-scrollbar-thumb:hover { background: #607d8b; }
+.db-cat-items::-webkit-scrollbar-track { background: #12122a; border-radius: 3px; }
+.db-cat-items::-webkit-scrollbar-thumb { background: #3a3a5a; border-radius: 3px; }
+.db-cat-items::-webkit-scrollbar-thumb:hover { background: #5a5a8a; }
 .db-item { padding: 2px 4px; border-radius: 3px; margin-bottom: 1px; font-size: 0.73rem; }
 
 /* ===== 類別分組抽屜分頁 ===== */
 .cat-tab-btn {
   padding: 5px 8px;
-  border: 1.5px solid #b0bec5;
+  border: 1.5px solid rgba(201,168,76,0.3);
   border-radius: 20px;
-  background: #eceff1;
-  color: #37474f;
+  background: #1e1e35;
+  color: #a0a8c0;
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 600;
@@ -517,8 +518,8 @@ input.sel-l2-inp:disabled {
   text-align: center;
   display: inline-block;
 }
-.cat-tab-btn:hover { background: #cfd8dc; }
-.cat-tab-btn.active { background: #37474f; color: #fff; border-color: #37474f; }
+.cat-tab-btn:hover { background: rgba(201,168,76,0.12); }
+.cat-tab-btn.active { background: #c9a84c; color: #1a1a2e; border-color: #c9a84c; }
 .cat-tab-panel { display: none; }
 .cat-tab-panel.active { display: block; }
 .cat-items-grid { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0; }
@@ -575,15 +576,15 @@ input.sel-l2-inp:disabled {
 }
 
 /* ===== 管理面板 ===== */
-.mgmt-panel { border: 2px solid #b0bec5; }
+.mgmt-panel { border: 2px solid rgba(201,168,76,0.25); }
 .mgmt-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
 .mgmt-tab {
-  padding: 6px 16px; border: 1.5px solid #b0bec5; border-radius: 6px;
-  background: #eceff1; color: #37474f; font-family: inherit; font-size: 0.84rem;
+  padding: 6px 16px; border: 1.5px solid rgba(201,168,76,0.3); border-radius: 6px;
+  background: #1e1e35; color: #a0a8c0; font-family: inherit; font-size: 0.84rem;
   font-weight: 600; cursor: pointer; transition: all 0.15s;
 }
-.mgmt-tab:hover { background: #cfd8dc; }
-.mgmt-tab.active { background: #37474f; color: #fff; border-color: #37474f; }
+.mgmt-tab:hover { background: rgba(201,168,76,0.12); }
+.mgmt-tab.active { background: #c9a84c; color: #1a1a2e; border-color: #c9a84c; }
 .mgmt-section { }
 .mgmt-action-btn {
   padding: 6px 14px; border: none; border-radius: 5px;
@@ -593,7 +594,7 @@ input.sel-l2-inp:disabled {
 .mgmt-action-btn:hover { opacity: 0.85; }
 .mgmt-items-list {
   display: flex; flex-wrap: wrap; gap: 6px; padding: 8px;
-  background: #f5f7f9; border-radius: 6px; min-height: 40px; border: 1px solid #e0e0e0;
+  background: #141428; border-radius: 6px; min-height: 40px; border: 1px solid rgba(201,168,76,0.15);
 }
 .mgmt-item-chip {
   display: inline-flex; align-items: center; gap: 4px;
@@ -607,9 +608,9 @@ input.sel-l2-inp:disabled {
   font-family: inherit;
 }
 .mgmt-item-chip .chip-del:hover { opacity: 1; }
-.mgmt-rowcats-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #f5f7f9; border-radius: 6px; min-height: 36px; border: 1px solid #e0e0e0; margin-bottom: 6px; }
-.rowcat-chip { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:16px;font-size:0.78rem;font-weight:600;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9; }
-.rowcat-chip .chip-del { background:none;border:none;color:#1565c0;opacity:0.5;cursor:pointer;font-size:0.7rem;padding:0 0 0 2px; }
+.mgmt-rowcats-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #141428; border-radius: 6px; min-height: 36px; border: 1px solid rgba(201,168,76,0.15); margin-bottom: 6px; }
+.rowcat-chip { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:16px;font-size:0.78rem;font-weight:600;background:rgba(42,74,138,0.25);color:#7aa0e0;border:1px solid rgba(42,74,138,0.5); }
+.rowcat-chip .chip-del { background:none;border:none;color:#7aa0e0;opacity:0.5;cursor:pointer;font-size:0.7rem;padding:0 0 0 2px; }
 .rowcat-chip .chip-del:hover { opacity:1; }
 
 /* ===== 右側多抽屜系統 ===== */
@@ -660,11 +661,11 @@ input.sel-l2-inp:disabled {
 }
 
 /* 各抽屜標籤顏色 */
-#tab-mgmt   { background: #37474f; color: #fff; }
-#tab-export { background: #00838f; color: #fff; }
-#tab-hist   { background: #4a148c; color: #fff; }
-#tab-colors { background: #00695c; color: #fff; }
-#tab-cats   { background: #1565c0; color: #fff; }
+#tab-mgmt   { background: #23233a; color: #e8d5a3; border-left: 2px solid #c9a84c; }
+#tab-export { background: #1a2a3a; color: #7ac0d0; border-left: 2px solid #4a90a8; }
+#tab-hist   { background: #1a1a2e; color: #c9a84c; border-left: 2px solid #c9a84c; }
+#tab-colors { background: #182a24; color: #7aba9a; border-left: 2px solid #4a9a7a; }
+#tab-cats   { background: #1a1e35; color: #7aa0e0; border-left: 2px solid #3a6abf; }
 
 
 
@@ -687,7 +688,7 @@ input.sel-l2-inp:disabled {
   width: 540px;
   max-width: 97vw;
   height: 100vh;
-  background: #fafafa;
+  background: #1a1a2e;
   z-index: 1200;
   box-shadow: -6px 0 28px rgba(0,0,0,0.22);
   transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -720,11 +721,11 @@ input.sel-l2-inp:disabled {
 }
 .drawer-close:hover { background: rgba(255,255,255,0.28); }
 
-#drawer-mgmt   .drawer-header { background: linear-gradient(135deg,#37474f,#263238); }
-#drawer-export .drawer-header { background: linear-gradient(135deg,#00acc1,#00838f); }
-#drawer-hist   .drawer-header { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
-#drawer-colors .drawer-header { background: linear-gradient(135deg,#00897b,#00695c); }
-#drawer-cats   .drawer-header { background: linear-gradient(135deg,#1976d2,#1565c0); }
+#drawer-mgmt   .drawer-header { background: linear-gradient(135deg,#23233a,#12122a); border-bottom: 1px solid rgba(201,168,76,0.3); }
+#drawer-export .drawer-header { background: linear-gradient(135deg,#1a3a4a,#0e2030); border-bottom: 1px solid rgba(74,144,168,0.4); }
+#drawer-hist   .drawer-header { background: linear-gradient(135deg,#1a1a2e,#12122a); border-bottom: 1px solid rgba(201,168,76,0.3); }
+#drawer-colors .drawer-header { background: linear-gradient(135deg,#182a24,#0e1e18); border-bottom: 1px solid rgba(74,154,122,0.4); }
+#drawer-cats   .drawer-header { background: linear-gradient(135deg,#1a1e35,#121630); border-bottom: 1px solid rgba(58,106,191,0.5); }
 
 /* 抽屜內容區 */
 .drawer-body {
@@ -736,15 +737,15 @@ input.sel-l2-inp:disabled {
 
 /* ─ Quick-Add 快速新增區 ─ */
 .quick-add-box {
-  background: #fff;
-  border: 2px solid #b0bec5;
+  background: #23233a;
+  border: 2px solid rgba(201,168,76,0.25);
   border-radius: 10px;
   padding: 12px 13px 10px;
   margin-bottom: 12px;
 }
 .quick-add-box h3 {
   font-size: 0.84rem;
-  color: #263238;
+  color: #e8d5a3;
   font-weight: 700;
   margin-bottom: 9px;
 }
@@ -756,7 +757,7 @@ input.sel-l2-inp:disabled {
 }
 .quick-add-row label {
   font-size: 0.73rem;
-  color: #546e7a;
+  color: #a0a8c0;
   font-weight: 600;
   display: flex;
   flex-direction: column;
@@ -764,14 +765,14 @@ input.sel-l2-inp:disabled {
 }
 .quick-add-row input[type="text"] {
   padding: 6px 9px;
-  border: 1.5px solid #b0bec5;
+  border: 1.5px solid rgba(201,168,76,0.3); color: #e8d5a3; background: #1e1e35;
   border-radius: 6px;
   font-family: inherit;
   font-size: 0.83rem;
   width: 120px;
   transition: border-color 0.15s;
 }
-.quick-add-row input[type="text"]:focus { outline: none; border-color: #43a047; }
+.quick-add-row input[type="text"]:focus { outline: none; border-color: #c9a84c; }
 .quick-add-row select.qa-sel {
   padding: 6px 24px 6px 8px;
   border: 1.5px solid #b0bec5;
@@ -804,7 +805,7 @@ input.sel-l2-inp:disabled {
 }
 .btn-qa-add {
   padding: 7px 14px;
-  background: #43a047;
+  background: #b8942a;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -816,7 +817,7 @@ input.sel-l2-inp:disabled {
   transition: background 0.15s;
   align-self: flex-end;
 }
-.btn-qa-add:hover { background: #2e7d32; }
+.btn-qa-add:hover { background: #c9a84c; }
 
 /* ─ 抽屜內 tabs ─ */
 .drawer-tabs {
@@ -827,18 +828,18 @@ input.sel-l2-inp:disabled {
 }
 .drawer-tab {
   padding: 5px 12px;
-  border: 1.5px solid #b0bec5;
+  border: 1.5px solid rgba(201,168,76,0.3);
   border-radius: 6px;
-  background: #eceff1;
-  color: #37474f;
+  background: #1e1e35;
+  color: #a0a8c0;
   font-family: inherit;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
 }
-.drawer-tab:hover { background: #cfd8dc; }
-.drawer-tab.active { background: #37474f; color: #fff; border-color: #37474f; }
+.drawer-tab:hover { background: rgba(201,168,76,0.1); }
+.drawer-tab.active { background: #c9a84c; color: #1a1a2e; border-color: #c9a84c; }
 
 .drawer-section { display: none; }
 .drawer-section.active { display: block; }
@@ -944,16 +945,16 @@ button {
 
 .online-user-chip {
   display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(102,187,106,0.15); border: 1px solid rgba(102,187,106,0.35);
+  background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3);
   border-radius: 20px; padding: 2px 10px 2px 6px;
-  font-size: 0.75rem; color: #a5d6a7; font-weight: 600;
+  font-size: 0.75rem; color: #c9a84c; font-weight: 600;
   animation: fadeInChip 0.3s ease;
 }
 .online-user-chip img { display: none; }
 .online-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: #66bb6a;
-  box-shadow: 0 0 4px #66bb6a;
+  background: #c9a84c;
+  box-shadow: 0 0 4px #c9a84c;
   display: inline-block; flex-shrink: 0;
   animation: pulse-dot 2s infinite;
 }
@@ -971,11 +972,11 @@ button {
 .chat-windows-container { display: none !important; }
 .online-user-chip { cursor: pointer; }
 .online-user-chip:hover {
-  background: rgba(102,187,106,0.28);
-  border-color: rgba(102,187,106,0.6);
+  background: rgba(201,168,76,0.2);
+  border-color: rgba(201,168,76,0.5);
 }
 @media (max-width: 600px) {
-  body { padding: 8px 6px; }
+  body { padding: 8px 6px; background: #12122a; }
 
   h1 { font-size: 1.9rem; letter-spacing: 1px; margin-bottom: 10px; }
 
@@ -1203,38 +1204,6 @@ button {
   </div>
   <div class="drawer-body">
 
-    <!-- 主畫面匯出區 -->
-    <div style="background:#e3f2fd;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #90caf9;">
-      <div style="font-size:0.82rem;font-weight:700;color:#1565c0;margin-bottom:10px;">🖼️ 主畫面匯出成圖片</div>
-      <!-- 日期區間選擇 -->
-      <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:10px;border:1px solid #bbdefb;">
-        <div style="font-size:0.74rem;color:#546e7a;font-weight:700;margin-bottom:7px;">📅 日期區間篩選（不選則匯出全部）</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">開始日期</label>
-            <input type="date" id="img-date-from" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
-          </div>
-          <div style="color:#90a4ae;font-size:0.8rem;align-self:flex-end;padding-bottom:6px;">～</div>
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">結束日期</label>
-            <input type="date" id="img-date-to" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
-          </div>
-          <button onclick="document.getElementById('img-date-from').value='';document.getElementById('img-date-to').value='';updateImgDateHint();" style="align-self:flex-end;background:#eceff1;border:1px solid #cfd8dc;border-radius:5px;padding:5px 10px;font-size:0.74rem;color:#607d8b;cursor:pointer;font-family:inherit;margin-bottom:1px;">清除</button>
-        </div>
-        <div id="img-date-hint" style="font-size:0.7rem;color:#42a5f5;margin-top:6px;min-height:14px;"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button onclick="exportAsImage(false);closeAllDrawers();" style="background:#42a5f5;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#1976d2'" onmouseout="this.style.background='#42a5f5'">
-          🖼️ 匯出成圖片（含類別）
-          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">顯示「類別」和「品項」兩欄，儲存為 PNG</div>
-        </button>
-        <button onclick="exportAsImage(true);closeAllDrawers();" style="background:#26a69a;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#00796b'" onmouseout="this.style.background='#26a69a'">
-          🖼️ 匯出成圖片（僅品項）
-          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">只顯示「品項」欄，精簡版，儲存為 PNG</div>
-        </button>
-      </div>
-    </div>
-
     <!-- 歷史資料匯出區 -->
     <div style="background:#f3e5f5;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #ce93d8;">
       <div style="font-size:0.82rem;font-weight:700;color:#6a1b9a;margin-bottom:10px;">📦 歷史資料匯出</div>
@@ -1297,7 +1266,7 @@ button {
   </div>
 </div>
 
-<!-- ③ 顏色分組抽屜（純一覽） -->
+<!-- ③ 顏色分組抽屜 -->
 <div class="side-drawer" id="drawer-colors">
   <div class="drawer-header">
     <span>🎨</span>
@@ -1305,9 +1274,27 @@ button {
     <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
   </div>
   <div class="drawer-body" style="padding:10px 12px 20px;">
-    <p style="font-size:0.76rem;color:#90a4ae;margin-bottom:10px;">所有食材依顏色分組顯示。要編輯請至⚙️管理 → 🎨顏色分組。</p>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+      <button onclick="addNewColorGroupFromPanel()" style="background:#43a047;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">➕ 新增顏色組</button>
+      <button onclick="deleteCurrentColorGroupFromPanel()" style="background:#c62828;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ 刪除顏色組</button>
+      <span id="colorPanelActiveLabel" style="font-size:0.78rem;color:#90a4ae;"></span>
+    </div>
     <div id="colorTabsBar" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"></div>
     <div id="colorTabContent"></div>
+    <!-- 食材操作浮層 -->
+    <div id="colorItemPopup" style="display:none;position:fixed;z-index:9999;background:#fff;border:1.5px solid #b0bec5;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.18);padding:14px 16px;min-width:220px;max-width:300px;">
+      <div style="font-weight:700;font-size:0.88rem;color:#37474f;margin-bottom:10px;" id="colorPopupTitle">編輯食材</div>
+      <input id="colorPopupInput" type="text" style="width:100%;padding:6px 9px;border:1.5px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;margin-bottom:8px;box-sizing:border-box;" placeholder="食材名稱">
+      <div style="font-size:0.72rem;color:#90a4ae;margin-bottom:4px;">移到顏色組：</div>
+      <select id="colorPopupMoveTarget" style="width:100%;margin-bottom:10px;font-size:0.82rem;padding:5px 8px;border:1.5px solid #b0bec5;border-radius:5px;font-family:inherit;background:#fff;color:#37474f;">
+      </select>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="colorPopupSave()" style="flex:1;background:#1976d2;color:#fff;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">✏️ 改名</button>
+        <button onclick="colorPopupMove()" style="flex:1;background:#ff9800;color:#fff;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">➡️ 移動</button>
+        <button onclick="colorPopupDelete()" style="flex:1;background:#c62828;color:#fff;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ 刪除</button>
+        <button onclick="document.getElementById('colorItemPopup').style.display='none'" style="flex:1;background:#eceff1;color:#37474f;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">取消</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1319,9 +1306,27 @@ button {
     <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
   </div>
   <div class="drawer-body" style="padding:10px 12px 20px;">
-    <p style="font-size:0.76rem;color:#90a4ae;margin-bottom:10px;">所有食材依類別分類顯示。要新增品項請至⚙️管理。</p>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+      <button onclick="addNewCategoryFromPanel()" style="background:#43a047;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">➕ 新增類別</button>
+      <button onclick="deleteCurrentCategoryFromPanel()" style="background:#c62828;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ 刪除類別</button>
+      <span id="catPanelActiveLabel" style="font-size:0.78rem;color:#90a4ae;"></span>
+    </div>
     <div id="catTabsBar" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;"></div>
     <div id="catTabContent"></div>
+    <!-- 品項操作浮層 -->
+    <div id="catItemPopup" style="display:none;position:fixed;z-index:9999;background:#fff;border:1.5px solid #b0bec5;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.18);padding:14px 16px;min-width:220px;max-width:300px;">
+      <div style="font-weight:700;font-size:0.88rem;color:#37474f;margin-bottom:10px;" id="catPopupTitle">編輯品項</div>
+      <input id="catPopupInput" type="text" style="width:100%;padding:6px 9px;border:1.5px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;margin-bottom:8px;box-sizing:border-box;" placeholder="品項名稱">
+      <div style="font-size:0.72rem;color:#90a4ae;margin-bottom:4px;">移到類別：</div>
+      <select id="catPopupMoveTarget" style="width:100%;margin-bottom:10px;font-size:0.82rem;padding:5px 8px;border:1.5px solid #b0bec5;border-radius:5px;font-family:inherit;background:#fff;color:#37474f;">
+      </select>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="catPopupSave()" style="flex:1;background:#1976d2;color:#fff;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">✏️ 改名</button>
+        <button onclick="catPopupMove()" style="flex:1;background:#ff9800;color:#fff;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">➡️ 移動</button>
+        <button onclick="catPopupDelete()" style="flex:1;background:#c62828;color:#fff;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">🗑️ 刪除</button>
+        <button onclick="document.getElementById('catItemPopup').style.display='none'" style="flex:1;background:#eceff1;color:#37474f;border:none;border-radius:5px;padding:6px 0;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;">取消</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1451,7 +1456,13 @@ function hideAccessOverlay() {
   document.body.style.overflow = "";
 }
 
+function isLocalDev() {
+  const h = location.hostname;
+  return h === 'localhost' || h === '127.0.0.1' || h === '' || location.protocol === 'file:';
+}
+
 function checkAccess(user) {
+  if (isLocalDev()) { hideAccessOverlay(); return true; }
   if (!user) {
     showAccessOverlay("nologin");
     return false;
@@ -2079,6 +2090,131 @@ ${tablesHTML}
   a.download = `chiayumenu_allhistory_${dateStr}.html`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+
+// ===== 匯出目前主畫面為 HTML =====
+function exportCurrentAsHTML() {
+  const blocks = document.querySelectorAll(".week-block");
+  if (blocks.length === 0) { alert("目前沒有任何菜單可匯出。"); return; }
+
+  const from = document.getElementById('img-date-from')?.value || '';
+  const to   = document.getElementById('img-date-to')?.value   || '';
+
+  let cssText = "";
+  for (const sheet of document.styleSheets) {
+    try { for (const rule of sheet.cssRules) { cssText += rule.cssText + "\n"; } } catch(e) {}
+  }
+
+  let tablesHTML = "";
+  blocks.forEach(block => {
+    const date = block.querySelector(".week-date")?.value || "";
+    if (from && date && date < from) return;
+    if (to   && date && date > to)   return;
+    const day = block.querySelector(".week-day")?.textContent || "";
+    const wid = block.id.replace("block_", "");
+    const info = weekDataMap[wid] || {};
+    const hLocsCount = (info.hLocs || DEFAULT_HEALTH_LOCS).length;
+    const wLocsCount = (info.wLocs || DEFAULT_WIND_LOCS).length;
+    const locSels = [...block.querySelectorAll(".loc-sel")];
+    const locInps = [...block.querySelectorAll(".loc-inp")];
+    const locQtyInps = [...block.querySelectorAll(".loc-qty-inp")];
+    const resolvedLocs = locSels.map((s, i) => getLocName(s, locInps[i]));
+    const hLocNames = resolvedLocs.slice(0, hLocsCount);
+    const wLocNames = resolvedLocs.slice(hLocsCount, hLocsCount + wLocsCount);
+    const hQtyVals = hLocNames.map((_, i) => locQtyInps[i]?.value || "");
+    const wQtyVals = wLocNames.map((_, i) => locQtyInps[hLocNames.length + i]?.value || "");
+
+    const hSpan = hLocNames.length * 2;
+    const wSpan = wLocNames.length * 2;
+    let hr1 = `<tr><th class="th-week" rowspan="3">類別</th><th class="th-health" colspan="${hSpan}">【健康餐】</th><th class="th-wind" colspan="${wSpan}">【風味餐】</th></tr>`;
+    let hr2 = "<tr>";
+    hLocNames.forEach((loc, i) => {
+      const qty = hQtyVals[i];
+      const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;">✦${qty}份</span>` : "";
+      hr2 += `<th class="${i%2===0?"th-hloc":"th-hloc-light"}" colspan="2" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
+    });
+    wLocNames.forEach((loc, i) => {
+      const qty = wQtyVals[i];
+      const qtyBadge = qty ? `<span style="display:inline-block;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:1px 7px;font-size:0.68rem;font-weight:700;margin-left:5px;">✦${qty}份</span>` : "";
+      hr2 += `<th class="${i%2===0?"th-wloc":"th-wloc-light"}" colspan="2" style="border-left:none;border-right:none;">${loc}${qtyBadge}</th>`;
+    });
+    hr2 += "</tr>";
+    let hr3 = "<tr>";
+    hLocNames.forEach((_, i) => ["類別","品項"].forEach(l => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-h":"th-sub-h-light"}">${l}</th>`; }));
+    wLocNames.forEach((_, i) => ["類別","品項"].forEach(l => { hr3 += `<th class="th-sub ${i%2===0?"th-sub-w":"th-sub-w-light"}">${l}</th>`; }));
+    hr3 += "</tr>";
+
+    let rowsHTML = "";
+    block.querySelectorAll("table tr").forEach(tr => {
+      const catTd = tr.querySelector(".td-cat");
+      if (!catTd) return;
+      const rowName = catTd.textContent;
+      const sels1 = [...tr.querySelectorAll("td.td-l1 select")];
+      const inps2 = [...tr.querySelectorAll("td.td-l2 input.sel-l2-inp")];
+      const [hS, hS2, wS, wS2] = getRowStyles(rowName);
+      rowsHTML += `<tr><td class="td-cat">${rowName}</td>`;
+      sels1.forEach((s1, i) => {
+        const isH = i < hLocNames.length;
+        const baseS = isH ? hS : wS;
+        const baseS2 = isH ? hS2 : wS2;
+        const v1 = s1.value && s1.value !== "-" ? s1.value : "";
+        const rawV2 = inps2[i]?.value || "";
+        const v2 = rawV2 && rawV2 !== "-" && rawV2 !== "-- 品項 --" ? rawV2 : "";
+        let itemBgStyle = "";
+        if (v2) { const colors = getFoodColors(v2); if (colors) itemBgStyle = `background:${colors.bg};color:${colors.fg};`; }
+        rowsHTML += `<td class="td-l1 ${baseS}" style="padding:4px 6px;">${v1}</td>`;
+        rowsHTML += `<td class="td-l2 ${baseS2}" style="padding:4px 6px;font-weight:600;${itemBgStyle}">${v2}</td>`;
+      });
+      rowsHTML += "</tr>";
+    });
+
+    const dayLabel = (day && day !== "請選日期") ? `<span class="week-day">${day}</span>` : "";
+    tablesHTML += `<div class="week-block" style="margin-bottom:28px;">
+      <div class="week-titlebar">
+        <span class="week-label">日期：${date}</span>${dayLabel}
+      </div>
+      <div class="tbl-wrap"><table>${hr1}${hr2}${hr3}${rowsHTML}</table></div>
+    </div>`;
+  });
+
+  if (!tablesHTML) { alert("篩選後沒有符合日期區間的菜單。"); return; }
+
+  const dateStr = new Date().toLocaleDateString("zh-TW").replace(/\//g,"-");
+  const html = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chiayumenu_${dateStr}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+${cssText}
+body { font-family:'Noto Sans TC',sans-serif; background:#eceff1; padding:18px 12px; }
+h1 { text-align:center; color:#2e7d32; font-size:1.4rem; font-weight:700; margin-bottom:6px; letter-spacing:3px; }
+select { display:none; } input { display:none; }
+.btn-save-to-history,.btn-del-week,.loc-cp-btn,.loc-clear-btn,.loc-qty-wrap { display:none; }
+.tbl-wrap { overflow-x:auto; }
+@media print {
+  body { background:#fff; padding:6px; }
+  .week-block { page-break-inside:avoid; box-shadow:none; margin-bottom:20px; }
+}
+</style>
+</head>
+<body>
+<h1>ChiaYu Menu</h1>
+<p style="text-align:center;color:#78909c;font-size:0.82rem;margin-bottom:18px;">匯出時間：${new Date().toLocaleString("zh-TW")}</p>
+${tablesHTML}
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `chiayumenu_${dateStr}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showSaveToast("🌐 HTML 已匯出");
 }
 
 // ===== 全部存成歷史 =====
@@ -3369,6 +3505,9 @@ ${tablesHTML}
 }
 
 
+// ── 顏色面板：目前選中的 key ──
+let _colorPanelActiveKey = null;
+
 function renderDB() {
   const tabsBar = document.getElementById("colorTabsBar");
   const tabContent = document.getElementById("colorTabContent");
@@ -3376,18 +3515,26 @@ function renderDB() {
   tabsBar.innerHTML = "";
   tabContent.innerHTML = "";
 
+  const keys = Object.keys(COLOR_GROUPS);
+  if (!_colorPanelActiveKey || !COLOR_GROUPS[_colorPanelActiveKey]) {
+    _colorPanelActiveKey = keys[0] || null;
+  }
+
   Object.entries(COLOR_GROUPS).forEach(([key, g], idx) => {
+    const isActive = key === _colorPanelActiveKey;
     // Tab 按鈕
     const btn = document.createElement("button");
-    btn.className = "cat-tab-btn" + (idx === 0 ? " active" : "");
+    btn.className = "cat-tab-btn" + (isActive ? " active" : "");
     btn.style.borderColor = g.titleBg;
-    btn.style.color = idx === 0 ? (g.fg || "#333") : g.titleBg;
-    btn.style.background = idx === 0 ? g.bg : "#fff";
+    btn.style.color = isActive ? (g.fg || "#333") : g.titleBg;
+    btn.style.background = isActive ? g.bg : "#fff";
     btn.textContent = g.label;
+    btn.dataset.colorKey = key;
     btn.addEventListener("click", () => {
+      _colorPanelActiveKey = key;
       tabsBar.querySelectorAll(".cat-tab-btn").forEach(b => {
-        const k = Object.keys(COLOR_GROUPS).find(k => COLOR_GROUPS[k].label === b.textContent);
-        const gs = k ? COLOR_GROUPS[k] : { bg:"#fff", fg:"#607d8b", titleBg:"#607d8b" };
+        const k = b.dataset.colorKey;
+        const gs = k && COLOR_GROUPS[k] ? COLOR_GROUPS[k] : { bg:"#fff", fg:"#607d8b", titleBg:"#607d8b" };
         b.style.background = "#fff";
         b.style.color = gs.titleBg;
         b.classList.remove("active");
@@ -3396,14 +3543,16 @@ function renderDB() {
       btn.style.color = g.fg || "#333";
       btn.classList.add("active");
       tabContent.querySelectorAll(".cat-tab-panel").forEach(p => p.classList.remove("active"));
-      document.getElementById("colorPanel_" + idx).classList.add("active");
+      document.getElementById("colorPanel_" + key).classList.add("active");
+      const lbl = document.getElementById("colorPanelActiveLabel");
+      if (lbl) lbl.textContent = "目前：" + g.label;
     });
     tabsBar.appendChild(btn);
 
     // 內容面板
     const panel = document.createElement("div");
-    panel.className = "cat-tab-panel" + (idx === 0 ? " active" : "");
-    panel.id = "colorPanel_" + idx;
+    panel.className = "cat-tab-panel" + (isActive ? " active" : "");
+    panel.id = "colorPanel_" + key;
     const colorGrid = document.createElement("div");
     colorGrid.className = "cat-items-grid";
     g.items.forEach(itemName => {
@@ -3411,48 +3560,27 @@ function renderDB() {
       chip.className = "color-item-chip chip-editable";
       chip.style.background = g.bg;
       chip.style.color = g.fg || "#333";
-      chip.title = "點擊編輯";
+      chip.title = "點擊管理此食材";
 
       const span = document.createElement("span");
       span.textContent = itemName;
       chip.appendChild(span);
 
-      chip.addEventListener("click", () => {
-        const inp = document.createElement("input");
-        inp.className = "chip-edit-input";
-        inp.value = itemName;
-        inp.style.color = g.fg || "#333";
-        chip.innerHTML = "";
-        chip.appendChild(inp);
-        inp.focus();
-        inp.select();
-
-        function save() {
-          const newVal = inp.value.trim();
-          if (newVal && newVal !== itemName) {
-            const idx2 = COLOR_GROUPS[key].items.indexOf(itemName);
-            if (idx2 >= 0) {
-              COLOR_GROUPS[key].items[idx2] = newVal;
-              if (FOOD_COLOR[itemName] === key) {
-                delete FOOD_COLOR[itemName];
-                FOOD_COLOR[newVal] = key;
-              }
-              scheduleAutoSave();
-            }
-          }
-          rerenderDBPanels();
-        }
-        inp.addEventListener("blur", save);
-        inp.addEventListener("keydown", e => {
-          if (e.key === "Enter") { e.preventDefault(); inp.blur(); }
-          if (e.key === "Escape") { inp.value = itemName; inp.blur(); }
-        });
+      chip.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openColorItemPopup(key, itemName, chip);
       });
       colorGrid.appendChild(chip);
     });
     panel.appendChild(colorGrid);
     tabContent.appendChild(panel);
   });
+
+  // 更新 active label
+  const lbl = document.getElementById("colorPanelActiveLabel");
+  if (lbl && _colorPanelActiveKey && COLOR_GROUPS[_colorPanelActiveKey]) {
+    lbl.textContent = "目前：" + COLOR_GROUPS[_colorPanelActiveKey].label;
+  }
 
     // ── 「未標示」tab：排除主菜/副主菜，依類別分組顯示 ──
   const EXCLUDED_CATS_FROM_UNTAGGED = ["主菜", "副主菜"];
@@ -3547,6 +3675,9 @@ const CAT_STYLES = {
   "輔料":       { titleBg:"#6a1b9a", titleFg:"#fff", itemBg:"#e1bee7", itemFg:"#4a148c" }
 };
 
+// ── 類別面板：目前選中的 cat ──
+let _catPanelActiveCat = null;
+
 function renderCatDB() {
   const tabsBar = document.getElementById("catTabsBar");
   const tabContent = document.getElementById("catTabContent");
@@ -3555,18 +3686,26 @@ function renderCatDB() {
   tabContent.innerHTML = "";
 
   const cats = Object.entries(DB);
+  const catKeys = Object.keys(DB);
+  if (!_catPanelActiveCat || !DB[_catPanelActiveCat]) {
+    _catPanelActiveCat = catKeys[0] || null;
+  }
+
   cats.forEach(([cat, items], idx) => {
+    const isActive = cat === _catPanelActiveCat;
     const style = CAT_STYLES[cat] || { titleBg:"#607d8b", titleFg:"#fff", itemBg:"#eceff1", itemFg:"#37474f" };
     const realItems = items.filter(i => i !== "-");
 
     // Tab 按鈕
     const btn = document.createElement("button");
-    btn.className = "cat-tab-btn" + (idx === 0 ? " active" : "");
+    btn.className = "cat-tab-btn" + (isActive ? " active" : "");
     btn.style.borderColor = style.titleBg;
-    btn.style.color = idx === 0 ? "#fff" : style.titleBg;
-    btn.style.background = idx === 0 ? style.titleBg : "#fff";
+    btn.style.color = isActive ? "#fff" : style.titleBg;
+    btn.style.background = isActive ? style.titleBg : "#fff";
     btn.textContent = cat;
+    btn.dataset.catKey = cat;
     btn.addEventListener("click", () => {
+      _catPanelActiveCat = cat;
       tabsBar.querySelectorAll(".cat-tab-btn").forEach(b => {
         const s = CAT_STYLES[b.textContent] || { titleBg:"#607d8b" };
         b.style.background = "#fff";
@@ -3577,14 +3716,16 @@ function renderCatDB() {
       btn.style.color = "#fff";
       btn.classList.add("active");
       tabContent.querySelectorAll(".cat-tab-panel").forEach(p => p.classList.remove("active"));
-      document.getElementById("catPanel_" + idx).classList.add("active");
+      document.getElementById("catPanel_" + cat).classList.add("active");
+      const lbl = document.getElementById("catPanelActiveLabel");
+      if (lbl) lbl.textContent = "目前：" + cat;
     });
     tabsBar.appendChild(btn);
 
     // 內容面板
     const panel = document.createElement("div");
-    panel.className = "cat-tab-panel" + (idx === 0 ? " active" : "");
-    panel.id = "catPanel_" + idx;
+    panel.className = "cat-tab-panel" + (isActive ? " active" : "");
+    panel.id = "catPanel_" + cat;
 
     function makeCatChip(itemName) {
       const chip = document.createElement("div");
@@ -3605,50 +3746,9 @@ function renderCatDB() {
       const chipColor = cat === "主菜"
         ? (itemName.endsWith("*") ? "#1b5e20" : "#0d47a1")
         : style.itemFg;
-      chip.addEventListener("click", () => {
-        const inp = document.createElement("input");
-        inp.className = "chip-edit-input";
-        inp.value = itemName;
-        inp.style.color = chipColor;
-        chip.innerHTML = "";
-        chip.appendChild(inp);
-        inp.focus();
-        inp.select();
-        function save() {
-          const newVal = inp.value.trim();
-          if (newVal && newVal !== itemName) {
-            const catArr = DB[cat];
-            const i2 = catArr ? catArr.indexOf(itemName) : -1;
-            if (i2 >= 0) {
-              catArr[i2] = newVal;
-              // 同步 MENU_GROUPS
-              Object.values(MENU_GROUPS).forEach(groups => {
-                groups.forEach(g => {
-                  const gi = g.items.indexOf(itemName);
-                  if (gi >= 0) g.items[gi] = newVal;
-                });
-              });
-              // 同步 FOOD_COLOR
-              const colorKey = FOOD_COLOR[itemName];
-              if (colorKey) {
-                delete FOOD_COLOR[itemName];
-                FOOD_COLOR[newVal] = colorKey;
-                const cg = COLOR_GROUPS[colorKey];
-                if (cg) {
-                  const ci = cg.items.indexOf(itemName);
-                  if (ci >= 0) cg.items[ci] = newVal;
-                }
-              }
-              scheduleAutoSave();
-            }
-          }
-          rerenderDBPanels();
-        }
-        inp.addEventListener("blur", save);
-        inp.addEventListener("keydown", e => {
-          if (e.key === "Enter") { e.preventDefault(); inp.blur(); }
-          if (e.key === "Escape") { inp.value = itemName; inp.blur(); }
-        });
+      chip.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openCatItemPopup(cat, itemName, chip);
       });
       return chip;
     }
@@ -3677,6 +3777,10 @@ function renderCatDB() {
     panel.appendChild(catGrid);
     tabContent.appendChild(panel);
   });
+
+  // 更新 active label
+  const lbl = document.getElementById("catPanelActiveLabel");
+  if (lbl && _catPanelActiveCat) lbl.textContent = "目前：" + _catPanelActiveCat;
 }
 
 // ===== Firebase 初始化流程 =====
@@ -3891,6 +3995,14 @@ function escapeHtml(str) {
 }
 
 startWhenReady();
+
+// 點空白處關閉浮層
+document.addEventListener("click", (e) => {
+  const cp = document.getElementById("colorItemPopup");
+  const pp = document.getElementById("catItemPopup");
+  if (cp && cp.style.display !== "none" && !cp.contains(e.target)) cp.style.display = "none";
+  if (pp && pp.style.display !== "none" && !pp.contains(e.target)) pp.style.display = "none";
+});
 
 // ===== 多抽屜系統 =====
 const DRAWER_IDS = ['mgmt','export','hist','colors','cats'];
@@ -4268,6 +4380,268 @@ function addCatToRow() {
 function removeCatFromRow(row, cat) {
   ROW_CATS[row] = (ROW_CATS[row]||[]).filter(c=>c!==cat);
   renderMgmtRowCats();
+}
+
+
+// ===== 顏色抽屜：浮層操作 =====
+let _colorPopupKey = null;
+let _colorPopupItem = null;
+
+function openColorItemPopup(key, itemName, anchorEl) {
+  _colorPopupKey = key;
+  _colorPopupItem = itemName;
+  const popup = document.getElementById("colorItemPopup");
+  const inp = document.getElementById("colorPopupInput");
+  const moveTarget = document.getElementById("colorPopupMoveTarget");
+  const title = document.getElementById("colorPopupTitle");
+
+  title.textContent = "食材：" + itemName;
+  inp.value = itemName;
+
+  // 填入可移動的顏色組選項（排除目前所在的組）
+  moveTarget.innerHTML = Object.entries(COLOR_GROUPS)
+    .filter(([k]) => k !== key)
+    .map(([k, g]) => `<option value="${k}">${g.label}（${k}）</option>`)
+    .join('');
+
+  // 定位浮層在 chip 旁
+  const rect = anchorEl.getBoundingClientRect();
+  popup.style.display = "block";
+  let left = rect.left + window.scrollX;
+  let top = rect.bottom + window.scrollY + 6;
+  // 防止超出螢幕右側
+  const pw = 300;
+  if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+  popup.style.left = left + "px";
+  popup.style.top = top + "px";
+
+  inp.focus();
+  inp.select();
+}
+
+function colorPopupSave() {
+  const popup = document.getElementById("colorItemPopup");
+  const inp = document.getElementById("colorPopupInput");
+  const newVal = inp.value.trim();
+  if (!newVal) { inp.focus(); return; }
+  if (!_colorPopupKey || !_colorPopupItem) return;
+  const g = COLOR_GROUPS[_colorPopupKey];
+  if (!g) return;
+  if (newVal !== _colorPopupItem) {
+    const i = g.items.indexOf(_colorPopupItem);
+    if (i >= 0) g.items[i] = newVal;
+    if (FOOD_COLOR[_colorPopupItem] === _colorPopupKey) {
+      delete FOOD_COLOR[_colorPopupItem];
+      FOOD_COLOR[newVal] = _colorPopupKey;
+    }
+    // 同步 DB
+    Object.keys(DB).forEach(cat => {
+      const di = DB[cat].indexOf(_colorPopupItem);
+      if (di !== -1) DB[cat][di] = newVal;
+    });
+    scheduleAutoSave();
+    showSaveToast("✏️ 已改名為「" + newVal + "」");
+  }
+  popup.style.display = "none";
+  rerenderDBPanels();
+}
+
+function colorPopupMove() {
+  const popup = document.getElementById("colorItemPopup");
+  const targetKey = document.getElementById("colorPopupMoveTarget").value;
+  if (!targetKey || !_colorPopupKey || !_colorPopupItem) return;
+  const srcG = COLOR_GROUPS[_colorPopupKey];
+  const dstG = COLOR_GROUPS[targetKey];
+  if (!srcG || !dstG) return;
+  // Remove from source
+  srcG.items = srcG.items.filter(i => i !== _colorPopupItem);
+  // Add to dest (avoid dup)
+  if (!dstG.items.includes(_colorPopupItem)) dstG.items.push(_colorPopupItem);
+  // Update FOOD_COLOR
+  FOOD_COLOR[_colorPopupItem] = targetKey;
+  _colorPanelActiveKey = targetKey;
+  scheduleAutoSave();
+  showSaveToast("➡️ 已移到「" + dstG.label + "」");
+  popup.style.display = "none";
+  rerenderDBPanels();
+}
+
+function colorPopupDelete() {
+  if (!_colorPopupKey || !_colorPopupItem) return;
+  if (!confirm("確定刪除食材「" + _colorPopupItem + "」？")) return;
+  const g = COLOR_GROUPS[_colorPopupKey];
+  if (g) g.items = g.items.filter(i => i !== _colorPopupItem);
+  delete FOOD_COLOR[_colorPopupItem];
+  // Remove from DB too
+  Object.keys(DB).forEach(cat => {
+    DB[cat] = DB[cat].filter(i => i !== _colorPopupItem);
+  });
+  scheduleAutoSave();
+  showSaveToast("🗑️ 已刪除「" + _colorPopupItem + "」");
+  document.getElementById("colorItemPopup").style.display = "none";
+  rerenderDBPanels();
+  initMgmtItems();
+}
+
+function addNewColorGroupFromPanel() {
+  const key = prompt("輸入顏色組 key（英文，如 orange）：");
+  if (!key || !key.trim()) return;
+  const k = key.trim().toLowerCase().replace(/\s+/g, "");
+  if (COLOR_GROUPS[k]) { alert("已存在！"); return; }
+  const label = prompt("顯示名稱（如 橙）：") || k;
+  COLOR_GROUPS[k] = { label, bg:"#ffcc80", fg:"#333", titleBg:"#ef6c00", items:[] };
+  _colorPanelActiveKey = k;
+  rerenderDBPanels();
+  scheduleAutoSave();
+}
+
+function deleteCurrentColorGroupFromPanel() {
+  const key = _colorPanelActiveKey;
+  if (!key || !COLOR_GROUPS[key]) { alert("請先選擇一個顏色組（點擊上方 tab）"); return; }
+  if (!confirm("確定刪除顏色組「" + COLOR_GROUPS[key].label + "」？（食材不會被刪除，只是移除顏色標記）")) return;
+  COLOR_GROUPS[key].items.forEach(item => { if (FOOD_COLOR[item] === key) delete FOOD_COLOR[item]; });
+  delete COLOR_GROUPS[key];
+  _colorPanelActiveKey = Object.keys(COLOR_GROUPS)[0] || null;
+  rerenderDBPanels();
+  scheduleAutoSave();
+  showSaveToast("🗑️ 已刪除顏色組");
+}
+
+// ===== 類別抽屜：浮層操作 =====
+let _catPopupCat = null;
+let _catPopupItem = null;
+
+function openCatItemPopup(cat, itemName, anchorEl) {
+  _catPopupCat = cat;
+  _catPopupItem = itemName;
+  const popup = document.getElementById("catItemPopup");
+  const inp = document.getElementById("catPopupInput");
+  const moveTarget = document.getElementById("catPopupMoveTarget");
+  const title = document.getElementById("catPopupTitle");
+
+  title.textContent = "品項：" + itemName;
+  inp.value = itemName;
+
+  // 填入可移動的類別（排除目前所在類別）
+  moveTarget.innerHTML = Object.keys(DB)
+    .filter(c => c !== cat)
+    .map(c => `<option value="${c}">${c}</option>`)
+    .join('');
+
+  // 定位浮層
+  const rect = anchorEl.getBoundingClientRect();
+  popup.style.display = "block";
+  let left = rect.left + window.scrollX;
+  let top = rect.bottom + window.scrollY + 6;
+  const pw = 300;
+  if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+  popup.style.left = left + "px";
+  popup.style.top = top + "px";
+
+  inp.focus();
+  inp.select();
+}
+
+function catPopupSave() {
+  const popup = document.getElementById("catItemPopup");
+  const inp = document.getElementById("catPopupInput");
+  const newVal = inp.value.trim();
+  if (!newVal) { inp.focus(); return; }
+  if (!_catPopupCat || !_catPopupItem) return;
+  if (newVal !== _catPopupItem) {
+    const catArr = DB[_catPopupCat];
+    const i = catArr ? catArr.indexOf(_catPopupItem) : -1;
+    if (i >= 0) catArr[i] = newVal;
+    // 同步 FOOD_COLOR
+    const colorKey = FOOD_COLOR[_catPopupItem];
+    if (colorKey) {
+      delete FOOD_COLOR[_catPopupItem];
+      FOOD_COLOR[newVal] = colorKey;
+      const cg = COLOR_GROUPS[colorKey];
+      if (cg) {
+        const ci = cg.items.indexOf(_catPopupItem);
+        if (ci >= 0) cg.items[ci] = newVal;
+      }
+    }
+    // 同步 MENU_GROUPS
+    Object.values(MENU_GROUPS).forEach(groups => {
+      groups.forEach(g => {
+        const gi = g.items.indexOf(_catPopupItem);
+        if (gi >= 0) g.items[gi] = newVal;
+      });
+    });
+    scheduleAutoSave();
+    showSaveToast("✏️ 已改名為「" + newVal + "」");
+  }
+  popup.style.display = "none";
+  rerenderDBPanels();
+  initMgmtItems();
+}
+
+function catPopupMove() {
+  const popup = document.getElementById("catItemPopup");
+  const targetCat = document.getElementById("catPopupMoveTarget").value;
+  if (!targetCat || !_catPopupCat || !_catPopupItem) return;
+  if (!DB[targetCat]) DB[targetCat] = ["-"];
+  // Remove from source
+  DB[_catPopupCat] = DB[_catPopupCat].filter(i => i !== _catPopupItem);
+  // Add to dest
+  if (!DB[targetCat].includes(_catPopupItem)) DB[targetCat].push(_catPopupItem);
+  _catPanelActiveCat = targetCat;
+  scheduleAutoSave();
+  showSaveToast("➡️ 已移到「" + targetCat + "」");
+  popup.style.display = "none";
+  rerenderDBPanels();
+  initMgmtItems();
+}
+
+function catPopupDelete() {
+  if (!_catPopupCat || !_catPopupItem) return;
+  if (!confirm("確定刪除品項「" + _catPopupItem + "」？")) return;
+  DB[_catPopupCat] = DB[_catPopupCat].filter(i => i !== _catPopupItem);
+  // 同步顏色組
+  const colorKey = FOOD_COLOR[_catPopupItem];
+  if (colorKey && COLOR_GROUPS[colorKey]) {
+    COLOR_GROUPS[colorKey].items = COLOR_GROUPS[colorKey].items.filter(i => i !== _catPopupItem);
+  }
+  delete FOOD_COLOR[_catPopupItem];
+  scheduleAutoSave();
+  showSaveToast("🗑️ 已刪除「" + _catPopupItem + "」");
+  document.getElementById("catItemPopup").style.display = "none";
+  rerenderDBPanels();
+  initMgmtItems();
+}
+
+function addNewCategoryFromPanel() {
+  const key = prompt("輸入新類別名稱：");
+  if (!key || !key.trim()) return;
+  const k = key.trim();
+  if (DB[k]) { alert("類別已存在！"); return; }
+  DB[k] = ["-"];
+  DATA_ROWS.forEach(row => {
+    if (!ROW_CATS[row]) ROW_CATS[row] = ["-"];
+    if (!ROW_CATS[row].includes(k)) ROW_CATS[row].push(k);
+  });
+  _catPanelActiveCat = k;
+  rerenderDBPanels();
+  initMgmtItems();
+  scheduleAutoSave();
+}
+
+function deleteCurrentCategoryFromPanel() {
+  const cat = _catPanelActiveCat;
+  if (!cat || !DB[cat]) { alert("請先選擇一個類別（點擊上方 tab）"); return; }
+  if (!confirm("確定刪除整個「" + cat + "」類別及其所有品項？")) return;
+  delete DB[cat];
+  delete CAT_STYLES[cat];
+  Object.keys(ROW_CATS).forEach(row => {
+    ROW_CATS[row] = (ROW_CATS[row] || []).filter(c => c !== cat);
+  });
+  _catPanelActiveCat = Object.keys(DB)[0] || null;
+  rerenderDBPanels();
+  initMgmtItems();
+  scheduleAutoSave();
+  showSaveToast("🗑️ 已刪除類別「" + cat + "」");
 }
 
 function rerenderDBPanels() {
