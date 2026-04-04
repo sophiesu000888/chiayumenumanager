@@ -609,8 +609,8 @@ input.sel-l2-inp:disabled {
 }
 .mgmt-item-chip .chip-del:hover { opacity: 1; }
 .mgmt-rowcats-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #141428; border-radius: 6px; min-height: 36px; border: 1px solid rgba(201,168,76,0.15); margin-bottom: 6px; }
-.rowcat-chip { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:16px;font-size:0.78rem;font-weight:600;background:rgba(42,74,138,0.25);color:#7aa0e0;border:1px solid rgba(42,74,138,0.5); }
-.rowcat-chip .chip-del { background:none;border:none;color:#7aa0e0;opacity:0.5;cursor:pointer;font-size:0.7rem;padding:0 0 0 2px; }
+.rowcat-chip { display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:16px;font-size:0.8rem;font-weight:700;background:#1e3a6e;color:#c8dcff;border:1px solid #3a6abf;width:8em;justify-content:space-between;box-sizing:border-box; }
+.rowcat-chip .chip-del { background:none;border:none;color:#c8dcff;opacity:0.6;cursor:pointer;font-size:0.7rem;padding:0 0 0 2px; }
 .rowcat-chip .chip-del:hover { opacity:1; }
 
 /* ===== 右側多抽屜系統 ===== */
@@ -633,29 +633,29 @@ input.sel-l2-inp:disabled {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  width: 32px;
-  padding: 10px 0;
-  border-radius: 8px 0 0 8px;
+  gap: 5px;
+  width: 44px;
+  padding: 13px 0;
+  border-radius: 10px 0 0 10px;
   cursor: pointer;
   user-select: none;
   box-shadow: -2px 0 8px rgba(0,0,0,0.15);
   transition: width 0.15s, box-shadow 0.15s;
   position: relative;
 }
-.side-tab:hover { width: 36px; box-shadow: -3px 0 12px rgba(0,0,0,0.22); }
-.side-tab.open  { width: 36px; box-shadow: -3px 0 12px rgba(0,0,0,0.28); }
+.side-tab:hover { width: 49px; box-shadow: -3px 0 12px rgba(0,0,0,0.22); }
+.side-tab.open  { width: 49px; box-shadow: -3px 0 12px rgba(0,0,0,0.28); }
 
 .side-tab .st-icon {
-  font-size: 0.92rem;
+  font-size: 1.3rem;
   line-height: 1;
 }
 .side-tab .st-label {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  font-size: 0.58rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.8px;
   opacity: 0.9;
   line-height: 1;
 }
@@ -1143,54 +1143,12 @@ button {
       <div class="qa-preview" id="qa-preview"></div>
     </div>
 
-    <div class="drawer-tabs">
-      <button class="drawer-tab active" onclick="switchDrawerTab('items',this)">🥦 類別品項</button>
-      <button class="drawer-tab" onclick="switchDrawerTab('colors',this)">🎨 顏色分組</button>
-      <button class="drawer-tab" onclick="switchDrawerTab('rowcats',this)">📑 列類別設定</button>
-    </div>
-
-    <div id="mgmt-items" class="drawer-section active">
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-cat-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtItems()"></select>
-        <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewCategory()">➕ 新增類別</button>
-        <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentCategory()">🗑️ 刪除此類別</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-        <input id="mgmt-item-input" type="text" placeholder="輸入新品項名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToCategory()" oninput="mgmtItemInputChange(this)">
-        <button id="mgmt-item-btn" class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToCategory()">➕ 新增品項</button>
-      </div>
-      <div id="mgmt-items-list" class="mgmt-items-list"></div>
-    </div>
-
-    <div id="mgmt-colors" class="drawer-section">
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-color-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtColorItems()"></select>
-        <button class="mgmt-action-btn" style="background:#43a047;" onclick="addNewColorGroup()">➕ 新增顏色組</button>
-        <button class="mgmt-action-btn" style="background:#c62828;" onclick="deleteCurrentColorGroup()">🗑️ 刪除</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <input id="mgmt-color-item-input" type="text" placeholder="輸入食材名稱" style="flex:1;min-width:140px;padding:6px 10px;border:1px solid #b0bec5;border-radius:5px;font-family:inherit;font-size:0.85rem;" onkeydown="if(event.key==='Enter')addItemToColorGroup()" oninput="mgmtColorInputChange(this)">
-        <button id="mgmt-color-item-btn" class="mgmt-action-btn" style="background:#1976d2;" onclick="addItemToColorGroup()">➕ 新增食材</button>
-      </div>
-      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;font-size:0.82rem;color:#546e7a;">
-        <label>背景色 <input type="color" id="mgmt-color-bg" value="#4cd964" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-        <label>文字色 <input type="color" id="mgmt-color-fg" value="#1a3a00" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-        <label>標題背景 <input type="color" id="mgmt-color-titlebg" value="#27ae60" style="width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;"></label>
-        <button class="mgmt-action-btn" style="background:#546e7a;font-size:0.78rem;" onclick="applyColorGroupColors()">套用</button>
-      </div>
-      <div id="mgmt-color-items-list" class="mgmt-items-list"></div>
-    </div>
-
-    <div id="mgmt-rowcats" class="drawer-section">
-      <p style="font-size:0.78rem;color:#90a4ae;margin-bottom:10px;">設定每個列（主菜/副主菜/1/2…）可選用哪些類別。</p>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-row-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;" onchange="renderMgmtRowCats()"></select>
-      </div>
-      <div id="mgmt-rowcats-list" class="mgmt-rowcats-list"></div>
-      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-        <select id="mgmt-rowcat-add-sel" style="width:auto;padding:6px 28px 6px 10px;font-size:0.85rem;"></select>
-        <button class="mgmt-action-btn" style="background:#1976d2;" onclick="addCatToRow()">➕ 加入此類別</button>
-      </div>
+    <div id="mgmt-rowcats">
+      <p style="font-size:0.78rem;color:#90a4ae;margin-bottom:12px;">設定每個列可選用哪些類別。點擊列名展開，可新增或移除類別。</p>
+      <div id="mgmt-rowcats-all"></div>
+      <!-- hidden selects kept for JS compat -->
+      <select id="mgmt-row-sel" style="display:none;"></select>
+      <select id="mgmt-rowcat-add-sel" style="display:none;"></select>
     </div>
   </div>
 </div>
@@ -4101,9 +4059,12 @@ function switchMgmtTab(tab) {}
 
 function initMgmtItems() {
   const sel = document.getElementById('mgmt-cat-sel');
-  const cur = sel.value;
-  sel.innerHTML = Object.keys(DB).map(k => `<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join('');
-  renderMgmtItems();
+  if (sel) {
+    const cur = sel.value;
+    sel.innerHTML = Object.keys(DB).map(k => `<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join('');
+    renderMgmtItems();
+  }
+  initMgmtRowCats();
 }
 
 function renderMgmtItems() {
@@ -4344,42 +4305,117 @@ function applyColorGroupColors() {
   rerenderDBPanels();
 }
 
-function initMgmtRowCats() {
-  const sel = document.getElementById('mgmt-row-sel');
-  const cur = sel.value;
-  sel.innerHTML = Object.keys(ROW_CATS).map(k => `<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join('');
-  renderMgmtRowCats();
-}
+// ===== 列類別設定：全展開一覽 =====
+const ROW_ORDER = ["主菜","副主菜","米飯","1","2","3","4","5","6","7"];
 
-function renderMgmtRowCats() {
-  const row = document.getElementById('mgmt-row-sel').value;
-  const list = document.getElementById('mgmt-rowcats-list');
-  list.innerHTML = '';
-  (ROW_CATS[row]||[]).filter(c=>c!=='-').forEach(cat => {
-    const chip = document.createElement('span');
-    chip.className = 'rowcat-chip';
-    chip.innerHTML = `${cat}<button class="chip-del" onclick="removeCatFromRow('${row}','${cat.replace(/'/g,"\\'")}')">✕</button>`;
-    list.appendChild(chip);
+function initMgmtRowCats() { renderAllRowCats(); }
+function renderMgmtRowCats() { renderAllRowCats(); }
+
+// 交替配色
+const ROW_THEMES = [
+  { hdrBg:'#1f1a38', border:'rgba(120,90,200,0.5)', labelColor:'#d4c0ff', badgeBg:'rgba(120,90,200,0.35)', badgeColor:'#c0a8ff', arrowColor:'#9878d8', bodyBg:'#140f28', chipBg:'#2e1f5a', chipColor:'#d4c0ff', chipBorder:'#7850c0', selBg:'#201540', selBorder:'#7850c0', selColor:'#d4c0ff' },
+  { hdrBg:'#0f2438', border:'rgba(40,140,180,0.5)',  labelColor:'#a8deff', badgeBg:'rgba(40,140,180,0.35)', badgeColor:'#80ccee', arrowColor:'#3aabcc', bodyBg:'#081828', chipBg:'#0e2e48', chipColor:'#a8deff', chipBorder:'#2878a8', selBg:'#0a2038', selBorder:'#2878a8', selColor:'#a8deff' },
+];
+
+function renderAllRowCats() {
+  const wrap = document.getElementById('mgmt-rowcats-all');
+  if (!wrap) return;
+  const rows = ROW_ORDER.filter(r => ROW_CATS[r] !== undefined);
+  Object.keys(ROW_CATS).forEach(r => { if (!rows.includes(r)) rows.push(r); });
+  wrap.innerHTML = '';
+  rows.forEach((row, idx) => {
+    const th = ROW_THEMES[idx % 2];
+    const cats = (ROW_CATS[row]||[]).filter(c=>c!=='-');
+    const allCats = Object.keys(DB);
+    const missing = allCats.filter(k=>!cats.includes(k));
+    const block = document.createElement('div');
+    block.style.cssText = 'margin-bottom:5px;border:1.5px solid ' + th.border + ';border-radius:8px;overflow:hidden;';
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;background:' + th.hdrBg + ';cursor:pointer;user-select:none;';
+    const labelEl = document.createElement('span');
+    labelEl.style.cssText = 'font-size:0.92rem;font-weight:900;color:' + th.labelColor + ';min-width:3.5em;letter-spacing:1.5px;';
+    labelEl.textContent = row;
+    const countBadge = document.createElement('span');
+    countBadge.style.cssText = 'font-size:0.72rem;background:' + th.badgeBg + ';color:' + th.badgeColor + ';border-radius:10px;padding:2px 8px;font-weight:700;';
+    countBadge.textContent = cats.length + ' \u500b';
+    const arrow = document.createElement('span');
+    arrow.className = 'rowcat-arrow';
+    arrow.style.cssText = 'margin-left:auto;color:' + th.arrowColor + ';font-size:0.78rem;transition:transform 0.22s cubic-bezier(0.4,0,0.2,1);';
+    arrow.textContent = '\u25b6';
+    hdr.appendChild(labelEl); hdr.appendChild(countBadge); hdr.appendChild(arrow);
+    const body = document.createElement('div');
+    body.className = 'rowcat-body';
+    body.style.cssText = 'display:none;padding:10px 12px 12px;background:' + th.bodyBg + ';border-top:1px solid ' + th.border + ';';
+    const chipWrap = document.createElement('div');
+    chipWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:32px;';
+    cats.forEach(cat => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.82rem;font-weight:700;background:' + th.chipBg + ';color:' + th.chipColor + ';border:1px solid ' + th.chipBorder + ';width:8em;justify-content:space-between;box-sizing:border-box;';
+      chip.innerHTML = '<span style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;">' + cat + '</span>'
+        + '<button style="background:none;border:none;color:' + th.chipColor + ';opacity:0.7;cursor:pointer;font-size:0.7rem;padding:0 0 0 2px;" onclick="removeCatFromRowAll(\'' + row.replace(/'/g,"\\'") + '\',\'' + cat.replace(/'/g,"\\'") + '\')">\u2715</button>';
+      chipWrap.appendChild(chip);
+    });
+    if (cats.length === 0) {
+      const empty = document.createElement('span');
+      empty.style.cssText = 'font-size:0.76rem;color:#546e7a;';
+      empty.textContent = '\uff08\u5c1a\u672a\u8a2d\u5b9a\uff09';
+      chipWrap.appendChild(empty);
+    }
+    const addRowEl = document.createElement('div');
+    addRowEl.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
+    const sel = document.createElement('select');
+    sel.style.cssText = 'padding:5px 22px 5px 8px;font-size:0.8rem;border-radius:5px;border:1px solid ' + th.selBorder + ';background:' + th.selBg + ';color:' + th.selColor + ';font-family:inherit;min-width:90px;';
+    missing.forEach(k => { const opt = document.createElement('option'); opt.value=k; opt.textContent=k; sel.appendChild(opt); });
+    if (missing.length === 0) { const opt = document.createElement('option'); opt.textContent='\uff08\u5df2\u5168\u9078\uff09'; sel.appendChild(opt); sel.disabled=true; }
+    const addBtn = document.createElement('button');
+    addBtn.className = 'mgmt-action-btn';
+    addBtn.style.cssText = 'background:#1976d2;font-size:0.78rem;padding:5px 10px;';
+    addBtn.textContent = '\u2795 \u52a0\u5165';
+    const rowCapture = row;
+    addBtn.onclick = () => {
+      const cat = sel.value;
+      if (!cat || sel.disabled) return;
+      if (!ROW_CATS[rowCapture]) ROW_CATS[rowCapture] = ['-'];
+      if (!ROW_CATS[rowCapture].includes(cat)) ROW_CATS[rowCapture].push(cat);
+      scheduleAutoSave();
+      renderAllRowCats();
+    };
+    addRowEl.appendChild(sel); addRowEl.appendChild(addBtn);
+    body.appendChild(chipWrap); body.appendChild(addRowEl);
+    // accordion
+    hdr.onclick = () => {
+      const isOpen = body.style.display !== 'none';
+      wrap.querySelectorAll('.rowcat-body').forEach(b => { b.style.display = 'none'; });
+      wrap.querySelectorAll('.rowcat-arrow').forEach(a => { a.style.transform = ''; });
+      if (!isOpen) {
+        body.style.display = 'block';
+        arrow.style.transform = 'rotate(90deg)';
+      }
+    };
+    block.appendChild(hdr); block.appendChild(body);
+    wrap.appendChild(block);
   });
-  const addSel = document.getElementById('mgmt-rowcat-add-sel');
-  const existing = ROW_CATS[row] || [];
-  addSel.innerHTML = Object.keys(DB).filter(k=>!existing.includes(k))
-    .map(k=>`<option value="${k}">${k}</option>`).join('');
+}
+function removeCatFromRowAll(row, cat) {
+  ROW_CATS[row] = (ROW_CATS[row]||[]).filter(c=>c!==cat);
+  scheduleAutoSave();
+  renderAllRowCats();
 }
 
 function addCatToRow() {
   const row = document.getElementById('mgmt-row-sel').value;
   const cat = document.getElementById('mgmt-rowcat-add-sel').value;
-  if (!cat) return;
+  if (!cat || !row) return;
   if (!ROW_CATS[row]) ROW_CATS[row] = ['-'];
-  if (ROW_CATS[row].includes(cat)) return;
-  ROW_CATS[row].push(cat);
-  renderMgmtRowCats();
+  if (!ROW_CATS[row].includes(cat)) ROW_CATS[row].push(cat);
+  scheduleAutoSave();
+  renderAllRowCats();
 }
 
 function removeCatFromRow(row, cat) {
   ROW_CATS[row] = (ROW_CATS[row]||[]).filter(c=>c!==cat);
-  renderMgmtRowCats();
+  scheduleAutoSave();
+  renderAllRowCats();
 }
 
 
