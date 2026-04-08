@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -1278,6 +1279,37 @@ button {
     <button class="drawer-close" onclick="closeAllDrawers()">✕</button>
   </div>
   <div class="drawer-body">
+
+     <!-- 圖片匯出區 -->
+    <div style="background:#e3f2fd;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #90caf9;">
+      <div style="font-size:0.82rem;font-weight:700;color:#0d47a1;margin-bottom:10px;">🖼️ 匯出圖片</div>
+      <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:10px;border:1px solid #bbdefb;">
+        <div style="font-size:0.74rem;color:#546e7a;font-weight:700;margin-bottom:7px;">📅 日期區間篩選（不選則匯出全部）</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">開始日期</label>
+            <input type="date" id="img-date-from" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
+          </div>
+          <div style="color:#90a4ae;font-size:0.8rem;align-self:flex-end;padding-bottom:6px;">～</div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <label style="font-size:0.68rem;color:#90a4ae;font-weight:600;">結束日期</label>
+            <input type="date" id="img-date-to" style="border:1.5px solid #b0bec5;border-radius:5px;padding:5px 8px;font-family:inherit;font-size:0.8rem;color:#37474f;background:#fafafa;cursor:pointer;" oninput="updateImgDateHint()">
+          </div>
+          <button onclick="document.getElementById('img-date-from').value='';document.getElementById('img-date-to').value='';updateImgDateHint();" style="align-self:flex-end;background:#eceff1;border:1px solid #cfd8dc;border-radius:5px;padding:5px 10px;font-size:0.74rem;color:#607d8b;cursor:pointer;font-family:inherit;margin-bottom:1px;">清除</button>
+        </div>
+        <div id="img-date-hint" style="font-size:0.7rem;color:#1565c0;margin-top:6px;min-height:14px;"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="exportAsImage(false);closeAllDrawers();" style="background:#1565c0;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#0d47a1'" onmouseout="this.style.background='#1565c0'">
+          🖼️ 匯出圖片（含類別）
+          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">包含健康餐/風味餐的類別與品項欄位</div>
+        </button>
+        <button onclick="exportAsImage(true);closeAllDrawers();" style="background:#0288d1;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;transition:background 0.15s;" onmouseover="this.style.background='#01579b'" onmouseout="this.style.background='#0288d1'">
+          🖼️ 匯出圖片（僅品項）
+          <div style="font-size:0.72rem;font-weight:400;margin-top:3px;opacity:0.85;">只顯示品項名稱，隱藏分類欄</div>
+        </button>
+      </div>
+    </div>
 
     <!-- 歷史資料匯出區 -->
     <div style="background:#f3e5f5;border-radius:10px;padding:14px 14px 10px;margin-bottom:14px;border:1.5px solid #ce93d8;">
