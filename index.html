@@ -1,121 +1,1933 @@
+
+
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>網站公告</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kengle Chu 毅合實業工作紀錄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  /* 主色系 — 深靛藍 */
+  --accent:#4f6ef7;--accent-dark:#3451d1;--accent-dim:#eef1ff;--accent-border:#c7d0fb;
+  /* 背景 */
+  --bg:#f0f2f8;--bg2:#ffffff;--bg3:#f5f6fb;--bg4:#e8ecf8;
+  /* 文字 */
+  --text:#1c2040;--text2:#3a4068;--text3:#7880a4;
+  /* 邊框 */
+  --border:rgba(79,110,247,0.08);--border2:rgba(79,110,247,0.16);
+  /* 功能色 */
+  --green:#059669;--green-dim:#ecfdf5;--green-border:#a7f3d0;
+  --amber:#d97706;--amber-dim:#fffbeb;--amber-border:#fcd34d;
+  --red:#e11d48;--red-dim:#fff1f2;--red-border:#fda4af;
+  /* 圓角 & 陰影 */
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 2px 12px rgba(79,110,247,0.08),0 0 0 1px rgba(79,110,247,0.06);
+  --shadow-md:0 4px 24px rgba(79,110,247,0.12),0 0 0 1px rgba(79,110,247,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;overflow-x:hidden}
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f5f5f5;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
-    }
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#2a3aad 0%,#4f6ef7 100%);
+  border-bottom:none;padding:18px 16px 14px;
+  position:sticky;top:0;z-index:20;
+  box-shadow:0 4px 20px rgba(79,110,247,0.3)
+}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.header-left .header-name{font-size:22px;font-weight:700;color:#fff;letter-spacing:-0.01em;line-height:1.2}
+.header-left .header-company{font-size:13px;font-weight:500;color:rgba(255,255,255,0.75);margin-top:2px}
+.month-nav{display:flex;align-items:center;gap:6px}
+.month-nav button{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;width:34px;height:34px;border-radius:10px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.month-nav button:active{background:rgba(255,255,255,0.3)}
+.month-label{font-size:15px;font-weight:700;min-width:68px;text-align:center;font-family:'DM Mono',monospace;color:#fff}
 
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 48px 56px;
-      max-width: 480px;
-      width: 90%;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-      text-align: center;
-    }
+/* SUMMARY GRID */
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 12px 6px}
+.stat-card{background:var(--bg2);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;border:1px solid var(--border)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#818cf8);opacity:0}
+.stat-card.clickable{cursor:pointer;transition:box-shadow 0.15s,transform 0.15s}
+.stat-card.clickable:active{transform:scale(0.98);box-shadow:var(--shadow-md)}
+.stat-card.full{grid-column:1/-1}
+.stat-card.salary-card{background:linear-gradient(135deg,#2a3aad 0%,#4f6ef7 60%,#818cf8 100%);border:none}
+.stat-card.salary-card::before{opacity:0}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:4px}
+.stat-label .tap-hint{font-size:9px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:5px;padding:1px 6px;color:var(--accent);font-weight:600}
+.stat-label .tap-hint-white{font-size:9px;background:rgba(255,255,255,0.22);border-radius:5px;padding:1px 6px;color:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.3)}
+.stat-val{font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text)}
+.stat-val.c-accent{color:var(--accent)}
+.stat-val.c-green{color:var(--green)}
+.stat-val.c-amber{color:var(--amber)}
+.stat-val.c-white{color:#fff;font-size:26px;letter-spacing:-0.5px}
 
-    .icon {
-      font-size: 48px;
-      margin-bottom: 20px;
-    }
+/* SALARY POPUP */
+.salary-popup{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:90;display:flex;align-items:center;justify-content:center;padding:24px}
+.salary-popup.hidden{display:none}
+.salary-box{background:#fff;border-radius:22px;padding:0 0 22px;max-width:300px;width:100%;box-shadow:0 12px 50px rgba(79,110,247,0.25);text-align:center;overflow:hidden}
+.salary-box h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:0;background:linear-gradient(135deg,#2a3aad,#4f6ef7);padding:22px 24px 18px}
+.salary-breakdown{display:flex;flex-direction:column;gap:8px;margin:16px 16px 16px;text-align:left}
+.sb-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:11px;background:var(--bg3);border:1px solid var(--border)}
+.sb-lbl{font-size:13px;color:var(--text2)}
+.sb-val{font-size:15px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text)}
+.sb-total{background:var(--accent-dim);border:1.5px solid var(--accent-border)}
+.sb-total .sb-lbl{color:var(--accent);font-weight:700}
+.sb-total .sb-val{color:var(--accent);font-size:20px}
+.salary-close{background:var(--bg4);border:1.5px solid var(--border2);color:var(--text2);padding:10px 28px;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;margin:0 16px}
 
-    h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 8px;
-    }
 
-    .subtitle {
-      font-size: 14px;
-      color: #888;
-      margin-bottom: 32px;
-    }
+/* ENCOURAGE TOAST */
+.enc-toast{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.7);
+  z-index:200;pointer-events:none;opacity:0;
+  transition:opacity 0.18s ease,transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  text-align:center;
+}
+.enc-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+.enc-inner{
+  background:linear-gradient(135deg,#2a3aad 0%,#4f6ef7 100%);
+  color:#fff;font-size:32px;font-weight:900;
+  padding:22px 38px;border-radius:24px;
+  box-shadow:0 8px 40px rgba(79,110,247,0.45);
+  letter-spacing:0.02em;white-space:pre;
+  font-family:'Noto Sans TC',sans-serif;
+}
 
-    .divider {
-      border: none;
-      border-top: 1px solid #ececec;
-      margin-bottom: 28px;
-    }
+/* SCROLL TO TOP */
+.scroll-top-btn{
+  position:fixed;bottom:24px;right:14px;z-index:51;
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,#2a3aad,#4f6ef7);
+  color:#fff;font-size:20px;border:none;cursor:pointer;
+  box-shadow:0 4px 16px rgba(79,110,247,0.4);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.22s,transform 0.22s;
+  transform:translateY(10px);
+}
+.scroll-top-btn.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+.scroll-top-btn:active{transform:scale(0.92)}
 
-    .label {
-      font-size: 12px;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
+/* SAVE STATUS */
+.save-status{font-size:12px;padding:6px 16px;border-radius:20px;font-weight:600;transition:opacity 0.3s,transform 0.3s;position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(4px);z-index:50;pointer-events:none;opacity:0;box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+.save-status.show{transform:translateX(-50%) translateY(0)}
+.save-status.show{opacity:1}
+.save-status.saved{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.save-status.saving{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
 
-    .link-btn {
-      display: inline-block;
-      padding: 12px 28px;
-      background: #2563eb;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 500;
-      transition: background 0.2s;
-      word-break: break-all;
-      margin-bottom: 28px;
-    }
+/* TOOLBAR */
+.toolbar{display:flex;gap:6px;padding:4px 12px 10px;flex-wrap:nowrap}
+.tool-btn{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:9px 4px;border-radius:11px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid transparent;font-family:'Noto Sans TC',sans-serif;white-space:pre;transition:opacity 0.12s,transform 0.1s}
+.tool-btn:active{opacity:0.75;transform:scale(0.97)}
+.tool-btn-export{background:var(--green-dim);color:var(--green);border-color:var(--green-border)}
+.tool-btn-clear{background:var(--red-dim);color:var(--red);border-color:var(--red-border)}
+.tool-btn-expand{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-border)}
+.tool-btn-collapse{background:var(--bg4);color:var(--text2);border-color:var(--border2)}
 
-    .link-btn:hover {
-      background: #1d4ed8;
-    }
+/* DAYS */
+.days-list{padding:4px 12px 90px;display:flex;flex-direction:column;gap:8px}
+.day-card{background:var(--bg2);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);transition:box-shadow 0.15s}
+.day-card.is-weekend{border-left:3px solid #818cf8;background:linear-gradient(to right,#f5f6ff,#fff)}
+.day-card.is-today{border-left:3px solid var(--accent);background:linear-gradient(135deg,#eef1ff 0%,#e8ecff 100%);box-shadow:0 4px 20px rgba(79,110,247,0.15)}
+.day-card.is-today .day-date{color:var(--accent)}
+.day-card.is-today .day-weekday{color:var(--accent)}
+.day-card.is-holiday{opacity:0.5}
+.day-header{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none}
+.day-date{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;min-width:52px;color:var(--text)}
+.day-weekday{font-size:12px;color:var(--text3);min-width:14px;font-weight:500}
+.is-weekend .day-weekday{color:#818cf8;font-weight:600}
+.day-times{display:flex;gap:6px;align-items:center;flex:1}
+.time-chip{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2);background:var(--bg4);padding:4px 8px;border-radius:7px;border:1px solid var(--border)}
+.time-chip.ot{color:var(--accent);background:var(--accent-dim);border:1px solid var(--accent-border);font-weight:600}
+.arrow{font-size:10px;color:var(--text3)}
+.day-pay{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent);margin-left:auto;white-space:pre}
+.day-pay.zero{color:var(--text3);font-weight:400}
+.holiday-badge{font-size:11px;background:var(--red-dim);color:var(--red);padding:3px 8px;border-radius:7px;margin-left:auto;border:1px solid var(--red-border)}
+.chevron{font-size:12px;color:var(--text3);margin-left:4px;transition:transform 0.2s;display:inline-block}
+.chevron.open{transform:rotate(180deg)}
+.day-summary-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:4px 13px 9px}
+.dsb{font-size:11px;color:var(--text3)}
+.dsb span{color:var(--text2);font-weight:500}
+.day-body{border-top:1px solid var(--border);padding:12px 13px;display:flex;flex-direction:column;gap:10px}
+.field-row{display:flex;align-items:center;gap:8px}
+.field-label{font-size:12px;color:var(--text3);min-width:52px;font-weight:500}
+.field-input{flex:1;background:var(--bg4);border:1.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:15px;font-family:'DM Mono',monospace;padding:9px 11px;outline:none;-webkit-appearance:none;min-width:0;transition:border-color 0.15s,background 0.15s}
+.field-input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(79,110,247,0.1)}
 
-    .password-box {
-      background: #f8f8f8;
-      border-radius: 8px;
-      padding: 14px 20px;
-      display: inline-block;
-    }
+/* BUTTONS */
+.btn{border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;padding:10px 14px;white-space:pre;font-family:'Noto Sans TC',sans-serif}
+.btn:active{opacity:0.7}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-success{background:#16a34a;color:#fff;border:1px solid #15803d}
+.btn-warning{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
 
-    .password-box .pw-label {
-      font-size: 12px;
-      color: #aaa;
-      margin-bottom: 4px;
-    }
+/* BADGES */
+.badge-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge-item{display:flex;align-items:center;gap:4px}
+.badge-lbl{font-size:11px;color:var(--text3)}
+.badge{font-size:12px;font-weight:700;font-family:'DM Mono',monospace;padding:3px 9px;border-radius:20px}
+.badge-blue{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border)}
+.badge-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.locked-row{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.locked-text{font-size:13px;font-family:'DM Mono',monospace;color:var(--text2);word-break:break-all;flex:1}
 
-    .password-box .pw-hint {
-      font-size: 20px;
-      font-weight: 600;
-      color: #1a1a1a;
-      letter-spacing: 0.12em;
-    }
-  </style>
+/* METER KEYPAD */
+.meter-section{display:flex;flex-direction:column;gap:8px}
+.meter-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:28px}
+.meter-chip{display:inline-flex;align-items:center;gap:4px;background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);border-radius:20px;padding:4px 9px;font-size:13px;font-family:'DM Mono',monospace;font-weight:600}
+.meter-chip-del{background:none;border:none;color:var(--accent);cursor:pointer;font-size:15px;padding:0;line-height:1;font-weight:700;opacity:0.7}
+.kp-current{background:var(--bg2);border:1.5px dashed var(--accent-border);border-radius:8px;padding:8px 12px;font-size:20px;font-family:'DM Mono',monospace;color:var(--accent);font-weight:700;text-align:center;min-height:44px;letter-spacing:0.05em}
+.kp-current.empty{color:var(--text3);font-size:13px;font-weight:400;display:flex;align-items:center;justify-content:center}
+.meter-keypad{background:var(--bg3);border-radius:var(--radius-sm);padding:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.kp-btn{background:var(--bg2);border:1.5px solid var(--border2);border-radius:10px;padding:14px 6px;font-size:18px;font-family:'DM Mono',monospace;font-weight:500;color:var(--text);cursor:pointer;text-align:center;transition:all 0.08s;user-select:none;box-shadow:0 1px 3px rgba(79,110,247,0.06)}
+.kp-btn:active{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent);transform:scale(0.95)}
+.kp-btn.kp-back{color:var(--amber);font-size:16px}
+.kp-btn.kp-add{background:linear-gradient(135deg,#3451d1,#4f6ef7);color:#fff;font-size:14px;font-weight:700;border-color:var(--accent);grid-column:1/-1;box-shadow:0 3px 12px rgba(79,110,247,0.35)}
+.kp-btn.kp-add:active{background:linear-gradient(135deg,#2a3aad,#3451d1);transform:scale(0.98)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--bg2);border-radius:20px;padding:26px 22px 20px;max-width:320px;width:100%;box-shadow:0 12px 48px rgba(79,110,247,0.2)}
+.modal-icon{font-size:34px;margin-bottom:10px}
+.modal h2{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+.modal p{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:22px}
+.modal-actions{display:flex;gap:10px}
+.modal-actions .btn{flex:1;text-align:center}
+
+/* DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(28,32,64,0.4);z-index:40;display:none;backdrop-filter:blur(2px)}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(94vw,420px);background:var(--bg2);z-index:50;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);box-shadow:-8px 0 40px rgba(79,110,247,0.18)}
+.drawer.open{transform:translateX(0)}
+.drawer-header{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:linear-gradient(135deg,#2a3aad,#4f6ef7)}
+.drawer-title{font-size:17px;font-weight:700;flex:1;color:#fff}
+.drawer-close{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);width:32px;height:32px;border-radius:9px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff}
+.drawer-filters{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0;background:var(--bg3)}
+.filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.filter-label{font-size:12px;color:var(--text3);min-width:32px;font-weight:500}
+.drawer-month-nav{display:flex;align-items:center;gap:5px}
+.drawer-month-nav button{background:var(--bg2);border:1px solid var(--border2);color:var(--text2);width:28px;height:28px;border-radius:7px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.drawer-month-label{font-size:13px;font-weight:700;min-width:60px;text-align:center;font-family:'DM Mono',monospace;color:var(--text)}
+.date-range{display:flex;align-items:center;gap:6px;flex:1}
+.date-input{background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:6px 8px;font-size:13px;font-family:'DM Mono',monospace;color:var(--text);outline:none;width:76px}
+.date-input:focus{border-color:var(--accent)}
+/* Day picker popup */
+.day-picker-wrap{position:relative;display:inline-block}
+.day-picker-btn{background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:6px 10px;font-size:13px;font-family:'DM Mono',monospace;color:var(--text3);cursor:pointer;min-width:64px;text-align:center}
+.day-picker-btn.selected{border-color:var(--accent);color:var(--accent);font-weight:600;background:var(--accent-dim)}
+.day-picker-popup{position:absolute;top:calc(100% + 6px);left:0;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:10px;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,0.15);display:none;width:220px}
+.day-picker-popup.open{display:block}
+.day-picker-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dpg-btn{background:none;border:none;border-radius:6px;padding:6px 2px;font-size:12px;font-family:'DM Mono',monospace;color:var(--text);cursor:pointer;text-align:center}
+.dpg-btn:hover{background:var(--accent-dim);color:var(--accent)}
+.dpg-btn.active{background:var(--accent);color:#fff;font-weight:700}
+.dpg-btn.in-range{background:var(--accent-dim)}
+.filter-clear{background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;padding:4px 6px;border-radius:5px;font-family:'Noto Sans TC',sans-serif}
+.filter-clear:active{background:var(--bg3)}
+.drawer-body{flex:1;overflow-y:auto;padding:8px 14px 16px}
+.drawer-body::-webkit-scrollbar{width:3px}
+.drawer-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.drawer-empty{text-align:center;color:var(--text3);font-size:14px;padding:40px 20px}
+.drawer-total-bar{padding:12px 14px;border-top:1.5px solid var(--border);background:var(--bg3);flex-shrink:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.dtb-item{font-size:12px;color:var(--text2)}
+.dtb-item span{font-weight:700;font-family:'DM Mono',monospace;color:var(--text)}
+.dtb-filter-note{font-size:10px;color:var(--accent);background:var(--accent-dim);padding:2px 7px;border-radius:10px;border:1px solid var(--accent-border)}
+
+/* RULES DRAWER */
+.rules-section{margin-bottom:18px}
+.rules-section-title{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:0.04em;text-transform:uppercase;padding:10px 14px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;position:sticky;top:0;background:var(--bg2);z-index:2}
+.rules-section-title .rs-icon{font-size:16px}
+.rule-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px;border-bottom:1px solid var(--border);gap:12px}
+.rule-row:last-child{border-bottom:none}
+.rule-lbl{font-size:13px;color:var(--text2);flex:1;line-height:1.5}
+.rule-lbl small{display:block;font-size:11px;color:var(--text3);margin-top:2px}
+.rule-val-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.rule-val{font-size:15px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text);background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;padding:5px 10px;min-width:72px;text-align:right;outline:none;-webkit-appearance:none}
+.rule-val:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(79,110,247,0.1)}
+.rule-unit{font-size:12px;color:var(--text3);white-space:pre;min-width:20px}
+.rule-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:pre}
+.rule-tag-blue{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border)}
+.rule-tag-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.rule-tag-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.rule-tag-purple{background:#f3e8ff;color:#7c3aed;border:1px solid #d8b4fe}
+.rules-save-btn{display:block;width:calc(100% - 28px);margin:0 14px 16px;padding:13px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;letter-spacing:0.02em;box-shadow:0 4px 16px rgba(79,110,247,0.35)}
+.rules-save-btn:active{opacity:0.85}
+.rules-reset-btn{display:block;width:calc(100% - 28px);margin:0 14px 10px;padding:10px;border-radius:12px;background:var(--bg3);color:var(--text2);border:1.5px solid var(--border2);font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
+.rules-note{font-size:11px;color:var(--text3);padding:6px 14px 16px;line-height:1.6}
+
+/* Detail rows */
+.detail-row{background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.detail-date{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text);min-width:44px}
+.detail-wd{font-size:11px;color:var(--text3);min-width:12px}
+.detail-time{font-size:12px;font-family:'DM Mono',monospace;color:var(--text3)}
+.detail-ot-hrs{font-size:13px;font-family:'DM Mono',monospace;color:var(--accent);flex:1}
+.detail-pay{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)}
+.detail-total{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--amber)}
+.detail-work{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2)}
+</style>
 </head>
 <body>
-  <div class="card">
-    <div class="icon">🏠</div>
-    <h1>網站已搬家</h1>
-    <p class="subtitle">無毒!!!請安心使用!!!</p>
-    <p class="copy-hint">不放心請複製前往<br>https://sophiesu000888.github.io/adminhub/index.html</p>
-    <hr class="divider">
-    <p class="label">新網址</p>
-    <a class="link-btn" href="https://sophiesu000888.github.io/adminhub/index.html" target="_blank" rel="noopener noreferrer">
-      前往新網站
-    </a>
-    <div class="password-box">
-      <div class="pw-label">密碼提示</div>
-      <div class="pw-hint">qwe*****8</div>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px">
+  <div style="font-size:48px">🔐</div>
+  <div style="font-size:22px;font-weight:700;color:var(--text)">Kengle 工作紀錄</div>
+  <div style="font-size:14px;color:var(--text2)">請輸入密碼</div>
+  <input id="pwdInput" type="password" placeholder="密碼" style="width:100%;max-width:260px;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border2);font-size:16px;font-family:'DM Mono',monospace;outline:none;text-align:center;background:#fff;color:var(--text)">
+  <button id="btnLogin" style="width:100%;max-width:260px;padding:13px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif">進入</button>
+  <div id="loginError" style="font-size:13px;color:var(--red);min-height:20px"></div>
+</div>
+
+<!-- APP -->
+<div id="appRoot" style="display:none">
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="header-name">Kengle Chu</div>
+      <div class="header-company">毅合實業工作紀錄</div>
+    </div>
+    <div class="month-nav">
+      <button id="btnPrev">‹</button>
+      <div class="month-label" id="monthLabel"></div>
+      <button id="btnNext">›</button>
     </div>
   </div>
+</div>
+
+<!-- SUMMARY: 2-col grid, salary full-width on top -->
+<div class="summary">
+  <!-- 本月加班費 → 點擊顯示薪資彈窗 -->
+  <div class="stat-card salary-card full clickable" id="cardSalary">
+    <div class="stat-label" style="color:rgba(255,255,255,0.7)">本月薪資
+      <span class="tap-hint-white">點擊查看明細</span>
+    </div>
+    <div class="stat-val c-white" id="sumSalary">$36,000</div>
+  </div>
+  <!-- 本月加班費 -->
+  <div class="stat-card">
+    <div class="stat-label">本月加班費</div>
+    <div class="stat-val c-accent" id="sumPay">$0</div>
+  </div>
+  <!-- 加班時數 → 點擊開加班抽屜 -->
+  <div class="stat-card clickable" id="cardHours">
+    <div class="stat-label">加班時數 <span class="tap-hint">▸ 明細</span></div>
+    <div class="stat-val c-accent" id="sumHours">0h 0m</div>
+  </div>
+  <!-- 總趟次 → 點擊開趟次抽屜 -->
+  <div class="stat-card clickable" id="cardTrips">
+    <div class="stat-label">總趟次 <span class="tap-hint">▸ 明細</span></div>
+    <div class="stat-val c-green" id="sumTrips">0</div>
+    <div id="tripsProgressWrap" style="margin-top:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span id="tripsProgressLabel" style="font-size:10px;color:var(--text3);font-weight:500"></span>
+        <span id="tripsProgressStar" style="font-size:12px"></span>
+      </div>
+      <div style="background:var(--bg3);border-radius:20px;height:6px;overflow:hidden">
+        <div id="tripsProgressBar" style="height:100%;border-radius:20px;transition:width 0.4s ease;width:0%"></div>
+      </div>
+    </div>
+  </div>
+  <!-- 總米數 → 點擊開米數抽屜 -->
+  <div class="stat-card clickable" id="cardMeters">
+    <div class="stat-label">總米數 <span class="tap-hint">▸ 明細</span></div>
+    <div class="stat-val c-amber" id="sumMeters">0</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button class="tool-btn tool-btn-expand" id="btnExpandAll">⬇ 展開</button>
+  <button class="tool-btn tool-btn-collapse" id="btnCollapseAll">⬆ 收合</button>
+  <button class="tool-btn tool-btn-export" id="btnExport">⬇ Excel</button>
+  <button class="tool-btn" id="btnRules" style="background:#f3e8ff;color:#7c3aed;border-color:#d8b4fe">⚙ 規則</button>
+  <button class="tool-btn tool-btn-clear" id="btnClear">🗑 清除</button>
+</div>
+
+<div class="days-list" id="daysList"></div>
+
+<!-- Save status toast -->
+<div class="save-status" id="saveStatus">✓ 已儲存</div>
+<button class="scroll-top-btn" id="scrollTopBtn" title="回到頂端">↑</button>
+<div class="enc-toast" id="encToast"><div class="enc-inner" id="encText"></div></div>
+
+<!-- Salary popup -->
+<div class="salary-popup hidden" id="salaryPopup">
+  <div class="salary-box">
+    <h3>本月薪資明細</h3>
+    <div class="salary-breakdown">
+      <div class="sb-row"><span class="sb-lbl">底薪</span><span class="sb-val">$36,000</span></div>
+      <div class="sb-row"><span class="sb-lbl">加班費</span><span class="sb-val" id="popupOT">$0</span></div>
+      <div class="sb-row"><span class="sb-lbl">超100趟次獎金</span><span class="sb-val" id="popupMeterBonus">$0</span></div>
+      <div class="sb-row"><span class="sb-lbl">米數獎金</span><span class="sb-val" id="popupMeterDistBonus">$0</span></div>
+      <div class="sb-row sb-total"><span class="sb-lbl">合計薪資</span><span class="sb-val" id="popupTotal">$36,000</span></div>
+    </div>
+    <button class="salary-close" id="salaryClose">關閉</button>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modalCancel">取消</button>
+      <button class="btn btn-danger" id="modalConfirm">確認</button>
+    </div>
+  </div>
+</div>
+
+<!-- OT Drawer -->
+<div class="drawer-overlay" id="otOverlay"></div>
+<div class="drawer" id="otDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">⏰ 加班明細</div>
+    <button class="drawer-close" id="otDrawerClose">✕</button>
+  </div>
+  <div class="drawer-filters">
+    <div class="filter-row">
+      <span class="filter-label">月份</span>
+      <div class="drawer-month-nav">
+        <button id="otMonthPrev">‹</button>
+        <div class="drawer-month-label" id="otMonthLabel"></div>
+        <button id="otMonthNext">›</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">日期</span>
+      <div class="date-range" style="gap:8px;align-items:center">
+        <div class="day-picker-wrap">
+          <button class="day-picker-btn" id="otDateFromBtn">起（日）</button>
+          <div class="day-picker-popup" id="otDateFromPopup"><div class="day-picker-grid" id="otDateFromGrid"></div></div>
+        </div>
+        <span style="color:var(--text3);font-size:12px">—</span>
+        <div class="day-picker-wrap">
+          <button class="day-picker-btn" id="otDateToBtn">迄（日）</button>
+          <div class="day-picker-popup" id="otDateToPopup"><div class="day-picker-grid" id="otDateToGrid"></div></div>
+        </div>
+      </div>
+      <button class="filter-clear" id="otDateClear">清除</button>
+    </div>
+  </div>
+  <div class="drawer-body" id="otDrawerBody"></div>
+  <div class="drawer-total-bar" id="otTotalBar"></div>
+</div>
+
+<!-- Meter Drawer -->
+<div class="drawer-overlay" id="mOverlay"></div>
+<div class="drawer" id="mDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📏 米數明細</div>
+    <button class="drawer-close" id="mDrawerClose">✕</button>
+  </div>
+  <div class="drawer-filters">
+    <div class="filter-row">
+      <span class="filter-label">月份</span>
+      <div class="drawer-month-nav">
+        <button id="mMonthPrev">‹</button>
+        <div class="drawer-month-label" id="mMonthLabel"></div>
+        <button id="mMonthNext">›</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">日期</span>
+      <div class="date-range" style="gap:8px;align-items:center">
+        <div class="day-picker-wrap">
+          <button class="day-picker-btn" id="mDateFromBtn">起（日）</button>
+          <div class="day-picker-popup" id="mDateFromPopup"><div class="day-picker-grid" id="mDateFromGrid"></div></div>
+        </div>
+        <span style="color:var(--text3);font-size:12px">—</span>
+        <div class="day-picker-wrap">
+          <button class="day-picker-btn" id="mDateToBtn">迄（日）</button>
+          <div class="day-picker-popup" id="mDateToPopup"><div class="day-picker-grid" id="mDateToGrid"></div></div>
+        </div>
+      </div>
+      <button class="filter-clear" id="mDateClear">清除</button>
+    </div>
+  </div>
+  <div class="drawer-body" id="mDrawerBody"></div>
+  <div class="drawer-total-bar" id="mTotalBar"></div>
+</div>
+
+<!-- Trips Drawer -->
+<div class="drawer-overlay" id="tripsOverlay"></div>
+<div class="drawer" id="tripsDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">🚗 趟次明細</div>
+    <button class="drawer-close" id="tripsDrawerClose">✕</button>
+  </div>
+  <div class="drawer-filters">
+    <div class="filter-row">
+      <span class="filter-label">月份</span>
+      <div class="drawer-month-nav">
+        <button id="tripsMonthPrev">‹</button>
+        <div class="drawer-month-label" id="tripsMonthLabel"></div>
+        <button id="tripsMonthNext">›</button>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-body" id="tripsDrawerBody"></div>
+  <div class="drawer-total-bar" id="tripsTotalBar"></div>
+</div>
+
+<!-- Rules Drawer -->
+<div class="drawer-overlay" id="rulesOverlay"></div>
+<div class="drawer" id="rulesDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">⚙ 薪資計算規則</div>
+    <button class="drawer-close" id="rulesDrawerClose">✕</button>
+  </div>
+  <div class="drawer-body" style="padding:0">
+
+    <!-- 底薪 -->
+    <div class="rules-section">
+      <div class="rules-section-title"><span class="rs-icon">💰</span>底薪</div>
+      <div class="rule-row">
+        <div class="rule-lbl">每月底薪</div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-blue">固定</span>
+          <input class="rule-val" type="number" id="ruleBaseSalary" value="36000" min="0" step="100">
+          <span class="rule-unit">元/月</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 正常工時 -->
+    <div class="rules-section">
+      <div class="rules-section-title"><span class="rs-icon">🕗</span>正常工時</div>
+      <div class="rule-row">
+        <div class="rule-lbl">正常上班時間<small>早於此時段上班才計提早加班費</small></div>
+        <div class="rule-val-wrap">
+          <input class="rule-val" type="time" id="ruleWorkStart" value="08:00" style="min-width:88px">
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">正常下班時間<small>晚於此時段下班才計加班費</small></div>
+        <div class="rule-val-wrap">
+          <input class="rule-val" type="time" id="ruleWorkEnd" value="17:00" style="min-width:88px">
+        </div>
+      </div>
+    </div>
+
+    <!-- 加班費（平日） -->
+    <div class="rules-section">
+      <div class="rules-section-title"><span class="rs-icon">⏰</span>加班費（平日）</div>
+      <div class="rule-row">
+        <div class="rule-lbl">提早上班<small>08:00 前每分鐘</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-blue">每分</span>
+          <input class="rule-val" type="number" id="ruleEarlyRate" value="9" min="0" step="0.5">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">17:00 – 20:00<small>每分鐘費率</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-blue">每分</span>
+          <input class="rule-val" type="number" id="ruleOT1Rate" value="3.5" min="0" step="0.5">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">20:00 – 00:00<small>每分鐘費率</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-blue">每分</span>
+          <input class="rule-val" type="number" id="ruleOT2Rate" value="4.5" min="0" step="0.5">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">00:00 – 08:00<small>每分鐘費率（深夜段）</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-blue">每分</span>
+          <input class="rule-val" type="number" id="ruleOT3Rate" value="9" min="0" step="0.5">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 加班費（星期天） -->
+    <div class="rules-section">
+      <div class="rules-section-title"><span class="rs-icon">☀️</span>加班費（星期天）</div>
+      <div class="rule-row">
+        <div class="rule-lbl">出勤門檻<small>出勤超過此時數，才計日薪</small></div>
+        <div class="rule-val-wrap">
+          <input class="rule-val" type="number" id="ruleSunThreshold" value="4" min="0" step="0.5">
+          <span class="rule-unit">小時</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">日薪（08:00–17:00 超過門檻）</div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-amber">固定</span>
+          <input class="rule-val" type="number" id="ruleSunDaySalary" value="2600" min="0" step="100">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">17:00 後加班費率<small>同平日 17:00–20:00 費率</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-amber">沿用平日</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 趟數獎金 -->
+    <div class="rules-section">
+      <div class="rules-section-title"><span class="rs-icon">🚗</span>趟數獎金</div>
+      <div class="rule-row">
+        <div class="rule-lbl">門檻趟次<small>累積達此趟數後開始計獎金</small></div>
+        <div class="rule-val-wrap">
+          <input class="rule-val" type="number" id="ruleTripThreshold" value="100" min="1" step="1">
+          <span class="rule-unit">趟</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">第一段獎金<small>超過門檻，至150趟</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-green">每趟</span>
+          <input class="rule-val" type="number" id="ruleTripBonus1" value="150" min="0" step="10">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">第二段門檻<small>達此趟數改用第二段費率</small></div>
+        <div class="rule-val-wrap">
+          <input class="rule-val" type="number" id="ruleTripThreshold2" value="150" min="1" step="1">
+          <span class="rule-unit">趟</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">第二段獎金<small>超過第二段門檻後每趟</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-purple">每趟</span>
+          <input class="rule-val" type="number" id="ruleTripBonus2" value="200" min="0" step="10">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 米數獎金 -->
+    <div class="rules-section">
+      <div class="rules-section-title"><span class="rs-icon">📏</span>米數獎金（每米）</div>
+      <div class="rule-row">
+        <div class="rule-lbl">501 – 600 m<small>每超過此區間1米</small></div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-green">每米</span>
+          <input class="rule-val" type="number" id="ruleMeter1" value="10" min="0" step="1">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">601 – 700 m</div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-green">每米</span>
+          <input class="rule-val" type="number" id="ruleMeter2" value="20" min="0" step="1">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">701 – 800 m</div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-green">每米</span>
+          <input class="rule-val" type="number" id="ruleMeter3" value="30" min="0" step="1">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">801 – 900 m</div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-green">每米</span>
+          <input class="rule-val" type="number" id="ruleMeter4" value="40" min="0" step="1">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+      <div class="rule-row">
+        <div class="rule-lbl">901 m 以上</div>
+        <div class="rule-val-wrap">
+          <span class="rule-tag rule-tag-green">每米</span>
+          <input class="rule-val" type="number" id="ruleMeter5" value="50" min="0" step="1">
+          <span class="rule-unit">元</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="rules-note">⚠️ 修改後點「儲存規則」才會套用。規則儲存於本機，重新整理後仍有效。<br>🔴 <span style="color:#dc2626;font-weight:600">紅色數值</span>表示與預設值不同，已被修改。</p>
+    <button class="rules-save-btn" id="rulesSaveBtn">💾 儲存規則並重新計算</button>
+    <button class="rules-reset-btn" id="rulesResetBtn">↺ 恢復全部預設值</button>
+  </div>
+</div>
+
+<!-- OT Breakdown Popup -->
+<div class="modal-overlay hidden" id="otBreakPopup">
+  <div class="modal" style="text-align:left">
+    <div class="modal-icon">⏰</div>
+    <h2>加班費計算明細</h2>
+    <div id="otBreakContent" style="margin-bottom:18px"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" style="flex:1;text-align:center" onclick="document.getElementById('otBreakPopup').classList.add('hidden')">關閉</button></div>
+  </div>
+</div>
+
+<script type="module">
+const STORE_KEY='kengle_data_v4';
+const WD=['日','一','二','三','四','五','六'];
+
+// ── RULES (可修改的薪資計算規則) ────────────────────────────
+const RULES_KEY='kengle_rules_v1';
+const DEFAULT_RULES={
+  baseSalary:36000,
+  workStart:'08:00',
+  workEnd:'17:00',
+  earlyRate:9,
+  ot1Rate:3.5,   // 17:00–20:00
+  ot2Rate:4.5,   // 20:00–00:00
+  ot3Rate:9,     // 00:00–08:00
+  sunThreshold:4, // 星期天出勤門檻(小時)
+  sunDaySalary:2600,
+  tripThreshold:100,
+  tripBonus1:150,
+  tripThreshold2:150,
+  tripBonus2:200,
+  meterRates:[10,20,30,40,50], // 501~600,601~700,...,901+
+};
+let RULES={...DEFAULT_RULES};
+
+function loadRules(){
+  try{
+    const raw=localStorage.getItem(RULES_KEY);
+    if(raw) RULES={...DEFAULT_RULES,...JSON.parse(raw)};
+  }catch(e){}
+}
+function saveRules(){
+  try{localStorage.setItem(RULES_KEY,JSON.stringify(RULES));}catch(e){}
+}
+function rulesFromInputs(){
+  return{
+    baseSalary:Number(document.getElementById('ruleBaseSalary').value)||36000,
+    workStart:document.getElementById('ruleWorkStart').value||'08:00',
+    workEnd:document.getElementById('ruleWorkEnd').value||'17:00',
+    earlyRate:Number(document.getElementById('ruleEarlyRate').value)||9,
+    ot1Rate:Number(document.getElementById('ruleOT1Rate').value)||3.5,
+    ot2Rate:Number(document.getElementById('ruleOT2Rate').value)||4.5,
+    ot3Rate:Number(document.getElementById('ruleOT3Rate').value)||9,
+    sunThreshold:Number(document.getElementById('ruleSunThreshold').value)||4,
+    sunDaySalary:Number(document.getElementById('ruleSunDaySalary').value)||2600,
+    tripThreshold:Number(document.getElementById('ruleTripThreshold').value)||100,
+    tripBonus1:Number(document.getElementById('ruleTripBonus1').value)||150,
+    tripThreshold2:Number(document.getElementById('ruleTripThreshold2').value)||150,
+    tripBonus2:Number(document.getElementById('ruleTripBonus2').value)||200,
+    meterRates:[
+      Number(document.getElementById('ruleMeter1').value)||10,
+      Number(document.getElementById('ruleMeter2').value)||20,
+      Number(document.getElementById('ruleMeter3').value)||30,
+      Number(document.getElementById('ruleMeter4').value)||40,
+      Number(document.getElementById('ruleMeter5').value)||50,
+    ],
+  };
+}
+// 規則欄位定義（id → DEFAULT_RULES 對應 key 或 meterRates index）
+const RULE_FIELDS=[
+  {id:'ruleBaseSalary',   key:'baseSalary'},
+  {id:'ruleWorkStart',    key:'workStart'},
+  {id:'ruleWorkEnd',      key:'workEnd'},
+  {id:'ruleEarlyRate',    key:'earlyRate'},
+  {id:'ruleOT1Rate',      key:'ot1Rate'},
+  {id:'ruleOT2Rate',      key:'ot2Rate'},
+  {id:'ruleOT3Rate',      key:'ot3Rate'},
+  {id:'ruleSunThreshold', key:'sunThreshold'},
+  {id:'ruleSunDaySalary', key:'sunDaySalary'},
+  {id:'ruleTripThreshold',key:'tripThreshold'},
+  {id:'ruleTripBonus1',   key:'tripBonus1'},
+  {id:'ruleTripThreshold2',key:'tripThreshold2'},
+  {id:'ruleTripBonus2',   key:'tripBonus2'},
+  {id:'ruleMeter1',       key:'meterRates',idx:0},
+  {id:'ruleMeter2',       key:'meterRates',idx:1},
+  {id:'ruleMeter3',       key:'meterRates',idx:2},
+  {id:'ruleMeter4',       key:'meterRates',idx:3},
+  {id:'ruleMeter5',       key:'meterRates',idx:4},
+];
+
+function getDefaultVal(f){
+  if(f.key==='meterRates') return DEFAULT_RULES.meterRates[f.idx];
+  return DEFAULT_RULES[f.key];
+}
+function getRuleVal(f){
+  if(f.key==='meterRates') return (RULES.meterRates||DEFAULT_RULES.meterRates)[f.idx];
+  return RULES[f.key];
+}
+function applyFieldStyle(el,currentVal,defaultVal){
+  const changed=String(currentVal)!==String(defaultVal);
+  el.style.color=changed?'#dc2626':'';
+  el.style.borderColor=changed?'#fca5a5':'';
+  el.style.background=changed?'#fff5f5':'';
+  el.style.fontWeight=changed?'700':'';
+  // label beside it
+  const row=el.closest('.rule-row');
+  if(row){
+    const lbl=row.querySelector('.rule-lbl');
+    if(lbl) lbl.style.color=changed?'#dc2626':'';
+  }
+}
+function updateFieldStyle(f){
+  const el=document.getElementById(f.id);
+  if(!el) return;
+  const defaultVal=getDefaultVal(f);
+  const currentVal=el.type==='number'?Number(el.value):el.value;
+  applyFieldStyle(el,currentVal,defaultVal);
+}
+function fillRulesInputs(){
+  RULE_FIELDS.forEach(f=>{
+    const el=document.getElementById(f.id);
+    if(!el) return;
+    el.value=getRuleVal(f);
+    updateFieldStyle(f);
+    // 即時標示（移除舊的再綁新的）
+    el.oninput=()=>updateFieldStyle(f);
+  });
+}
+
+// Rules drawer open/close
+function openRulesDrawer(){
+  fillRulesInputs();
+  document.getElementById('rulesOverlay').classList.add('open');
+  document.getElementById('rulesDrawer').classList.add('open');
+}
+function closeRulesDrawer(){
+  document.getElementById('rulesOverlay').classList.remove('open');
+  document.getElementById('rulesDrawer').classList.remove('open');
+}
+document.getElementById('btnRules').addEventListener('click',openRulesDrawer);
+document.getElementById('rulesDrawerClose').addEventListener('click',closeRulesDrawer);
+document.getElementById('rulesOverlay').addEventListener('click',closeRulesDrawer);
+document.getElementById('rulesSaveBtn').addEventListener('click',()=>{
+  RULES=rulesFromInputs();
+  saveRules();
+  fillRulesInputs(); // 重新標色（儲存後比對預設值）
+  closeRulesDrawer();
+  showSpecialMsg('規則已儲存 ✓\n重新計算中…');
+  setTimeout(()=>{const rows=getRows(viewYear,viewMonth);updateSummary(rows);},300);
+});
+document.getElementById('rulesResetBtn').addEventListener('click',()=>{
+  RULES={...DEFAULT_RULES,meterRates:[...DEFAULT_RULES.meterRates]};
+  saveRules();
+  fillRulesInputs();
+  showSpecialMsg('已恢復預設值 ✓');
+  setTimeout(()=>{const rows=getRows(viewYear,viewMonth);updateSummary(rows);},300);
+});
+
+// ── FIREBASE ─────────────────────────────────────────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAZlK1yptGoIAcmNuZp99sgANCUJ1crdkI",
+  authDomain: "kenglework.firebaseapp.com",
+  projectId: "kenglework",
+  storageBucket: "kenglework.firebasestorage.app",
+  messagingSenderId: "560347469856",
+  appId: "1:560347469856:web:4104600a45bf84378c0445"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const auth = getAuth(fbApp);
+const DOC_REF = doc(db, 'workdata', 'kengle'); // legacy ref for migration
+function monthDocRef(mk){ return doc(db, 'workdata', mk); }
+
+// ── AUTH UI ───────────────────────────────────────────────
+function showLoginScreen(){
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('appRoot').style.display='none';
+  setTimeout(()=>document.getElementById('pwdInput').focus(),100);
+}
+function hideLoginScreen(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appRoot').style.display='block';
+}
+async function tryLogin(){
+  const pwd=document.getElementById('pwdInput').value;
+  const errEl=document.getElementById('loginError');
+  const btn=document.getElementById('btnLogin');
+  if(!pwd){errEl.textContent='請輸入密碼';return;}
+  btn.textContent='驗證中…';btn.disabled=true;errEl.textContent='';
+  try{
+    await signInWithEmailAndPassword(auth,'marsgorock@gmail.com',pwd);
+  }catch(e){
+    errEl.textContent='❌ 密碼錯誤';
+    document.getElementById('pwdInput').value='';
+    document.getElementById('pwdInput').focus();
+  }finally{
+    btn.textContent='進入';btn.disabled=false;
+  }
+}
+document.getElementById('btnLogin').addEventListener('click', tryLogin);
+document.getElementById('pwdInput').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
+
+// ── STORAGE (per-month documents) ────────────────────────
+let saveTimer=null;
+
+async function loadMonth(mk){
+  try{
+    const snap=await getDoc(monthDocRef(mk));
+    if(snap.exists()) return snap.data().days||{};
+    return {};
+  }catch(e){
+    console.warn('Firebase loadMonth failed',mk,e);
+    return {};
+  }
+}
+
+async function loadFromCloud(){
+  try{
+    // Migration: check if old single-doc exists
+    const oldSnap=await getDoc(DOC_REF);
+    if(oldSnap.exists()&&oldSnap.data().payload){
+      const oldAll=JSON.parse(oldSnap.data().payload);
+      console.log('舊資料搬移中...',Object.keys(oldAll));
+      for(const mk of Object.keys(oldAll)){
+        await setDoc(monthDocRef(mk),{days:oldAll[mk],updatedAt:Date.now()});
+      }
+      await setDoc(DOC_REF,{migrated:true,migratedAt:Date.now()});
+      console.log('搬移完成');
+      return oldAll;
+    }
+    // Normal: load current month
+    const now=new Date();
+    const mk=monthKey(now.getFullYear(),now.getMonth());
+    const days=await loadMonth(mk);
+    return {[mk]:days};
+  }catch(e){
+    console.warn('Firebase load failed, using localStorage',e);
+    try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch(e2){return {};}
+  }
+}
+
+async function ensureMonthLoaded(mk){
+  if(allData[mk]&&Object.keys(allData[mk]).length>0) return;
+  allData[mk]=await loadMonth(mk);
+}
+
+function save(){
+  showSaveStatus('saving');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    try{
+      const mk=monthKey(viewYear,viewMonth);
+      await setDoc(monthDocRef(mk),{days:allData[mk]||{},updatedAt:Date.now()});
+      try{localStorage.setItem(STORE_KEY,JSON.stringify(allData));}catch(e){}
+    }catch(e){
+      console.warn('Firebase save failed, using localStorage',e);
+      try{localStorage.setItem(STORE_KEY,JSON.stringify(allData));}catch(e2){}
+    }
+    showSaveStatus('saved');
+  },600);
+}
+
+const ENC_MSGS=['你很棒','GOOD JOB','做得好','很頂','夠硬','有料','猛','有點意思','給力','不簡單','狠人','強'];
+let _encTimer=null;
+function showSpecialMsg(msg){
+  const toast=document.getElementById('encToast');
+  const txt=document.getElementById('encText');
+  txt.innerHTML=msg;
+  txt.style.fontSize='18px';
+  if(_encTimer) clearTimeout(_encTimer);
+  toast.classList.remove('show');
+  void toast.offsetWidth;
+  toast.classList.add('show');
+  _encTimer=setTimeout(()=>{toast.classList.remove('show');txt.style.fontSize='';},2200);
+}
+function showEncourage(){
+  const msg=ENC_MSGS[Math.floor(Math.random()*ENC_MSGS.length)];
+  const toast=document.getElementById('encToast');
+  const txt=document.getElementById('encText');
+  txt.textContent=msg;
+  if(_encTimer) clearTimeout(_encTimer);
+  toast.classList.remove('show');
+  void toast.offsetWidth; // reflow
+  toast.classList.add('show');
+  _encTimer=setTimeout(()=>toast.classList.remove('show'),900);
+}
+
+function showSaveStatus(s){
+  const el=document.getElementById('saveStatus');
+  el.className='save-status '+s+' show';
+  el.textContent=s==='saving'?'儲存中…':'✓ 已儲存';
+  if(s==='saved') setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+let allData={};
+let viewYear,viewMonth;
+
+// ── HELPERS ──────────────────────────────────────────────
+function monthKey(y,m){return `${y}_${String(m+1).padStart(2,'0')}`;}
+
+function getRows(y,m){
+  const mk=monthKey(y,m);
+  if(!allData[mk]) allData[mk]={};
+  const rows=[];
+  for(let d=1;d<=31;d++){
+    const dt=new Date(y,m,d);
+    if(dt.getMonth()!==m) break;
+    const dk=String(d);
+    if(!allData[mk][dk]) allData[mk][dk]={holiday:false,startTime:'08:00',startInput:'',startLocked:false,otInput:'',endTime:'17:00',metersInput:'',metersArr:[],metersLocked:false,timeLocked:false,expanded:false};
+    if(!allData[mk][dk].metersArr) allData[mk][dk].metersArr=parseMeters(allData[mk][dk].metersInput||'');
+    rows.push({d,dt,wd:dt.getDay(),isWeekend:dt.getDay()===0||dt.getDay()===6,dk,data:allData[mk][dk]});
+  }
+  return rows;
+}
+
+function parseMeters(str){
+  if(!str||!str.trim()) return [];
+  return str.trim().split(/[\s,]+/).filter(v=>v!=='').map(v=>parseFloat(v)||0).filter(v=>v>0);
+}
+
+function getWorkStart(){const[h,m]=(RULES.workStart||'08:00').split(':').map(Number);return h*60+m;}
+function getWorkEnd(){const[h,m]=(RULES.workEnd||'17:00').split(':').map(Number);return h*60+m;}
+
+function normalizeEndMins(h,m){
+  const workEnd=getWorkEnd();
+  const raw=h*60+m;
+  return raw<workEnd?raw+24*60:raw;
+}
+function calcEarlyOTPay(startH,startM){
+  const WORK_START=getWorkStart();
+  if(startH===undefined||startM===undefined) return 0;
+  const startMins=startH*60+startM;
+  if(startMins>=WORK_START) return 0;
+  return Math.round((WORK_START-startMins)*RULES.earlyRate);
+}
+function calcPay(h,m,startH,startM,isSunday){
+  const WORK_START=getWorkStart();
+  const WORK_END=getWorkEnd();
+  const end=normalizeEndMins(h,m);
+  const r1=RULES.ot1Rate,r2=RULES.ot2Rate,r3=RULES.ot3Rate;
+  let t=0;
+  if(isSunday){
+    const startMins=(startH!==undefined?startH*60+startM:WORK_START);
+    const dayWorkStart=Math.max(startMins, WORK_START);
+    const dayWorkEnd=Math.min(end, WORK_END);
+    const dayMins=Math.max(0, dayWorkEnd-dayWorkStart);
+    if(dayMins>RULES.sunThreshold*60) t+=RULES.sunDaySalary;
+    if(end>WORK_END){
+      [{f:WORK_END,to:20*60,r:r1},{f:20*60,to:24*60,r:r2},{f:24*60,to:32*60,r:r3}].forEach(s=>{
+        const a=s.f,b=Math.min(s.to,end);
+        if(b>a) t+=(b-a)*s.r;
+      });
+    }
+  } else {
+    t+=calcEarlyOTPay(startH,startM);
+    if(end>WORK_END){
+      [{f:WORK_END,to:20*60,r:r1},{f:20*60,to:24*60,r:r2},{f:24*60,to:32*60,r:r3}].forEach(s=>{
+        const a=s.f,b=Math.min(s.to,end);
+        if(b>a) t+=(b-a)*s.r;
+      });
+    }
+  }
+  return Math.round(t);
+}
+
+// 米數獎金（依月累計總米數，分段計算）
+function calcMeterDistanceBonus(totalM){
+  const rates=RULES.meterRates||[10,20,30,40,50];
+  const tiers=[
+    {from:501,to:600,bonus:rates[0]},
+    {from:601,to:700,bonus:rates[1]},
+    {from:701,to:800,bonus:rates[2]},
+    {from:801,to:900,bonus:rates[3]},
+    {from:901,to:Infinity,bonus:rates[4]},
+  ];
+  let total=0;
+  tiers.forEach(t=>{
+    if(totalM>t.from-1){
+      const meters=Math.min(totalM, t.to===Infinity?totalM:t.to)-(t.from-1);
+      total+=Math.max(0,meters)*t.bonus;
+    }
+  });
+  return total;
+}
+
+function calcOTBreakdown(endTime,startTime,isSunday){
+  const WORK_START=getWorkStart();
+  const WORK_END=getWorkEnd();
+  const wsStr=RULES.workStart||'08:00';
+  const weStr=RULES.workEnd||'17:00';
+  const r1=RULES.ot1Rate,r2=RULES.ot2Rate,r3=RULES.ot3Rate;
+  const[h,m]=endTime.split(':').map(Number);
+  const end=normalizeEndMins(h,m);
+  const result=[];
+  if(isSunday){
+    const[sh,sm]=(startTime||wsStr).split(':').map(Number);
+    const dayWorkStart=Math.max(sh*60+sm, WORK_START);
+    const dayWorkEnd=Math.min(end, WORK_END);
+    const dayMins=Math.max(0,dayWorkEnd-dayWorkStart);
+    if(dayMins>RULES.sunThreshold*60){
+      result.push({label:`${wsStr} – ${weStr}（星期天出勤 ${Math.floor(dayMins/60)}h${dayMins%60>0?(dayMins%60)+'m':''}）`,mins:dayMins,rate:null,pay:RULES.sunDaySalary,sunday:true});
+    }
+    if(end>WORK_END){
+      const segs=[
+        {label:`${weStr} – 20:00`,f:WORK_END,to:20*60,rate:r1},
+        {label:'20:00 – 00:00',f:20*60,to:24*60,rate:r2},
+        {label:'00:00 – 08:00',f:24*60,to:32*60,rate:r3}
+      ];
+      segs.forEach(s=>{
+        const a=s.f,b=Math.min(s.to,end);
+        if(b<=a) return;
+        const mins=b-a;const pay=Math.round(mins*s.rate);
+        result.push({label:s.label,mins,rate:s.rate,pay});
+      });
+    }
+  } else {
+    if(startTime){
+      const[sh,sm]=startTime.split(':').map(Number);
+      const earlyMins=Math.max(0,WORK_START-(sh*60+sm));
+      if(earlyMins>0){
+        const pay=Math.round(earlyMins*RULES.earlyRate);
+        result.push({label:`${startTime} – ${wsStr}（提早上班）`,mins:earlyMins,rate:RULES.earlyRate,pay,early:true});
+      }
+    }
+    if(end>WORK_END){
+      const segs=[
+        {label:`${weStr} – 20:00`,f:WORK_END,to:20*60,rate:r1},
+        {label:'20:00 – 00:00',f:20*60,to:24*60,rate:r2},
+        {label:'00:00 – 08:00',f:24*60,to:32*60,rate:r3}
+      ];
+      segs.forEach(s=>{
+        const a=s.f,b=Math.min(s.to,end);
+        if(b<=a) return;
+        const mins=b-a;const pay=Math.round(mins*s.rate);
+        result.push({label:s.label,mins,rate:s.rate,pay});
+      });
+    }
+  }
+  return result;
+}
+function showOTBreakdown(endTime,total,startTime,isSunday){
+  const segs=calcOTBreakdown(endTime,startTime,isSunday);
+  let html='<div style="display:flex;flex-direction:column;gap:8px">';
+  segs.forEach(s=>{
+    const hh=Math.floor(s.mins/60),mm=s.mins%60;
+    const dur=hh>0?`${hh}h${mm>0?String(mm).padStart(2,'0')+'m':''}`:`${mm}m`;
+    const bgColor=s.sunday?'#f0fdf4':s.early?'#fff7ed':'var(--bg3)';
+    const labelColor=s.sunday?'#15803d':s.early?'#92400e':'var(--text2)';
+    const rateStr=s.rate?`${dur} × $${s.rate}/min`:`出勤 ${dur} > 4h → 日薪`;
+    html+=`<div style="display:flex;justify-content:space-between;align-items:center;background:${bgColor};padding:9px 12px;border-radius:9px;border:1px solid ${s.sunday?'#86efac':s.early?'#fcd34d':'transparent'}"><span style="font-size:12px;color:${labelColor}">${s.label}<br><span style="font-size:11px;color:var(--text3)">${rateStr}</span></span><span style="font-size:15px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)">$${s.pay.toLocaleString()}</span></div>`;
+  });
+  html+=`<div style="display:flex;justify-content:space-between;align-items:center;background:var(--accent-dim);border:1px solid var(--accent-border);padding:9px 12px;border-radius:9px"><span style="font-size:13px;font-weight:600;color:var(--accent)">加班費合計</span><span style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)">$${total.toLocaleString()}</span></div>`;
+  html+='</div>';
+  document.getElementById('otBreakContent').innerHTML=html;
+  document.getElementById('otBreakPopup').classList.remove('hidden');
+}
+function arrStats(arr){
+  const a=arr||[];
+  return{count:a.length,total:a.reduce((s,v)=>s+v,0)};
+}
+
+function fmtNum(n){
+  if(Number.isInteger(n)) return String(n);
+  return parseFloat(n.toFixed(3)).toString();
+}
+
+function parseFmtTime(raw){
+  const s=raw.replace(/[^0-9]/g,'');
+  if(!s.length) return null;
+  let h,m;
+  if(s.length<=2){h=parseInt(s);m=0;}
+  else if(s.length===3){h=parseInt(s[0]);m=parseInt(s.slice(1));}
+  else{h=parseInt(s.slice(0,2));m=parseInt(s.slice(2,4));}
+  if(isNaN(h)||isNaN(m)||h>23||m>59) return null;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+
+function getDaysInMonth(y,m){return new Date(y,m,0).getDate();}
+function nowStr(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
+function fmtDate(dt){return `${dt.getMonth()+1}/${String(dt.getDate()).padStart(2,'0')}`;}
+function syncMetersInput(d){d.metersInput=(d.metersArr||[]).join(' ');}
+
+// ── SUMMARY ──────────────────────────────────────────────
+function getTripThreshold(){return RULES.tripThreshold||100;}
+
+function calcTripBonusFromCount(cumTrips){
+  const t1=RULES.tripThreshold||100;
+  const t2=RULES.tripThreshold2||150;
+  const b1=RULES.tripBonus1||150;
+  const b2=RULES.tripBonus2||200;
+  if(cumTrips<=t1) return 0;
+  const tier1=Math.min(cumTrips, t2)-t1;
+  const tier2=Math.max(0, cumTrips-t2);
+  return tier1*b1 + tier2*b2;
+}
+
+function calcMeterBonus(rows){
+  let cumTrips=0;
+  rows.forEach(r=>{
+    if(r.data.holiday) return;
+    cumTrips+=(r.data.metersArr||[]).length;
+  });
+  return calcTripBonusFromCount(cumTrips);
+}
+
+function updateSummary(rows){
+  let tpay=0,totMin=0,ttrips=0,tmeters=0;
+  rows.forEach(r=>{
+    if(r.data.holiday) return;
+    // 未實際填寫下班時間（預設17:00且未鎖定）→ 不計加班費
+    if(!r.data.timeLocked && r.data.endTime==='17:00' && !r.data.otInput) return;
+    const isSunday=r.wd===0;
+    const[eh,em]=r.data.endTime.split(':').map(Number);
+    const[sh,sm]=(r.data.startTime||'08:00').split(':').map(Number);
+    tpay+=calcPay(eh,em,sh,sm,isSunday);
+    if(isSunday){
+      // 星期天加班時數：17:00後
+      totMin+=Math.max(0,normalizeEndMins(eh,em)-getWorkEnd());
+    } else {
+      const earlyMins=Math.max(0,getWorkStart()-(sh*60+sm));
+      totMin+=Math.max(0,normalizeEndMins(eh,em)-getWorkEnd())+earlyMins;
+    }
+    const res=arrStats(r.data.metersArr);
+    ttrips+=res.count;tmeters+=res.total;
+  });
+  const meterBonus=calcMeterBonus(rows);
+  const meterDistBonus=calcMeterDistanceBonus(tmeters);
+  const totalSalary=RULES.baseSalary+tpay+meterBonus+meterDistBonus;
+  document.getElementById('sumPay').textContent='$'+tpay.toLocaleString();
+  document.getElementById('sumSalary').textContent='$'+totalSalary.toLocaleString();
+  document.getElementById('sumHours').textContent=Math.floor(totMin/60)+'h '+(totMin%60)+'m';
+  document.getElementById('sumTrips').textContent=ttrips;
+  document.getElementById('sumMeters').textContent=fmtNum(tmeters)+' m';
+
+  // ── trips progress bar ──
+  const TRIP_BONUS_THRESHOLD=getTripThreshold();
+  const pct=Math.min(ttrips/TRIP_BONUS_THRESHOLD*100,100);
+  const exceeded=ttrips>TRIP_BONUS_THRESHOLD;
+  const bar=document.getElementById('tripsProgressBar');
+  const lbl=document.getElementById('tripsProgressLabel');
+  const star=document.getElementById('tripsProgressStar');
+  if(exceeded){
+    bar.style.width='100%';
+    bar.style.background='linear-gradient(90deg,#16a34a,#4ade80)';
+    const bonusAmt=calcTripBonusFromCount(ttrips);
+    lbl.textContent=`超標 +${ttrips-TRIP_BONUS_THRESHOLD} 趟　獎金 $${bonusAmt.toLocaleString()}`;
+    lbl.style.color='#15803d';
+    lbl.style.fontWeight='600';
+    star.textContent='⭐';
+  } else {
+    bar.style.width=pct+'%';
+    bar.style.background='linear-gradient(90deg,#2563eb,#60a5fa)';
+    lbl.textContent=`${ttrips} / ${TRIP_BONUS_THRESHOLD} 趟　還差 ${TRIP_BONUS_THRESHOLD-ttrips} 趟達標`;
+    lbl.style.color='var(--text3)';
+    lbl.style.fontWeight='500';
+    star.textContent=ttrips>=80?'🌟':'';
+  }
+
+  // keep popup data in sync
+  document.getElementById('popupOT').textContent='$'+tpay.toLocaleString();
+  document.getElementById('popupMeterBonus').textContent='$'+meterBonus.toLocaleString();
+  document.getElementById('popupMeterDistBonus').textContent='$'+meterDistBonus.toLocaleString();
+  document.getElementById('popupTotal').textContent='$'+totalSalary.toLocaleString();
+}
+
+// ── KEYPAD STATE ──────────────────────────────────────────
+const kpState={};
+function kpKey(dk,mk){return mk+'_'+dk;}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderAll(){
+  const now=new Date();
+  const todayY=now.getFullYear(),todayM=now.getMonth(),todayD=now.getDate();
+  document.getElementById('monthLabel').textContent=`${viewYear}/${String(viewMonth+1).padStart(2,'0')}`;
+  const rows=getRows(viewYear,viewMonth);
+  updateSummary(rows);
+  const list=document.getElementById('daysList');
+  list.innerHTML='';
+  const mk=monthKey(viewYear,viewMonth);
+
+  // Pre-compute per-day bonus trip counts
+  const dayBonusMap={};
+  let _cum=0;
+  const _tripThreshold=getTripThreshold();
+  rows.forEach(r=>{
+    if(r.data.holiday){dayBonusMap[r.dk]=0;return;}
+    let bonus=0;
+    (r.data.metersArr||[]).forEach(()=>{_cum++;if(_cum>_tripThreshold)bonus++;});
+    dayBonusMap[r.dk]=bonus;
+  });
+
+  rows.forEach(r=>{
+    const isToday=viewYear===todayY&&viewMonth===todayM&&r.d===todayD;
+    const d=r.data;
+    const payVal=d.holiday?0:(!d.timeLocked&&d.endTime==='17:00'&&!d.otInput)?0:(()=>{const[h,m]=d.endTime.split(':').map(Number);const[sh2,sm2]=(d.startTime||'08:00').split(':').map(Number);return calcPay(h,m,sh2,sm2,r.wd===0);})();
+    const mRes=arrStats(d.metersArr);
+    const dayBonus=dayBonusMap[r.dk]||0;
+    const kpk=kpKey(r.dk,mk);
+    if(!kpState[kpk]) kpState[kpk]={current:''};
+
+    const card=document.createElement('div');
+    card.className='day-card'+(r.isWeekend?' is-weekend':'')+(d.holiday?' is-holiday':'')+(isToday?' is-today':'');
+
+    // HEADER
+    const hasData=d.holiday||d.timeLocked||(d.metersArr&&d.metersArr.length>0);
+    const hdr=document.createElement('div');hdr.className='day-header';
+    const dateEl=document.createElement('div');dateEl.className='day-date';
+    if(hasData){const ck=document.createElement('span');ck.textContent='✓';ck.style.cssText='font-size:11px;color:var(--green);margin-right:4px;font-weight:700';dateEl.appendChild(ck);}
+    dateEl.appendChild(document.createTextNode(fmtDate(r.dt)));
+    const wdEl=document.createElement('div');wdEl.className='day-weekday';wdEl.textContent=WD[r.wd];
+    hdr.appendChild(dateEl);hdr.appendChild(wdEl);
+
+    if(d.holiday){
+      const hb=document.createElement('div');hb.className='holiday-badge';hb.textContent='休假';hdr.appendChild(hb);
+    } else {
+      const times=document.createElement('div');times.className='day-times';
+      const c1=document.createElement('span');c1.className='time-chip'+(d.startTime&&d.startTime!=='08:00'?' ot':'');c1.textContent=d.startTime||'08:00';
+      const arr=document.createElement('span');arr.className='arrow';arr.textContent='→';
+      const c2=document.createElement('span');c2.className='time-chip'+(d.endTime!=='17:00'?' ot':'');
+      c2.textContent=d.endTime;
+      times.appendChild(c1);times.appendChild(arr);times.appendChild(c2);hdr.appendChild(times);
+      const payEl=document.createElement('div');payEl.className='day-pay'+(payVal===0?' zero':'');
+      payEl.textContent=payVal>0?'$'+payVal.toLocaleString():'—';
+      if(payVal>0){payEl.style.cssText='cursor:pointer;text-decoration:underline dotted';payEl.title='查看加班費明細';payEl.addEventListener('click',e=>{e.stopPropagation();showOTBreakdown(d.endTime,payVal,d.startTime,r.wd===0);});}
+      hdr.appendChild(payEl);
+    }
+
+    const chev=document.createElement('span');chev.className='chevron'+(d.expanded?' open':'');chev.textContent='▾';hdr.appendChild(chev);
+    hdr.addEventListener('click',()=>{
+      const wasExpanded=d.expanded;
+      if(!wasExpanded){
+        // collapse all others
+        const mk2=monthKey(viewYear,viewMonth);
+        const allRows=getRows(viewYear,viewMonth);
+        allRows.forEach(rr=>{if(rr.dk!==r.dk) rr.data.expanded=false;});
+      }
+      d.expanded=!wasExpanded;save();renderAll();
+    });
+    card.appendChild(hdr);
+
+    // collapsed summary
+    if(!d.expanded&&!d.holiday&&mRes.count>0){
+      const sl=document.createElement('div');sl.className='day-summary-line';
+      const bonusHtml=dayBonus>0?`<span style="margin-left:auto;font-size:11px;color:var(--green);font-weight:700">+$${(dayBonus*150).toLocaleString()}</span>`:'';
+      sl.innerHTML=`<span class="dsb">趟次 <span>${mRes.count}</span></span><span class="dsb">米數 <span>${fmtNum(mRes.total)} m</span></span>${d.metersLocked?'<span class="badge badge-green" style="font-size:10px;padding:2px 7px">已確認</span>':''}${bonusHtml}`;
+      card.appendChild(sl);
+    }
+
+    // BODY
+    if(d.expanded){
+      const body=document.createElement('div');body.className='day-body';
+
+      if(d.holiday){
+        const btn=document.createElement('button');btn.className='btn btn-ghost';btn.textContent='取消休假';
+        btn.addEventListener('click',()=>{d.holiday=false;d.expanded=true;save();renderAll();});
+        body.appendChild(btn);
+      } else {
+        // ── Start time row ──
+        const stRow=document.createElement('div');stRow.className='field-row';
+        const stLbl=document.createElement('div');stLbl.className='field-label';stLbl.textContent='上班時間';
+        if(!d.startTime) d.startTime='08:00';
+        if(d.startLocked){
+          const ld=document.createElement('div');ld.className='locked-row';
+          const lt=document.createElement('span');lt.className='locked-text';
+          lt.textContent=d.startTime;
+          if(d.startTime!=='08:00') lt.style.color='var(--amber)';
+          const editBtn=document.createElement('button');editBtn.className='btn btn-warning';editBtn.textContent='修改';
+          editBtn.addEventListener('click',()=>{
+            showModal('確認修改上班時間？',`目前記錄為 ${d.startTime}，確定要重新修改嗎？`,()=>{d.startLocked=false;save();renderAll();});
+          });
+          ld.appendChild(lt);ld.appendChild(editBtn);
+          stRow.appendChild(stLbl);stRow.appendChild(ld);
+        } else {
+          const stInp=document.createElement('input');stInp.type='text';stInp.inputMode='numeric';
+          stInp.className='field-input';stInp.placeholder='08:00';stInp.value=d.startInput||'';
+          stInp.addEventListener('input',()=>{d.startInput=stInp.value;save();});
+          const stBtnWrap=document.createElement('div');stBtnWrap.style.cssText='display:flex;gap:6px;flex-shrink:0';
+          const normalBtn=document.createElement('button');normalBtn.className='btn btn-ghost';normalBtn.textContent='正常';normalBtn.style.cssText='font-size:12px;padding:10px 10px';
+          normalBtn.addEventListener('click',()=>{d.startTime='08:00';d.startInput='';d.startLocked=true;save();renderAll();});
+          const earlyBtn=document.createElement('button');earlyBtn.className='btn btn-warning';earlyBtn.textContent='提早';earlyBtn.style.cssText='font-size:12px;padding:10px 10px';
+          earlyBtn.addEventListener('click',()=>{
+            const raw=stInp.value.trim();
+            const t=raw===''?nowStr():parseFmtTime(raw);
+            if(!t){stInp.style.borderColor='var(--red)';setTimeout(()=>stInp.style.borderColor='',1200);return;}
+            const[th,tm]=t.split(':').map(Number);
+            if(th*60+tm>=getWorkStart()){stInp.style.borderColor='var(--red)';setTimeout(()=>stInp.style.borderColor='',1200);return;}
+            d.startTime=t;d.startInput=raw;d.startLocked=true;save();renderAll();
+          });
+          stBtnWrap.appendChild(normalBtn);stBtnWrap.appendChild(earlyBtn);
+          stRow.appendChild(stLbl);stRow.appendChild(stInp);stRow.appendChild(stBtnWrap);
+        }
+        body.appendChild(stRow);
+
+        // ── Clock-out row ──
+        const otRow=document.createElement('div');otRow.className='field-row';
+        const otLbl=document.createElement('div');otLbl.className='field-label';otLbl.textContent='下班時間';
+
+        if(d.timeLocked){
+          const ld=document.createElement('div');ld.className='locked-row';
+          const lt=document.createElement('span');lt.className='locked-text';lt.textContent=d.endTime;
+          const editBtn=document.createElement('button');editBtn.className='btn btn-warning';editBtn.textContent='修改';
+          editBtn.addEventListener('click',()=>{
+            showModal('確認修改下班時間？',`目前記錄為 ${d.endTime}，確定要重新修改嗎？`,()=>{d.timeLocked=false;save();renderAll();});
+          });
+          ld.appendChild(lt);ld.appendChild(editBtn);
+          otRow.appendChild(otLbl);otRow.appendChild(ld);
+        } else {
+          const otInp=document.createElement('input');otInp.type='text';otInp.inputMode='numeric';
+          otInp.className='field-input';otInp.placeholder='';otInp.value=d.otInput;
+          otInp.addEventListener('input',()=>{d.otInput=otInp.value;save();});
+          const btnWrap=document.createElement('div');btnWrap.style.cssText='display:flex;gap:6px;flex-shrink:0';
+          const noOtBtn=document.createElement('button');noOtBtn.className='btn btn-ghost';noOtBtn.textContent='無加班';noOtBtn.style.cssText='font-size:12px;padding:10px 10px';
+          noOtBtn.addEventListener('click',()=>{
+            const doIt=()=>{d.endTime='17:00';d.otInput='';d.timeLocked=true;save();showEncourage();renderAll();};
+            if(d.timeLocked) showModal('確認覆蓋下班時間？',`目前記錄為 ${d.endTime}，確定要改為無加班 (17:00) 嗎？`,doIt);else doIt();
+          });
+          const otBtn=document.createElement('button');otBtn.className='btn btn-primary';otBtn.textContent='加班';otBtn.style.cssText='font-size:12px;padding:10px 10px';
+          otBtn.addEventListener('click',()=>{
+            const raw=otInp.value.trim();
+            const t=raw===''?nowStr():parseFmtTime(raw);
+            if(!t){otInp.style.borderColor='var(--red)';setTimeout(()=>otInp.style.borderColor='',1200);return;}
+            const doIt=()=>{d.endTime=t;d.otInput=raw;d.timeLocked=true;save();showEncourage();renderAll();};
+            if(d.timeLocked) showModal('確認覆蓋下班時間？',`目前記錄為 ${d.endTime}，確定要改為 ${t} 嗎？`,doIt);else doIt();
+          });
+          btnWrap.appendChild(noOtBtn);btnWrap.appendChild(otBtn);
+          otRow.appendChild(otLbl);otRow.appendChild(otInp);otRow.appendChild(btnWrap);
+        }
+        body.appendChild(otRow);
+
+        // ── Meters section ──
+        const mSec=document.createElement('div');mSec.className='meter-section';
+        const mHdr=document.createElement('div');mHdr.style.cssText='display:flex;align-items:center;gap:8px';
+        const mLbl=document.createElement('div');mLbl.className='field-label';mLbl.textContent='米數';mHdr.appendChild(mLbl);
+
+        if(d.metersLocked){
+          const ld=document.createElement('div');ld.className='locked-row';
+          const chips=document.createElement('div');chips.className='meter-chips';
+          (d.metersArr||[]).forEach(v=>{
+            const c=document.createElement('span');c.className='meter-chip';c.textContent=fmtNum(v)+' m';chips.appendChild(c);
+          });
+          if(!(d.metersArr||[]).length){const e=document.createElement('span');e.style.cssText='font-size:13px;color:var(--text3)';e.textContent='—';chips.appendChild(e);}
+          const editBtn=document.createElement('button');editBtn.className='btn btn-warning';editBtn.style.flexShrink='0';editBtn.textContent='修改';
+          editBtn.addEventListener('click',()=>{
+            showModal('確認修改米數？','確定要重新修改已確認的米數嗎？',()=>{d.metersLocked=false;save();renderAll();});
+          });
+          ld.appendChild(chips);ld.appendChild(editBtn);mHdr.appendChild(ld);
+          mSec.appendChild(mHdr);
+          const br=document.createElement('div');br.className='badge-row';
+          br.innerHTML=`<div class="badge-item"><span class="badge-lbl">趟次</span><span class="badge badge-blue">${mRes.count}</span></div><div class="badge-item"><span class="badge-lbl">米數計</span><span class="badge badge-green">${fmtNum(mRes.total)}</span></div>`;
+          mSec.appendChild(br);
+        } else {
+          mSec.appendChild(mHdr);
+          const kps=kpState[kpk];
+
+          // chips
+          const chips=document.createElement('div');chips.className='meter-chips';
+          (d.metersArr||[]).forEach((v,i)=>{
+            const c=document.createElement('span');c.className='meter-chip';
+            c.appendChild(document.createTextNode(fmtNum(v)+' m'));
+            const del=document.createElement('button');del.className='meter-chip-del';del.textContent='×';
+            del.addEventListener('click',e=>{e.stopPropagation();d.metersArr.splice(i,1);syncMetersInput(d);save();renderAll();});
+            c.appendChild(del);chips.appendChild(c);
+          });
+          if(!(d.metersArr||[]).length){const ph=document.createElement('span');ph.style.cssText='font-size:12px;color:var(--text3)';ph.textContent='尚無米數';chips.appendChild(ph);}
+          mSec.appendChild(chips);
+
+          // current input display
+          const kpCurr=document.createElement('div');
+          kpCurr.className='kp-current'+(kps.current===''?' empty':'');
+          kpCurr.textContent=kps.current===''?'輸入數值，按 ＋ 加入':kps.current;
+          mSec.appendChild(kpCurr);
+
+          // keypad: 1-2-3 / 4-5-6 / 7-8-9 / . 0 ⌫
+          const kpad=document.createElement('div');kpad.className='meter-keypad';
+          const keys=['1','2','3','4','5','6','7','8','9','.','0','⌫'];
+          keys.forEach(k=>{
+            const b=document.createElement('button');b.className='kp-btn';
+            if(k==='⌫') b.classList.add('kp-back');
+            b.textContent=k;
+            b.addEventListener('click',()=>{
+              if(k==='⌫'){
+                kps.current=kps.current.slice(0,-1);
+              } else if(k==='.'){
+                if(!kps.current.includes('.')) kps.current+='.';
+              } else {
+                if(kps.current.length<10) kps.current+=k;
+              }
+              kpCurr.textContent=kps.current===''?'輸入數值，按 ＋ 加入':kps.current;
+              kpCurr.className='kp-current'+(kps.current===''?' empty':'');
+            });
+            kpad.appendChild(b);
+          });
+          // + add button (span 2 cols) + confirm button (1 col)
+          const addBtn=document.createElement('button');addBtn.className='kp-btn kp-add';addBtn.style.cssText='grid-column:span 2';addBtn.textContent='＋  加入';
+          addBtn.addEventListener('click',()=>{
+            const v=parseFloat(kps.current);
+            if(!kps.current === '' || isNaN(v)) {kpCurr.style.border='1.5px solid var(--red)';setTimeout(()=>kpCurr.style.border='',1000);return;}
+            if(!d.metersArr) d.metersArr=[];
+            d.metersArr.push(v);syncMetersInput(d);kps.current='';save();renderAll();
+          });
+          const confBtn=document.createElement('button');confBtn.className='btn btn-success';confBtn.style.cssText='border-radius:8px;font-size:13px;font-weight:700';confBtn.textContent='確認米數';
+          confBtn.addEventListener('click',()=>{d.metersLocked=true;save();renderAll();});
+          kpad.appendChild(addBtn);kpad.appendChild(confBtn);
+          mSec.appendChild(kpad);
+
+          // badges only
+          const btm=document.createElement('div');btm.style.cssText='display:flex;align-items:center;gap:8px;flex-wrap:wrap';
+          const br=document.createElement('div');br.className='badge-row';br.style.flex='1';
+          br.innerHTML=`<div class="badge-item"><span class="badge-lbl">趟次</span><span class="badge badge-blue">${mRes.count}</span></div><div class="badge-item"><span class="badge-lbl">米數計</span><span class="badge badge-green">${fmtNum(mRes.total)}</span></div>`;
+          btm.appendChild(br);
+          mSec.appendChild(btm);
+        }
+        body.appendChild(mSec);
+
+        // holiday btn
+        const holBtn=document.createElement('button');holBtn.className='btn btn-danger';holBtn.textContent='標記休假';
+        holBtn.addEventListener('click',()=>{d.holiday=true;d.endTime='17:00';d.otInput='';d.expanded=true;save();showSpecialMsg('休假在家<br>不要擺臉色給老婆看');renderAll();});
+        body.appendChild(holBtn);
+      }
+      card.appendChild(body);
+    }
+    list.appendChild(card);
+  });
+}
+
+document.getElementById('btnExpandAll').addEventListener('click',()=>{
+  const rows=getRows(viewYear,viewMonth);
+  rows.forEach(r=>{r.data.expanded=true;});
+  save();renderAll();
+});
+document.getElementById('btnCollapseAll').addEventListener('click',()=>{
+  const rows=getRows(viewYear,viewMonth);
+  rows.forEach(r=>{r.data.expanded=false;});
+  save();renderAll();
+});
+
+// ── MONTH NAV ─────────────────────────────────────────────
+document.getElementById('btnPrev').addEventListener('click',async()=>{viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--;}await ensureMonthLoaded(monthKey(viewYear,viewMonth));renderAll();});
+document.getElementById('btnNext').addEventListener('click',async()=>{viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++;}await ensureMonthLoaded(monthKey(viewYear,viewMonth));renderAll();});
+
+// ── MODAL ─────────────────────────────────────────────────
+let pendingAction=null;
+function showModal(title,desc,action){
+  pendingAction=action;
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalDesc').textContent=desc;
+  document.getElementById('confirmModal').classList.remove('hidden');
+}
+document.getElementById('modalCancel').addEventListener('click',()=>{document.getElementById('confirmModal').classList.add('hidden');pendingAction=null;});
+document.getElementById('modalConfirm').addEventListener('click',()=>{document.getElementById('confirmModal').classList.add('hidden');if(pendingAction)pendingAction();pendingAction=null;});
+document.getElementById('confirmModal').addEventListener('click',e=>{if(e.target===document.getElementById('confirmModal')){document.getElementById('confirmModal').classList.add('hidden');pendingAction=null;}});
+
+// ── SALARY POPUP ──────────────────────────────────────────
+document.getElementById('cardSalary').addEventListener('click',()=>document.getElementById('salaryPopup').classList.remove('hidden'));
+document.getElementById('salaryClose').addEventListener('click',()=>document.getElementById('salaryPopup').classList.add('hidden'));
+document.getElementById('salaryPopup').addEventListener('click',e=>{if(e.target===document.getElementById('salaryPopup'))document.getElementById('salaryPopup').classList.add('hidden');});
+
+// ── CLEAR ─────────────────────────────────────────────────
+document.getElementById('btnClear').addEventListener('click',()=>{
+  const label=`${viewYear} 年 ${viewMonth+1} 月`;
+  showModal('確認清除資料？',`此操作將永久刪除 ${label} 的所有出勤、加班及工作紀錄，且無法復原。確定要繼續嗎？`,()=>{
+    const mk=monthKey(viewYear,viewMonth);delete allData[mk];save();renderAll();
+  });
+});
+
+// ── EXPORT ────────────────────────────────────────────────
+document.getElementById('btnExport').addEventListener('click',()=>{
+  const rows=getRows(viewYear,viewMonth);
+  const wb=XLSX.utils.book_new();
+  const headers=['日期','星期','上班時間','下班時間','加班費($)','趟次','米數明細','米數合計(m)','備註'];
+  const data=[headers];
+  let tPay=0,tTrips=0,tMeters=0,tOTMin=0;
+  rows.forEach(r=>{
+    const d=r.data;
+    if(d.holiday){data.push([fmtDate(r.dt),WD[r.wd],'—','—','—','—','—','—','休假']);return;}
+    const[eh,em]=d.endTime.split(':').map(Number);
+    const[sh_e,sm_e]=(d.startTime||'08:00').split(':').map(Number);const pay=calcPay(eh,em,sh_e,sm_e,r.wd===0);const mRes=arrStats(d.metersArr);
+    tPay+=pay;tTrips+=mRes.count;tMeters+=mRes.total;const earlyE=Math.max(0,getWorkStart()-(sh_e*60+sm_e));tOTMin+=Math.max(0,normalizeEndMins(eh,em)-getWorkEnd())+earlyE;
+    data.push([fmtDate(r.dt),WD[r.wd],(d.startTime||'08:00'),d.endTime,pay,mRes.count,(d.metersArr||[]).join(' '),fmtNum(mRes.total),d.metersLocked?'已確認':'']);
+  });
+  data.push([]);
+  data.push(['合計','','','',tPay,tTrips,'',fmtNum(tMeters),'加班時數：'+Math.floor(tOTMin/60)+'h '+(tOTMin%60)+'m']);
+  const mBonus=calcMeterBonus(rows);
+  const mDistBonus=calcMeterDistanceBonus(tMeters);
+  data.push(['本月薪資','','','',RULES.baseSalary+tPay+mBonus+mDistBonus,'','','','底薪'+RULES.baseSalary+'＋加班費＋趟數獎金'+mBonus+'＋米數獎金'+mDistBonus]);
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:10},{wch:6},{wch:10},{wch:10},{wch:10},{wch:6},{wch:24},{wch:12},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws,`${viewYear}-${String(viewMonth+1).padStart(2,'0')}`);
+  XLSX.writeFile(wb,`毅合實業工作紀錄_${viewYear}${String(viewMonth+1).padStart(2,'0')}.xlsx`);
+});
+
+// ── DRAWERS ───────────────────────────────────────────────
+let otDY=null,otDM=null,mDY=null,mDM=null,tripsDY=null,tripsDM=null;
+
+function openDrawer(which){
+  if(which==='ot'){
+    if(otDY===null){otDY=viewYear;otDM=viewMonth;}
+    document.getElementById('otDrawer').classList.add('open');
+    document.getElementById('otOverlay').classList.add('open');
+    renderOTDrawer();
+  } else if(which==='trips'){
+    if(tripsDY===null){tripsDY=viewYear;tripsDM=viewMonth;}
+    document.getElementById('tripsDrawer').classList.add('open');
+    document.getElementById('tripsOverlay').classList.add('open');
+    renderTripsDrawer();
+  } else {
+    if(mDY===null){mDY=viewYear;mDM=viewMonth;}
+    document.getElementById('mDrawer').classList.add('open');
+    document.getElementById('mOverlay').classList.add('open');
+    renderMDrawer();
+  }
+}
+function closeDrawer(which){
+  if(which==='ot'){document.getElementById('otDrawer').classList.remove('open');document.getElementById('otOverlay').classList.remove('open');}
+  else if(which==='trips'){document.getElementById('tripsDrawer').classList.remove('open');document.getElementById('tripsOverlay').classList.remove('open');}
+  else{document.getElementById('mDrawer').classList.remove('open');document.getElementById('mOverlay').classList.remove('open');}
+}
+
+// stat cards open drawers
+document.getElementById('cardHours').addEventListener('click',()=>openDrawer('ot'));
+document.getElementById('cardMeters').addEventListener('click',()=>openDrawer('m'));
+document.getElementById('cardTrips').addEventListener('click',()=>openDrawer('trips'));
+
+document.getElementById('otDrawerClose').addEventListener('click',()=>closeDrawer('ot'));
+document.getElementById('mDrawerClose').addEventListener('click',()=>closeDrawer('m'));
+document.getElementById('tripsDrawerClose').addEventListener('click',()=>closeDrawer('trips'));
+document.getElementById('otOverlay').addEventListener('click',()=>closeDrawer('ot'));
+document.getElementById('mOverlay').addEventListener('click',()=>closeDrawer('m'));
+document.getElementById('tripsOverlay').addEventListener('click',()=>closeDrawer('trips'));
+
+document.getElementById('otMonthPrev').addEventListener('click',()=>{otDM--;if(otDM<0){otDM=11;otDY--;}renderOTDrawer();});
+document.getElementById('otMonthNext').addEventListener('click',()=>{otDM++;if(otDM>11){otDM=0;otDY++;}renderOTDrawer();});
+document.getElementById('mMonthPrev').addEventListener('click',()=>{mDM--;if(mDM<0){mDM=11;mDY--;}renderMDrawer();});
+document.getElementById('mMonthNext').addEventListener('click',()=>{mDM++;if(mDM>11){mDM=0;mDY++;}renderMDrawer();});
+document.getElementById('tripsMonthPrev').addEventListener('click',()=>{tripsDM--;if(tripsDM<0){tripsDM=11;tripsDY--;}renderTripsDrawer();});
+document.getElementById('tripsMonthNext').addEventListener('click',()=>{tripsDM++;if(tripsDM>11){tripsDM=0;tripsDY++;}renderTripsDrawer();});
+
+// ── DAY PICKER LOGIC ─────────────────────────────────────
+// state: {from, to} per drawer
+const pickerState={ot:{from:null,to:null},m:{from:null,to:null}};
+
+function buildPickerGrid(gridId, drawerKey, role, getDIM_fn){
+  const grid=document.getElementById(gridId);
+  const dim=getDIM_fn();
+  const st=pickerState[drawerKey];
+  grid.innerHTML='';
+  for(let d=1;d<=dim;d++){
+    const btn=document.createElement('button');
+    btn.className='dpg-btn';
+    btn.textContent=d;
+    const isFrom=st.from===d, isTo=st.to===d;
+    const inRange=st.from&&st.to&&d>st.from&&d<st.to;
+    if(isFrom||isTo) btn.classList.add('active');
+    else if(inRange) btn.classList.add('in-range');
+    btn.addEventListener('click',()=>{
+      if(role==='from'){
+        st.from=d;
+        if(st.to&&st.to<d) st.to=null;
+      } else {
+        st.to=d;
+        if(st.from&&st.from>d) st.from=null;
+      }
+      closeAllPickers();
+      updatePickerBtns(drawerKey);
+      if(drawerKey==='ot') renderOTDrawer();
+      else renderMDrawer();
+    });
+    grid.appendChild(btn);
+  }
+}
+
+function updatePickerBtns(dk){
+  const st=pickerState[dk];
+  const fromBtn=document.getElementById(dk+'DateFromBtn');
+  const toBtn=document.getElementById(dk+'DateToBtn');
+  if(fromBtn){fromBtn.textContent=st.from?String(st.from)+'日':'起（日）';fromBtn.classList.toggle('selected',!!st.from);}
+  if(toBtn){toBtn.textContent=st.to?String(st.to)+'日':'迄（日）';toBtn.classList.toggle('selected',!!st.to);}
+}
+
+function closeAllPickers(){
+  document.querySelectorAll('.day-picker-popup').forEach(p=>p.classList.remove('open'));
+}
+
+function setupPicker(btnId, popupId, gridId, drawerKey, role, getDIM_fn){
+  const btn=document.getElementById(btnId);
+  const popup=document.getElementById(popupId);
+  if(!btn||!popup) return;
+  btn.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    const wasOpen=popup.classList.contains('open');
+    closeAllPickers();
+    if(!wasOpen){
+      buildPickerGrid(gridId, drawerKey, role, getDIM_fn);
+      popup.classList.add('open');
+    }
+  });
+}
+
+document.addEventListener('click',()=>closeAllPickers());
+
+// OT pickers
+setupPicker('otDateFromBtn','otDateFromPopup','otDateFromGrid','ot','from',()=>getDaysInMonth(otDY,otDM+1));
+setupPicker('otDateToBtn','otDateToPopup','otDateToGrid','ot','to',()=>getDaysInMonth(otDY,otDM+1));
+document.getElementById('otDateClear').addEventListener('click',()=>{
+  pickerState.ot={from:null,to:null};
+  updatePickerBtns('ot');
+  renderOTDrawer();
+});
+
+// Meter pickers
+setupPicker('mDateFromBtn','mDateFromPopup','mDateFromGrid','m','from',()=>getDaysInMonth(mDY,mDM+1));
+setupPicker('mDateToBtn','mDateToPopup','mDateToGrid','m','to',()=>getDaysInMonth(mDY,mDM+1));
+document.getElementById('mDateClear').addEventListener('click',()=>{
+  pickerState.m={from:null,to:null};
+  updatePickerBtns('m');
+  renderMDrawer();
+});
+
+function getFilteredRows(y,m,fromD,toD,includeHoliday){
+  const rows=getRows(y,m);
+  return rows.filter(r=>{
+    if(!includeHoliday&&r.data.holiday) return false;
+    if(fromD&&r.d<fromD) return false;
+    if(toD&&r.d>toD) return false;
+    return true;
+  });
+}
+
+// ── OT DRAWER RENDER ──────────────────────────────────────
+function renderOTDrawer(){
+  document.getElementById('otMonthLabel').textContent=`${otDY}/${String(otDM+1).padStart(2,'0')}`;
+  const fromD=pickerState.ot.from||null;
+  const toD=pickerState.ot.to||null;
+  const isFiltered=fromD||toD;
+
+  // ALL rows for work-day count (no holiday, no date filter)
+  const allRows=getFilteredRows(otDY,otDM,null,null,false);
+  // Filtered rows for totals/display
+  const rows=getFilteredRows(otDY,otDM,fromD,toD,false);
+
+  const body=document.getElementById('otDrawerBody');
+  body.innerHTML='';
+  let totalPay=0,totalOTMin=0,totalWorkDays=0,hasOT=false;
+
+  rows.forEach(r=>{
+    const d=r.data;
+    const[eh,em]=d.endTime.split(':').map(Number);
+    const[sh_d,sm_d]=(d.startTime||'08:00').split(':').map(Number);
+    const endM=normalizeEndMins(eh,em);
+    const earlyMin=Math.max(0,getWorkStart()-(sh_d*60+sm_d));
+    const otMin=Math.max(0,endM-getWorkEnd())+earlyMin;
+    const pay=calcPay(eh,em,sh_d,sm_d,r.wd===0);
+    totalWorkDays++;
+    if(otMin===0&&pay===0) return;
+    hasOT=true;
+    totalPay+=pay;totalOTMin+=otMin;
+    const st=d.startTime&&d.startTime!=='08:00'?`<span class="detail-time" style="color:var(--amber)">${d.startTime}↑</span>`:'';
+    const row=document.createElement('div');row.className='detail-row';
+    row.innerHTML=`<span class="detail-date">${fmtDate(r.dt)}</span><span class="detail-wd">${WD[r.wd]}</span>${st}<span class="detail-time">${d.endTime}</span><span class="detail-ot-hrs">+${Math.floor(otMin/60)}h${otMin%60>0?String(otMin%60).padStart(2,'0')+'m':''}</span><span class="detail-pay">$${pay.toLocaleString()}</span>`;
+    body.appendChild(row);
+  });
+
+  if(!hasOT){body.innerHTML='<div class="drawer-empty">此月份無加班記錄</div>';}
+
+  const bar=document.getElementById('otTotalBar');
+  let html=`<span class="dtb-item">上班天數 <span>${totalWorkDays}</span></span><span class="dtb-item">加班費 <span>$${totalPay.toLocaleString()}</span></span><span class="dtb-item">加班時數 <span>${Math.floor(totalOTMin/60)}h ${totalOTMin%60}m</span></span>`;
+  if(isFiltered) html+=`<span class="dtb-filter-note">篩選區間</span>`;
+  bar.innerHTML=html;
+}
+
+// ── METER DRAWER RENDER ───────────────────────────────────
+function renderMDrawer(){
+  document.getElementById('mMonthLabel').textContent=`${mDY}/${String(mDM+1).padStart(2,'0')}`;
+  const fromD=pickerState.m.from||null;
+  const toD=pickerState.m.to||null;
+  const isFiltered=fromD||toD;
+
+  const rows=getFilteredRows(mDY,mDM,fromD,toD,false);
+  const body=document.getElementById('mDrawerBody');
+  body.innerHTML='';
+  let totalTrips=0,totalMeters=0,totalWorkDays=0,hasM=false;
+
+  rows.forEach(r=>{
+    const d=r.data;
+    const mRes=arrStats(d.metersArr);
+    totalWorkDays++;
+    if(mRes.count===0) return;
+    hasM=true;totalTrips+=mRes.count;totalMeters+=mRes.total;
+    const row=document.createElement('div');row.className='detail-row';
+    const cHtml=(d.metersArr||[]).map(v=>`<span style="background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border);border-radius:12px;padding:2px 7px;font-size:11px;font-family:'DM Mono',monospace;font-weight:600">${fmtNum(v)}</span>`).join(' ');
+    row.innerHTML=`<span class="detail-date">${fmtDate(r.dt)}</span><span class="detail-wd">${WD[r.wd]}</span><div style="flex:1;display:flex;flex-wrap:wrap;gap:4px;align-items:center">${cHtml}</div><span class="detail-total">${fmtNum(mRes.total)} m</span>`;
+    body.appendChild(row);
+  });
+
+  if(!hasM){body.innerHTML='<div class="drawer-empty">此月份無米數記錄</div>';}
+
+  const bar=document.getElementById('mTotalBar');
+  let html=`<span class="dtb-item">上班天數 <span>${totalWorkDays}</span></span><span class="dtb-item">趟次 <span>${totalTrips}</span></span><span class="dtb-item">米數 <span>${fmtNum(totalMeters)} m</span></span>`;
+  if(isFiltered) html+=`<span class="dtb-filter-note">篩選區間</span>`;
+  bar.innerHTML=html;
+}
+
+// ── TRIPS DRAWER RENDER ──────────────────────────────────
+function renderTripsDrawer(){
+  document.getElementById('tripsMonthLabel').textContent=`${tripsDY}/${String(tripsDM+1).padStart(2,'0')}`;
+  const rows=getFilteredRows(tripsDY,tripsDM,null,null,false);
+  const body=document.getElementById('tripsDrawerBody');
+  body.innerHTML='';
+
+  const THRESHOLD=RULES.tripThreshold||100;
+  const THRESHOLD2=RULES.tripThreshold2||150;
+  let cumTrips=0;
+  let bonusTrips150=0; // 101~150趟數
+  let bonusTrips200=0; // 151趟以上
+  let thresholdCrossedDay=null; // 哪天第101趟達標
+  let threshold150Day=null;     // 哪天第151趟達標
+  let hasAny=false;
+
+  // First pass: figure out per-day data including bonus trip counts
+  const dayItems=[];
+  rows.forEach(r=>{
+    const d=r.data;
+    const trips=d.metersArr||[];
+    if(trips.length===0) return;
+    const dayTrips=[];
+    trips.forEach(v=>{
+      cumTrips++;
+      const is150plus=cumTrips>THRESHOLD2;
+      const is100plus=cumTrips>THRESHOLD;
+      const crossesThreshold=(cumTrips===THRESHOLD+1);
+      const crosses150=(cumTrips===THRESHOLD2+1);
+      if(is150plus) bonusTrips200++;
+      else if(is100plus) bonusTrips150++;
+      if(crossesThreshold&&thresholdCrossedDay===null) thresholdCrossedDay=fmtDate(r.dt);
+      if(crosses150&&threshold150Day===null) threshold150Day=fmtDate(r.dt);
+      dayTrips.push({v,is100plus,is150plus,crossesThreshold,crosses150,tripNum:cumTrips});
+    });
+    dayItems.push({r,dayTrips});
+    hasAny=true;
+  });
+
+  if(!hasAny){body.innerHTML='<div class="drawer-empty">此月份無趟次記錄</div>';}
+
+  dayItems.forEach(({r,dayTrips})=>{
+    const row=document.createElement('div');
+    // Check if any bonus trips in this day
+    const hasDayBonus=dayTrips.some(t=>t.is100plus);
+    const hasDayCross=dayTrips.some(t=>t.crossesThreshold);
+    const hasDayCross150=dayTrips.some(t=>t.crosses150);
+    row.style.cssText=`background:${hasDayBonus?'#f0fdf4':'var(--bg)'};border-radius:10px;padding:10px 12px;margin-bottom:6px;border:${hasDayCross||hasDayCross150?'1.5px solid #16a34a':'1px solid transparent'}`;
+
+    const topLine=document.createElement('div');
+    topLine.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap';
+
+    const dateSpan=document.createElement('span');
+    dateSpan.style.cssText='font-size:13px;font-weight:700;font-family:"DM Mono",monospace;color:var(--text);min-width:44px';
+    dateSpan.textContent=fmtDate(r.dt);
+
+    const wdSpan=document.createElement('span');
+    wdSpan.style.cssText='font-size:11px;color:var(--text3);min-width:12px';
+    wdSpan.textContent=WD[r.wd];
+
+    topLine.appendChild(dateSpan);
+    topLine.appendChild(wdSpan);
+
+    if(hasDayCross){
+      const badge=document.createElement('span');
+      badge.style.cssText='font-size:10px;background:#16a34a;color:#fff;padding:2px 8px;border-radius:10px;font-weight:700';
+      badge.textContent=`⭐ 達標日(${THRESHOLD+1}趟)`;
+      topLine.appendChild(badge);
+    }
+    if(hasDayCross150){
+      const badge=document.createElement('span');
+      badge.style.cssText='font-size:10px;background:#7c3aed;color:#fff;padding:2px 8px;border-radius:10px;font-weight:700';
+      badge.textContent=`🚀 達標日(${THRESHOLD2+1}趟)`;
+      topLine.appendChild(badge);
+    }
+
+    const tripCount=dayTrips.length;
+    const tripSummary=document.createElement('span');
+    tripSummary.style.cssText='margin-left:auto;font-size:12px;font-family:"DM Mono",monospace;font-weight:600;color:var(--text2)';
+    tripSummary.textContent=`${tripCount} 趟`;
+    topLine.appendChild(tripSummary);
+
+    row.appendChild(topLine);
+
+    // Day bonus summary
+    const dayBonus150=dayTrips.filter(t=>t.is100plus&&!t.is150plus).length;
+    const b1=RULES.tripBonus1||150;
+    const b2=RULES.tripBonus2||200;
+    const dayBonus200=dayTrips.filter(t=>t.is150plus).length;
+    if(dayBonus150>0){
+      const bonusLine=document.createElement('div');
+      bonusLine.style.cssText='margin-top:4px;font-size:12px;color:#15803d;font-weight:600';
+      bonusLine.textContent=`第一段獎勵 ${dayBonus150} 趟 × $${b1} = $${(dayBonus150*b1).toLocaleString()}`;
+      row.appendChild(bonusLine);
+    }
+    if(dayBonus200>0){
+      const bonusLine=document.createElement('div');
+      bonusLine.style.cssText='margin-top:4px;font-size:12px;color:#7c3aed;font-weight:600';
+      bonusLine.textContent=`第二段獎勵 ${dayBonus200} 趟 × $${b2} = $${(dayBonus200*b2).toLocaleString()}`;
+      row.appendChild(bonusLine);
+    }
+
+    body.appendChild(row);
+  });
+
+  // total bar
+  const b1=RULES.tripBonus1||150;
+  const b2=RULES.tripBonus2||200;
+  const totalBonus=bonusTrips150*b1+bonusTrips200*b2;
+  const bar=document.getElementById('tripsTotalBar');
+  let html=`<span class="dtb-item">總趟次 <span>${cumTrips}</span></span>`;
+  if(thresholdCrossedDay) html+=`<span class="dtb-item">第${THRESHOLD+1}趟達標日 <span>${thresholdCrossedDay}</span></span>`;
+  if(threshold150Day) html+=`<span class="dtb-item">第${THRESHOLD2+1}趟達標日 <span>${threshold150Day}</span></span>`;
+  if(bonusTrips150>0) html+=`<span class="dtb-item" style="color:#15803d">${THRESHOLD+1}~${THRESHOLD2}趟獎金 <span style="color:#16a34a">${bonusTrips150} 趟 × $${b1} = $${(bonusTrips150*b1).toLocaleString()}</span></span>`;
+  if(bonusTrips200>0) html+=`<span class="dtb-item" style="color:#7c3aed">${THRESHOLD2+1}趟以上獎金 <span style="color:#7c3aed">${bonusTrips200} 趟 × $${b2} = $${(bonusTrips200*b2).toLocaleString()}</span></span>`;
+  if(totalBonus>0) html+=`<span class="dtb-item" style="font-weight:700">趟數獎金合計 <span style="color:#16a34a">$${totalBonus.toLocaleString()}</span></span>`;
+  bar.innerHTML=html;
+}
+
+// ── SCROLL TO TOP ─────────────────────────────────────────
+const _scrollTopBtn=document.getElementById('scrollTopBtn');
+window.addEventListener('scroll',()=>{
+  if(window.scrollY>220) _scrollTopBtn.classList.add('visible');
+  else _scrollTopBtn.classList.remove('visible');
+},{passive:true});
+_scrollTopBtn.addEventListener('click',()=>{
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+// ── SCROLL TO TODAY ──────────────────────────────────────
+function scrollToToday(){
+  const todayCard=document.querySelector('.day-card.is-today');
+  if(todayCard) todayCard.scrollIntoView({behavior:'smooth',block:'center'});
+}
+// ── INIT ──────────────────────────────────────────────────
+async function initApp(){
+  loadRules();
+  const now=new Date();
+  viewYear=now.getFullYear();viewMonth=now.getMonth();
+  // Load current month (with migration if needed)
+  allData=await loadFromCloud();
+  const mk=monthKey(viewYear,viewMonth);
+  if(!allData[mk]) allData[mk]={};
+  const dk=String(now.getDate());
+  if(!allData[mk][dk]) allData[mk][dk]={holiday:false,startTime:'08:00',startInput:'',startLocked:false,otInput:'',endTime:'17:00',metersInput:'',metersArr:[],metersLocked:false,timeLocked:false,expanded:true};
+  else{allData[mk][dk].expanded=true;if(!allData[mk][dk].metersArr) allData[mk][dk].metersArr=parseMeters(allData[mk][dk].metersInput||'');}
+  save();renderAll();setTimeout(scrollToToday,80);
+}
+
+onAuthStateChanged(auth, user=>{
+  if(user){
+    hideLoginScreen();
+    initApp();
+  } else {
+    showLoginScreen();
+  }
+});
+</script>
+</div><!-- /appRoot -->
 </body>
 </html>
